@@ -9,7 +9,7 @@ import CONST from "./graph.const";
 import { MARKERS } from "../marker/marker.const";
 
 import { Link } from "../link/Link";
-import Node from "../node/Node";
+import { Node } from "../node/Node";
 import { Marker } from "../marker/Marker";
 import { buildLinkProps, buildNodeProps } from "./graph.builder";
 import { getId } from "../graph/graph.helper";

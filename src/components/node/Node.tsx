@@ -1,8 +1,39 @@
-import React from "react";
+import React, { SVGAttributes } from "react";
 
 import nodeHelper from "./node.helper";
 import CONST from "./node.const";
 import { logWarning } from "../../utils";
+
+export interface INodeProps {
+  id: string;
+  type;
+  cx;
+  cy;
+  svg;
+  viewGenerator;
+  overrideGlobalViewGenerator;
+
+  className?;
+  cursor?;
+  opacity?;
+  dx?;
+  labelPosition?;
+  label?;
+  renderLabel?;
+  fontColor?;
+  fontSize?;
+  fontWeight?;
+  size?;
+
+  fill?;
+  stroke?;
+  strokeWidth?;
+
+  onClickNode?;
+  onRightClickNode?;
+  onMouseOverNode?;
+  onMouseOut?;
+}
 
 /**
  * Node component is responsible for encapsulating node render.
@@ -52,7 +83,7 @@ import { logWarning } from "../../utils";
  *     onMouseOverNode={onMouseOverNode}
  *     onMouseOutNode={onMouseOutNode} />
  */
-export default class Node extends React.Component {
+export class Node extends React.Component<INodeProps> {
     /**
      * Handle click on the node.
      * @returns {undefined}
@@ -79,7 +110,7 @@ export default class Node extends React.Component {
     handleOnMouseOutNode = () => this.props.onMouseOut && this.props.onMouseOut(this.props.id);
 
     render() {
-        const nodeProps = {
+        const nodeProps: SVGAttributes<SVGElement> = {
             cursor: this.props.cursor,
             onClick: this.handleOnClickNode,
             onContextMenu: this.handleOnRightClickNode,
@@ -101,8 +132,8 @@ export default class Node extends React.Component {
 
         let gtx = this.props.cx,
             gty = this.props.cy,
-            label = null,
-            node = null;
+            label,
+            node;
 
         if (this.props.svg || this.props.viewGenerator) {
             const height = isSizeNumericalValue ? size / 10 : size.height / 10;
@@ -140,13 +171,13 @@ export default class Node extends React.Component {
                 logWarning("node.size should be a number when not using custom nodes.");
                 size = CONST.DEFAULT_NODE_SIZE;
             }
-            nodeProps.d = nodeHelper.buildSvgSymbol(size, this.props.type);
+            nodeProps.d = nodeHelper.buildSvgSymbol(size, this.props.type) || undefined;
             nodeProps.fill = this.props.fill;
             nodeProps.stroke = this.props.stroke;
             nodeProps.strokeWidth = this.props.strokeWidth;
 
             label = <text {...textProps}>{this.props.label}</text>;
-            node = <path tabIndex="0" {...nodeProps} />;
+            node = <path tabIndex={0} {...nodeProps} />;
         }
 
         const gProps = {

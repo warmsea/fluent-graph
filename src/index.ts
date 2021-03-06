@@ -1,5 +1,3 @@
-import { Graph } from "./components/graph/Graph";
-import Node from "./components/node/Node";
-import { Link } from "./components/link/Link";
-
-export { Graph, Node, Link };
+export { Graph } from "./components/graph/Graph";
+export { Node } from "./components/node/Node";
+export { Link } from "./components/link/Link";
