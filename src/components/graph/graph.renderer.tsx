@@ -10,7 +10,7 @@ import { MARKERS } from "../marker/marker.const";
 
 import { Link } from "../link/Link";
 import Node from "../node/Node";
-import Marker from "../marker/Marker";
+import { Marker } from "../marker/Marker";
 import { buildLinkProps, buildNodeProps } from "./graph.builder";
 import { getId } from "../graph/graph.helper";
 import { getMarkerSize } from "../marker/marker.helper";
