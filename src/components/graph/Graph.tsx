@@ -4,6 +4,7 @@ import { drag as d3Drag } from "d3-drag";
 import { forceLink as d3ForceLink } from "d3-force";
 import { select as d3Select, selectAll as d3SelectAll, event as d3Event } from "d3-selection";
 import { zoom as d3Zoom } from "d3-zoom";
+import { debounce } from 'lodash';
 
 import CONST from "./graph.const";
 import DEFAULT_CONFIG from "./graph.config";
@@ -62,6 +63,7 @@ export interface IGraphState {
   focusTransformation;
   previousZoom;
 }
+import { throwErr } from "../../utils";
 
 /**
  * Graph component is the main component for react-d3-graph components, its interface allows its user
@@ -600,7 +602,7 @@ export class Graph extends React.Component<IGraphProps, IGraphState> {
     const state = graphElementsUpdated ? initializeGraphState(nextProps, this.state) : this.state;
     const newConfig = nextProps.config || {};
     const { configUpdated, d3ConfigUpdated } = checkForGraphConfigChanges(nextProps, this.state);
-    const config = configUpdated ? merge(DEFAULT_CONFIG, newConfig) : this.state.config;
+    const config = configUpdated ? { ...DEFAULT_CONFIG, ...newConfig} : this.state.config;
 
     // in order to properly update graph data we need to pause eventual d3 ongoing animations
     newGraphElements && this.pauseSimulation();

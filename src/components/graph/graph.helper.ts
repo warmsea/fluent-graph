@@ -25,12 +25,13 @@ import {
     forceSimulation as d3ForceSimulation,
     forceManyBody as d3ForceManyBody,
 } from "d3-force";
+import { pick, isEqual, isEmpty } from 'lodash';
 
 import CONST from "./graph.const";
 import DEFAULT_CONFIG from "./graph.config";
 import ERRORS from "../../err";
 
-import { isDeepEqual, isEmptyObject, merge, pick, antiPick, throwErr, logWarning } from "../../utils";
+import { antiPick, throwErr } from "../../utils";
 import { computeNodeDegree } from "./collapse.helper";
 
 const NODE_PROPS_WHITELIST = ["id", "highlighted", "x", "y", "index", "vy", "vx"];
@@ -294,12 +295,12 @@ function checkForGraphElementsChanges(nextProps, currentState) {
         source: getId(l.source),
         target: getId(l.target),
     }));
-    const graphElementsUpdated = !(isDeepEqual(nextNodes, stateD3Nodes) && isDeepEqual(nextLinks, stateD3Links));
+    const graphElementsUpdated = !(isEqual(nextNodes, stateD3Nodes) && isEqual(nextLinks, stateD3Links));
     const newGraphElements =
         nextNodes.length !== stateD3Nodes.length ||
         nextLinks.length !== stateD3Links.length ||
-        !isDeepEqual(nextNodes.map(_pickId), stateD3Nodes.map(_pickId)) ||
-        !isDeepEqual(nextLinks.map(_pickSourceAndTarget), stateD3Links.map(_pickSourceAndTarget));
+        !isEqual(nextNodes.map(_pickId), stateD3Nodes.map(_pickId)) ||
+        !isEqual(nextLinks.map(_pickSourceAndTarget), stateD3Links.map(_pickSourceAndTarget));
 
     return { graphElementsUpdated, newGraphElements };
 }
@@ -315,8 +316,8 @@ function checkForGraphElementsChanges(nextProps, currentState) {
  */
 function checkForGraphConfigChanges(nextProps, currentState) {
     const newConfig = nextProps.config || {};
-    const configUpdated = newConfig && !isEmptyObject(newConfig) && !isDeepEqual(newConfig, currentState.config);
-    const d3ConfigUpdated = newConfig && newConfig.d3 && !isDeepEqual(newConfig.d3, currentState.config.d3);
+    const configUpdated = newConfig && !isEmpty(newConfig) && !isEqual(newConfig, currentState.config);
+    const d3ConfigUpdated = newConfig && newConfig.d3 && !isEqual(newConfig.d3, currentState.config.d3);
 
     return { configUpdated, d3ConfigUpdated };
 }
