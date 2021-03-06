@@ -13,7 +13,6 @@ import Node from "../node/Node";
 import Marker from "../marker/Marker";
 import { buildLinkProps, buildNodeProps } from "./graph.builder";
 import { getId } from "../graph/graph.helper";
-import { isNodeVisible } from "./collapse.helper";
 import { getMarkerSize } from "../marker/marker.helper";
 
 /**
@@ -71,9 +70,9 @@ function renderWithBFS(
         return <Link key={key} id={key} {...props} />;
     }
 
-    const visitedNodeIds = [];
+    const visitedNodeIds: string[] = [];
     const visitedLinks = [];
-    const elements = [];
+    const elements: JSX.Element[] = [];
 
     const startNodeId = nodes[Object.keys(nodes)[0]].id;
     elements.push(_renderNode(startNodeId));

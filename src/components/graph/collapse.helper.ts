@@ -100,7 +100,7 @@ function computeNodeDegree(nodeId, linksMatrix = {}) {
 function getTargetLeafConnections(rootNodeId, linksMatrix = {}, { directed }) {
     const rootConnectionsNodesIds = linksMatrix[rootNodeId] ? Object.keys(linksMatrix[rootNodeId]) : [];
 
-    return rootConnectionsNodesIds.reduce((leafConnections, target) => {
+    return rootConnectionsNodesIds.reduce((leafConnections: any[], target) => {
         if (_isLeaf(target, linksMatrix, directed)) {
             leafConnections.push({
                 source: rootNodeId,

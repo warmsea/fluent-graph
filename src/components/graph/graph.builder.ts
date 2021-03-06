@@ -134,7 +134,7 @@ function buildLinkProps(link, nodes, links, config, linkCallbacks, highlightedNo
         className: CONST.LINK_CLASS_NAME,
         d,
         fontColor,
-        fontSize: fontSize * t,
+        fontSize: (fontSize as unknown as number) * t,
         fontWeight,
         label,
         markerId,
@@ -166,7 +166,7 @@ function buildLinkProps(link, nodes, links, config, linkCallbacks, highlightedNo
  * @returns {Object} returns object that contain Link props ready to be feeded to the Link component.
  * @memberof Graph/builder
  */
-function buildNodeProps(node, config, nodeCallbacks = {}, highlightedNode, highlightedLink, transform) {
+function buildNodeProps(node, config, nodeCallbacks: any = {}, highlightedNode, highlightedLink, transform) {
     const highlight =
         node.highlighted ||
         node.id === (highlightedLink && highlightedLink.source) ||

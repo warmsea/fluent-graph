@@ -143,10 +143,10 @@ function _initializeNodes(graphNodes) {
  * @returns {Object} a d3Link.
  * @memberof Graph/helper
  */
-function _mergeDataLinkWithD3Link(link, index, d3Links = [], config, state = {}) {
+function _mergeDataLinkWithD3Link(link, index, d3Links = [], config, state: any = {}) {
     // find the matching link if it exists
-    const tmp = d3Links.find(l => l.source.id === link.source && l.target.id === link.target);
-    const d3Link = tmp && pick(tmp, LINK_PROPS_WHITELIST);
+    const tmp = d3Links.find((l: any) => l.source.id === link.source && l.target.id === link.target);
+    const d3Link: any = tmp && pick(tmp, LINK_PROPS_WHITELIST);
     const customProps = antiPick(link, ["source", "target"]);
 
     if (d3Link) {
@@ -482,7 +482,7 @@ function normalize(vector) {
  * @returns {Object} new nodes coordinates
  * @memberof Graph/helper
  */
-function getNormalizedNodeCoordinates({ source = {}, target = {} }, nodes, config, strokeWidth) {
+function getNormalizedNodeCoordinates({ source = {} as any, target = {} as any }, nodes, config, strokeWidth) {
     if (config.node?.viewGenerator) {
         return { source, target };
     }
