@@ -1,4 +1,33 @@
-import React from "react";
+import React, { SVGAttributes } from "react";
+
+export interface ILinkProps {
+  id;
+  source;
+  target;
+
+  className?;
+  d?;
+  strokeWidth?;
+  stroke?;
+  opacity?;
+  mouseCursor?;
+
+  linkFocusable?;
+  getLinkAriaLabel?;
+  linkStrokeDashArray?;
+  markerId?;
+
+  label?;
+  fontColor?;
+  fontSize?;
+  fontWeight?;
+
+  onClickLink?;
+  onRightClickLink?;
+  onMouseOverLink?;
+  onMouseOutLink?;
+  onKeyDownLink?;
+}
 
 /**
  * Link component is responsible for encapsulating link render.
@@ -34,7 +63,7 @@ import React from "react";
  *     onMouseOverLink={onMouseOverLink}
  *     onMouseOutLink={onMouseOutLink} />
  */
-export default class Link extends React.Component {
+export class Link extends React.Component<ILinkProps> {
     /**
      * Handle link click event.
      * @returns {undefined}
@@ -75,7 +104,7 @@ export default class Link extends React.Component {
             cursor: this.props.mouseCursor,
         };
 
-        const lineProps = {
+        const lineProps: SVGAttributes<SVGPathElement> = {
             className: this.props.className,
             d: this.props.d,
             onClick: this.handleOnClickLink,
@@ -83,7 +112,7 @@ export default class Link extends React.Component {
             onMouseOut: this.handleOnMouseOutLink,
             onMouseOver: this.handleOnMouseOverLink,
             onKeyDown: this.handleOnKeyDownLink,
-            tabIndex: this.props.linkFocusable ? "0" : undefined,
+            tabIndex: this.props.linkFocusable ? 0 : undefined,
             "aria-label": this.props.getLinkAriaLabel
                 ? this.props.getLinkAriaLabel(this.props.source, this.props.target)
                 : undefined,
@@ -98,12 +127,13 @@ export default class Link extends React.Component {
         }
 
         const { label, id } = this.props;
-        const textProps = {
+        const textProps: SVGAttributes<SVGTextElement> = {
             dy: -1,
             style: {
                 fill: this.props.fontColor,
                 fontSize: this.props.fontSize,
                 fontWeight: this.props.fontWeight,
+                textAnchor: "middle",
             },
         };
 
@@ -128,7 +158,7 @@ export default class Link extends React.Component {
                 <path {...lineProps} id={id} />
                 {needClickHelperPath && <path {...clickHelperLineProps} id={`clickHelper-${id}`} />}
                 {label && (
-                    <text style={{ textAnchor: "middle" }} {...textProps}>
+                    <text {...textProps}>
                         <textPath href={`#${id}`} startOffset="50%">
                             {label}
                         </textPath>

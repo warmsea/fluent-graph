@@ -8,7 +8,7 @@ import React from "react";
 import CONST from "./graph.const";
 import { MARKERS } from "../marker/marker.const";
 
-import Link from "../link/Link";
+import { Link } from "../link/Link";
 import Node from "../node/Node";
 import Marker from "../marker/Marker";
 import { buildLinkProps, buildNodeProps } from "./graph.builder";
