@@ -29,12 +29,7 @@
       "pre-commit": "tsdx lint"
     }
   },
-  "prettier": {
-    "printWidth": 80,
-    "semi": true,
-    "singleQuote": true,
-    "trailingComma": "es5"
-  },
+  "prettier": {},
   "name": "fluent-graph",
   "author": "Su Su",
   "module": "dist/fluent-graph.esm.js",
