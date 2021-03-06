@@ -132,8 +132,7 @@ function isNodeVisible(nodeId, nodes, linksMatrix) {
         if (process.env.NODE_ENV === "development") {
             logError(
                 "graph/collapse.helper",
-                `Trying to check if node ${nodeId} is visible but its not present in nodes: `,
-                nodes
+                `Trying to check if node ${nodeId} is visible but its not present in nodes: `
             );
         }
         return false;

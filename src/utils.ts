@@ -35,7 +35,7 @@ function _isPropertyNestedObject(o, k) {
  * @memberof utils
  */
 function isDeepEqual(o1, o2, _depth = 0) {
-    let diffs = [];
+    let diffs: any[] = [];
 
     if (_depth === 0 && o1 === o2) {
         return true;
@@ -149,8 +149,8 @@ function merge(o1 = {}, o2 = {}, _depth = 0) {
  * @returns {Object} the object resultant from the picking operation.
  * @memberof utils
  */
-function pick(o, props = []) {
-    return props.reduce((acc, k) => {
+function pick(o, props: string[] = []) {
+    return props.reduce((acc: any, k) => {
         if (Object.prototype.hasOwnProperty.call(o, k)) {
             acc[k] = o[k];
         }
@@ -166,7 +166,7 @@ function pick(o, props = []) {
  * @returns {Object} the object resultant from the anti picking operation.
  * @memberof utils
  */
-function antiPick(o, props = []) {
+function antiPick(o, props: string[] = []) {
     const wanted = Object.keys(o).filter(k => !props.includes(k));
 
     return pick(o, wanted);

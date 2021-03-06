@@ -168,7 +168,7 @@ export class Node extends React.Component<INodeProps> {
             gty -= ty;
         } else {
             if (!isSizeNumericalValue) {
-                logWarning("node.size should be a number when not using custom nodes.");
+                logWarning("Node", "node.size should be a number when not using custom nodes.");
                 size = CONST.DEFAULT_NODE_SIZE;
             }
             nodeProps.d = nodeHelper.buildSvgSymbol(size, this.props.type) || undefined;

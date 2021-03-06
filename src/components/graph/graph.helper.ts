@@ -393,7 +393,7 @@ function initializeGraphState({ data, id, config }, state) {
         };
     }
 
-    let newConfig = { ...merge(DEFAULT_CONFIG, config || {}) },
+    let newConfig: any = { ...merge(DEFAULT_CONFIG, config || {}) },
         links = _initializeLinks(graph.links, newConfig), // matrix of graph connections
         nodes = _tagOrphanNodes(_initializeNodes(graph.nodes), links);
     const { nodes: d3Nodes, links: d3Links } = graph;
