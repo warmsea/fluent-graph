@@ -59,8 +59,6 @@ function buildLinkProps(link, nodes, links, config, linkCallbacks, highlightedNo
     let x2 = nodes?.[target]?.x || 0;
     let y2 = nodes?.[target]?.y || 0;
 
-    const type = link.type || config.link.type;
-
     let mainNodeParticipates = false;
 
     switch (config.highlightDegree) {
@@ -128,7 +126,7 @@ function buildLinkProps(link, nodes, links, config, linkCallbacks, highlightedNo
         config,
         strokeWidth
     );
-    const d = buildLinkPathDefinition(normalizedNodeCoordinates, type);
+    const d = buildLinkPathDefinition(normalizedNodeCoordinates);
 
     return {
         className: CONST.LINK_CLASS_NAME,
