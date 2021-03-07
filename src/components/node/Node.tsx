@@ -1,39 +1,7 @@
-import React, { SVGAttributes } from "react";
+import React, { FC, SVGAttributes, useCallback } from "react";
 
-import nodeHelper from "./node.helper";
-import CONST from "./node.const";
-import { logWarning } from "../../utils";
-
-export interface INodeProps {
-  id: string;
-  type;
-  cx;
-  cy;
-  svg;
-  viewGenerator;
-  overrideGlobalViewGenerator;
-
-  className?;
-  cursor?;
-  opacity?;
-  dx?;
-  labelPosition?;
-  label?;
-  renderLabel?;
-  fontColor?;
-  fontSize?;
-  fontWeight?;
-  size?;
-
-  fill?;
-  stroke?;
-  strokeWidth?;
-
-  onClickNode?;
-  onRightClickNode?;
-  onMouseOverNode?;
-  onMouseOut?;
-}
+import { buildSvgSymbol, getLabelPlacementProps } from "./node.helper";
+import { INodeProps } from './Node.types';
 
 /**
  * Node component is responsible for encapsulating node render.
@@ -83,116 +51,100 @@ export interface INodeProps {
  *     onMouseOverNode={onMouseOverNode}
  *     onMouseOutNode={onMouseOutNode} />
  */
-export class Node extends React.Component<INodeProps> {
-    /**
-     * Handle click on the node.
-     * @returns {undefined}
-     */
-    handleOnClickNode = () => this.props.onClickNode && this.props.onClickNode(this.props.id);
+export const Node: FC<INodeProps> = (props: INodeProps) => {
 
-    /**
-     * Handle right click on the node.
-     * @param {Object} event - native event.
-     * @returns {undefined}
-     */
-    handleOnRightClickNode = event => this.props.onRightClickNode && this.props.onRightClickNode(event, this.props.id);
+  const handleOnClickNode = useCallback(event => {
+    props.onClickNode?.(event, props.id);
+  }, [props.onClickNode]);
 
-    /**
-     * Handle mouse over node event.
-     * @returns {undefined}
-     */
-    handleOnMouseOverNode = () => this.props.onMouseOverNode && this.props.onMouseOverNode(this.props.id);
+  const handleOnRightClickNode = useCallback(event => {
+    props.onRightClickNode?.(event, props.id);
+  }, [props.onRightClickNode]);
 
-    /**
-     * Handle mouse out node event.
-     * @returns {undefined}
-     */
-    handleOnMouseOutNode = () => this.props.onMouseOut && this.props.onMouseOut(this.props.id);
+  const handleOnMouseOverNode = useCallback(event => {
+    props.onMouseOverNode?.(event, props.id)
+  }, [props.onMouseOverNode]);
 
-    render() {
-        const nodeProps: SVGAttributes<SVGElement> = {
-            cursor: this.props.cursor,
-            onClick: this.handleOnClickNode,
-            onContextMenu: this.handleOnRightClickNode,
-            onMouseOut: this.handleOnMouseOutNode,
-            onMouseOver: this.handleOnMouseOverNode,
-            opacity: this.props.opacity,
-        };
+  const handleOnMouseOutNode = useCallback(event => {
+    props.onMouseOut?.(event, props.id);
+  }, [props.onMouseOut]);
 
-        const textProps = {
-            ...nodeHelper.getLabelPlacementProps(this.props.dx, this.props.labelPosition),
-            fill: this.props.fontColor,
-            fontSize: this.props.fontSize,
-            fontWeight: this.props.fontWeight,
-            opacity: this.props.opacity,
-        };
+  const nodeProps: SVGAttributes<SVGElement> = {
+    cursor: props.cursor,
+    opacity: props.opacity,
+    onClick: handleOnClickNode,
+    onContextMenu: handleOnRightClickNode,
+    onMouseOut: handleOnMouseOutNode,
+    onMouseOver: handleOnMouseOverNode,
+  };
 
-        let size = this.props.size;
-        const isSizeNumericalValue = typeof size !== "object";
+  const textProps: SVGAttributes<SVGTextElement> = {
+    ...getLabelPlacementProps(props.dx, props.labelPosition),
+    fill: props.fontColor,
+    fontSize: props.fontSize,
+    fontWeight: props.fontWeight,
+    opacity: props.opacity,
+  };
 
-        let gtx = this.props.cx,
-            gty = this.props.cy,
-            label,
-            node;
+  let size = props.size;
 
-        if (this.props.svg || this.props.viewGenerator) {
-            const height = isSizeNumericalValue ? size / 10 : size.height / 10;
-            const width = isSizeNumericalValue ? size / 10 : size.width / 10;
-            const tx = width / 2;
-            const ty = height / 2;
-            const transform = `translate(${tx},${ty})`;
+  let gtx = props.cx,
+    gty = props.cy,
+    label,
+    node;
 
-            label = (
-                <text {...textProps} transform={transform}>
-                    {this.props.label}
-                </text>
-            );
+  if (props.svg || props.viewGenerator) {
+    const { size } = props;
+    const tx = size / 2;
+    const ty = size / 2;
+    const transform = `translate(${tx},${ty})`;
 
-            // By default, if a view generator is set, it takes precedence over any svg image url
-            if (this.props.viewGenerator && !this.props.overrideGlobalViewGenerator) {
-                node = (
-                    <svg {...nodeProps} width={width} height={height}>
-                        <foreignObject x="0" y="0" width="100%" height="100%">
-                            <section style={{ height, width, backgroundColor: "transparent" }}>
-                                {this.props.viewGenerator(this.props)}
-                            </section>
-                        </foreignObject>
-                    </svg>
-                );
-            } else {
-                node = <image {...nodeProps} href={this.props.svg} width={width} height={height} />;
-            }
+    label = (
+      <text {...textProps} transform={transform}>
+        {props.label}
+      </text>
+    );
 
-            // svg offset transform regarding svg width/height
-            gtx -= tx;
-            gty -= ty;
-        } else {
-            if (!isSizeNumericalValue) {
-                logWarning("Node", "node.size should be a number when not using custom nodes.");
-                size = CONST.DEFAULT_NODE_SIZE;
-            }
-            nodeProps.d = nodeHelper.buildSvgSymbol(size, this.props.type) || undefined;
-            nodeProps.fill = this.props.fill;
-            nodeProps.stroke = this.props.stroke;
-            nodeProps.strokeWidth = this.props.strokeWidth;
-
-            label = <text {...textProps}>{this.props.label}</text>;
-            node = <path tabIndex={0} {...nodeProps} />;
-        }
-
-        const gProps = {
-            className: this.props.className,
-            cx: this.props.cx,
-            cy: this.props.cy,
-            id: this.props.id,
-            transform: `translate(${gtx},${gty})`,
-        };
-
-        return (
-            <g {...gProps}>
-                {node}
-                {this.props.renderLabel && label}
-            </g>
-        );
+    // By default, if a view generator is set, it takes precedence over any svg image url
+    if (props.viewGenerator && !props.overrideGlobalViewGenerator) {
+      node = (
+        <svg {...nodeProps} width={size} height={size}>
+          <foreignObject x="0" y="0" width="100%" height="100%">
+            <section style={{ height: size, width: size, backgroundColor: "transparent" }}>
+              {props.viewGenerator(props)}
+            </section>
+          </foreignObject>
+        </svg>
+      );
+    } else {
+      node = <image {...nodeProps} href={props.svg} width={size} height={size} />;
     }
+
+    // svg offset transform regarding svg width/height
+    gtx -= tx;
+    gty -= ty;
+  } else {
+    nodeProps.d = buildSvgSymbol(size, props.type);
+    nodeProps.fill = props.fill;
+    nodeProps.stroke = props.stroke;
+    nodeProps.strokeWidth = props.strokeWidth;
+
+    label = <text {...textProps}>{props.label}</text>;
+    node = <path tabIndex={0} {...nodeProps} />;
+  }
+
+  const gProps: SVGAttributes<SVGGElement> = {
+    id: props.id,
+    className: props.className,
+    cx: props.cx,
+    cy: props.cy,
+    transform: `translate(${gtx},${gty})`,
+  };
+
+  return (
+    <g {...gProps}>
+      {node}
+      {props.renderLabel && label}
+    </g>
+  );
 }
