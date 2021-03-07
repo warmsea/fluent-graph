@@ -1,33 +1,6 @@
-import React, { SVGAttributes } from "react";
+import React, { CSSProperties, FC, SVGAttributes, useCallback } from "react";
 
-export interface ILinkProps {
-  id;
-  source;
-  target;
-
-  className?;
-  d?;
-  strokeWidth?;
-  stroke?;
-  opacity?;
-  mouseCursor?;
-
-  linkFocusable?;
-  getLinkAriaLabel?;
-  linkStrokeDashArray?;
-  markerId?;
-
-  label?;
-  fontColor?;
-  fontSize?;
-  fontWeight?;
-
-  onClickLink?;
-  onRightClickLink?;
-  onMouseOverLink?;
-  onMouseOutLink?;
-  onKeyDownLink?;
-}
+import { ILinkProps } from './Link.types';
 
 /**
  * Link component is responsible for encapsulating link render.
@@ -63,108 +36,90 @@ export interface ILinkProps {
  *     onMouseOverLink={onMouseOverLink}
  *     onMouseOutLink={onMouseOutLink} />
  */
-export class Link extends React.Component<ILinkProps> {
-    /**
-     * Handle link click event.
-     * @returns {undefined}
-     */
-    handleOnClickLink = () => this.props.onClickLink && this.props.onClickLink(this.props.source, this.props.target);
+export const Link: FC<ILinkProps> = (props: ILinkProps) => {
+  const handleOnClickLink = useCallback(event => {
+    props.onClickLink?.(event, props.source, props.target);
+  }, [props.onClickLink]);
 
-    /**
-     * Handle link right click event.
-     * @param {Object} event - native event.
-     * @returns {undefined}
-     */
-    handleOnRightClickLink = event =>
-        this.props.onRightClickLink && this.props.onRightClickLink(event, this.props.source, this.props.target);
+  const handleOnRightClickLink = useCallback(event => {
+    props.onRightClickLink?.(event, props.source, props.target);
+  }, [props.onRightClickLink]);
 
-    /**
-     * Handle mouse over link event.
-     * @returns {undefined}
-     */
-    handleOnMouseOverLink = () =>
-        this.props.onMouseOverLink && this.props.onMouseOverLink(this.props.source, this.props.target);
+  const handleOnMouseOverLink = useCallback(event => {
+    props.onMouseOverLink?.(event, props.source, props.target);
+  }, [props.onMouseOverLink]);
 
-    /**
-     * Handle mouse out link event.
-     * @returns {undefined}
-     */
-    handleOnMouseOutLink = () =>
-        this.props.onMouseOutLink && this.props.onMouseOutLink(this.props.source, this.props.target);
+  const handleOnMouseOutLink = useCallback(event => {
+    props.onMouseOutLink?.(event, props.source, props.target);
+  }, [props.onMouseOutLink]);
 
-    handleOnKeyDownLink = event =>
-        this.props.onKeyDownLink && this.props.onKeyDownLink(event, this.props.source, this.props.target);
+  const handleOnKeyDownLink = useCallback(event => {
+    props.onKeyDownLink?.(event, props.source, props.target);
+  }, [props.onKeyDownLink]);
 
-    render() {
-        const lineStyle = {
-            strokeWidth: this.props.strokeWidth,
-            stroke: this.props.stroke,
-            opacity: this.props.opacity,
-            fill: "none",
-            cursor: this.props.mouseCursor,
-        };
+  const lineStyle: CSSProperties = {
+    cursor: props.mouseCursor,
+    stroke: props.stroke,
+    strokeWidth: props.strokeWidth,
+    opacity: props.opacity,
+    fill: "none",
+  };
 
-        const lineProps: SVGAttributes<SVGPathElement> = {
-            className: this.props.className,
-            d: this.props.d,
-            onClick: this.handleOnClickLink,
-            onContextMenu: this.handleOnRightClickLink,
-            onMouseOut: this.handleOnMouseOutLink,
-            onMouseOver: this.handleOnMouseOverLink,
-            onKeyDown: this.handleOnKeyDownLink,
-            tabIndex: this.props.linkFocusable ? 0 : undefined,
-            "aria-label": this.props.getLinkAriaLabel
-                ? this.props.getLinkAriaLabel(this.props.source, this.props.target)
-                : undefined,
-            style: lineStyle,
-            strokeDasharray: this.props.linkStrokeDashArray
-                ? this.props.linkStrokeDashArray(this.props.source, this.props.target)
-                : undefined,
-        };
+  const lineProps: SVGAttributes<SVGPathElement> = {
+    className: props.className,
+    d: props.d,
+    style: lineStyle,
+    strokeDasharray: props.linkStrokeDashArray?.(props.source, props.target),
+    markerEnd: props.markerId ? `url(#${props.markerId})` : undefined ,
 
-        if (this.props.markerId) {
-            lineProps.markerEnd = `url(#${this.props.markerId})`;
-        }
+    onClick: handleOnClickLink,
+    onContextMenu: handleOnRightClickLink,
+    onMouseOut: handleOnMouseOutLink,
+    onMouseOver: handleOnMouseOverLink,
+    onKeyDown: handleOnKeyDownLink,
 
-        const { label, id } = this.props;
-        const textProps: SVGAttributes<SVGTextElement> = {
-            dy: -1,
-            style: {
-                fill: this.props.fontColor,
-                fontSize: this.props.fontSize,
-                fontWeight: this.props.fontWeight,
-                textAnchor: "middle",
-            },
-        };
+    tabIndex: props.linkFocusable ? 0 : undefined,
+    "aria-label": props.getLinkAriaLabel?.(props.source, props.target),
+  };
 
-        const STROKE_WIDTH_LIMIT = 12;
+  const { label, id } = props;
+  const textProps: SVGAttributes<SVGTextElement> = {
+    dy: -1,
+    style: {
+      fill: props.fontColor,
+      fontSize: props.fontSize,
+      fontWeight: props.fontWeight as any,
+      textAnchor: "middle",
+    },
+  };
 
-        const needClickHelperPath = this.props.onClickLink && this.props.strokeWidth < STROKE_WIDTH_LIMIT;
+  const STROKE_WIDTH_LIMIT: number = 12;
 
-        const clickHelperLineStyle = {
-            strokeWidth: STROKE_WIDTH_LIMIT,
-            stroke: this.props.stroke,
-            opacity: 0,
-            cursor: this.props.mouseCursor,
-        };
-        const clickHelperLineProps = {
-            className: this.props.className,
-            d: this.props.d,
-            onClick: this.handleOnClickLink,
-            style: clickHelperLineStyle,
-        };
-        return (
-            <g>
-                <path {...lineProps} id={id} />
-                {needClickHelperPath && <path {...clickHelperLineProps} id={`clickHelper-${id}`} />}
-                {label && (
-                    <text {...textProps}>
-                        <textPath href={`#${id}`} startOffset="50%">
-                            {label}
-                        </textPath>
-                    </text>
-                )}
-            </g>
-        );
-    }
-}
+  const needClickHelperPath: boolean = !!props.onClickLink && props.strokeWidth < STROKE_WIDTH_LIMIT;
+
+  const clickHelperLineStyle: CSSProperties = {
+    cursor: props.mouseCursor,
+    strokeWidth: STROKE_WIDTH_LIMIT,
+    stroke: props.stroke,
+    opacity: 0,
+  };
+  const clickHelperLineProps: SVGAttributes<SVGPathElement> = {
+    className: props.className,
+    style: clickHelperLineStyle,
+    d: props.d,
+    onClick: handleOnClickLink,
+  };
+  return (
+    <g>
+      <path {...lineProps} id={id} />
+      {needClickHelperPath && <path {...clickHelperLineProps} id={`clickHelper-${id}`} />}
+      {label && (
+        <text {...textProps}>
+          <textPath href={`#${id}`} startOffset="50%">
+            {label}
+          </textPath>
+        </text>
+      )}
+    </g>
+  );
+};
