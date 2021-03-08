@@ -7,7 +7,7 @@ import { zoom as d3Zoom } from "d3-zoom";
 import { debounce } from 'lodash';
 
 import CONST from "./graph.const";
-import DEFAULT_CONFIG from "./graph.config";
+import { DEFAULT_CONFIG } from "./graph.config";
 import ERRORS from "../../err";
 
 import {
@@ -315,7 +315,7 @@ export class Graph extends React.Component<IGraphProps, IGraphState> {
       .scaleExtent([this.state.config.minZoom, this.state.config.maxZoom])
       .on("zoom", this._zoomed);
 
-    if (this.state.config.initialZoom !== null) {
+    if (this.state.config.initialZoom !== undefined) {
       zoomObject.scaleTo(selector as any, this.state.config.initialZoom);
     }
 

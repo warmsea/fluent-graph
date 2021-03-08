@@ -20,20 +20,20 @@
  * @memberof Graph/helper
  */
 import {
-    forceX as d3ForceX,
-    forceY as d3ForceY,
-    forceSimulation as d3ForceSimulation,
-    forceManyBody as d3ForceManyBody,
+  forceX as d3ForceX,
+  forceY as d3ForceY,
+  forceSimulation as d3ForceSimulation,
+  forceManyBody as d3ForceManyBody,
 } from "d3-force";
 import { pick, isEqual, isEmpty } from 'lodash';
 
 import CONST from "./graph.const";
-import DEFAULT_CONFIG from "./graph.config";
+import { DEFAULT_CONFIG } from "./graph.config";
 import ERRORS from "../../err";
 
 import { antiPick, throwErr } from "../../utils";
 import { computeNodeDegree } from "./collapse.helper";
-import { IGraphConfig, IGraphData, IGraphProps, IGraphState } from './Graph.types';
+import { IGraphPropsData, IGraphProps, IGraphState, IGraphConfig } from './Graph.types';
 
 const NODE_PROPS_WHITELIST = ["id", "highlighted", "x", "y", "index", "vy", "vx"];
 const LINK_PROPS_WHITELIST = ["index", "source", "target", "isHidden"];
@@ -50,14 +50,14 @@ const LINK_PROPS_WHITELIST = ["index", "source", "target", "isHidden"];
  * @memberof Graph/helper
  */
 function _createForceSimulation(width, height, gravity) {
-    const frx = d3ForceX(width / 2).strength(CONST.FORCE_X);
-    const fry = d3ForceY(height / 2).strength(CONST.FORCE_Y);
-    const forceStrength = gravity;
+  const frx = d3ForceX(width / 2).strength(CONST.FORCE_X);
+  const fry = d3ForceY(height / 2).strength(CONST.FORCE_Y);
+  const forceStrength = gravity;
 
-    return d3ForceSimulation()
-        .force("charge", d3ForceManyBody().strength(forceStrength))
-        .force("x", frx)
-        .force("y", fry);
+  return d3ForceSimulation()
+    .force("charge", d3ForceManyBody().strength(forceStrength))
+    .force("x", frx)
+    .force("y", fry);
 }
 
 /**
@@ -71,28 +71,28 @@ function _createForceSimulation(width, height, gravity) {
  * @memberof Graph/helper
  */
 function _initializeLinks(graphLinks, config) {
-    return graphLinks.reduce((links, l) => {
-        const source = getId(l.source);
-        const target = getId(l.target);
+  return graphLinks.reduce((links, l) => {
+    const source = getId(l.source);
+    const target = getId(l.target);
 
-        if (!links[source]) {
-            links[source] = {};
-        }
+    if (!links[source]) {
+      links[source] = {};
+    }
 
-        if (!links[target]) {
-            links[target] = {};
-        }
+    if (!links[target]) {
+      links[target] = {};
+    }
 
-        const value = config.collapsible && l.isHidden ? 0 : l.value || 1;
+    const value = config.collapsible && l.isHidden ? 0 : l.value || 1;
 
-        links[source][target] = value;
+    links[source][target] = value;
 
-        if (!config.directed) {
-            links[target][source] = value;
-        }
+    if (!config.directed) {
+      links[target][source] = value;
+    }
 
-        return links;
-    }, {});
+    return links;
+  }, {});
 }
 
 /**
@@ -105,32 +105,32 @@ function _initializeLinks(graphLinks, config) {
  * @memberof Graph/helper
  */
 function _initializeNodes(graphNodes) {
-    let nodes = {};
-    const n = graphNodes.length;
+  let nodes = {};
+  const n = graphNodes.length;
 
-    for (let i = 0; i < n; i++) {
-        const node = graphNodes[i];
+  for (let i = 0; i < n; i++) {
+    const node = graphNodes[i];
 
-        node.highlighted = false;
+    node.highlighted = false;
 
-        // if an fx (forced x) is given, we want to use that
-        if (Object.prototype.hasOwnProperty.call(node, "fx")) {
-            node.x = node.fx;
-        } else if (!Object.prototype.hasOwnProperty.call(node, "x")) {
-            node.x = 0;
-        }
-
-        // if an fy (forced y) is given, we want to use that
-        if (Object.prototype.hasOwnProperty.call(node, "fy")) {
-            node.y = node.fy;
-        } else if (!Object.prototype.hasOwnProperty.call(node, "y")) {
-            node.y = 0;
-        }
-
-        nodes[node.id.toString()] = node;
+    // if an fx (forced x) is given, we want to use that
+    if (Object.prototype.hasOwnProperty.call(node, "fx")) {
+      node.x = node.fx;
+    } else if (!Object.prototype.hasOwnProperty.call(node, "x")) {
+      node.x = 0;
     }
 
-    return nodes;
+    // if an fy (forced y) is given, we want to use that
+    if (Object.prototype.hasOwnProperty.call(node, "fy")) {
+      node.y = node.fy;
+    } else if (!Object.prototype.hasOwnProperty.call(node, "y")) {
+      node.y = 0;
+    }
+
+    nodes[node.id.toString()] = node;
+  }
+
+  return nodes;
 }
 
 /**
@@ -146,47 +146,47 @@ function _initializeNodes(graphNodes) {
  * @memberof Graph/helper
  */
 function _mergeDataLinkWithD3Link(link, index, d3Links = [], config, state: any = {}) {
-    // find the matching link if it exists
-    const tmp = d3Links.find((l: any) => l.source.id === link.source && l.target.id === link.target);
-    const d3Link: any = tmp && pick(tmp, LINK_PROPS_WHITELIST);
-    const customProps = antiPick(link, ["source", "target"]);
+  // find the matching link if it exists
+  const tmp = d3Links.find((l: any) => l.source.id === link.source && l.target.id === link.target);
+  const d3Link: any = tmp && pick(tmp, LINK_PROPS_WHITELIST);
+  const customProps = antiPick(link, ["source", "target"]);
 
-    if (d3Link) {
-        const toggledDirected =
-            state.config &&
-            Object.prototype.hasOwnProperty.call(state.config, "directed") &&
-            config.directed !== state.config.directed;
-        const refinedD3Link = {
-            index,
-            ...d3Link,
-            ...customProps,
-        };
+  if (d3Link) {
+    const toggledDirected =
+      state.config &&
+      Object.prototype.hasOwnProperty.call(state.config, "directed") &&
+      config.directed !== state.config.directed;
+    const refinedD3Link = {
+      index,
+      ...d3Link,
+      ...customProps,
+    };
 
-        // every time we toggle directed config all links should be visible again
-        if (toggledDirected) {
-            return { ...refinedD3Link, isHidden: false };
-        }
-
-        // every time we disable collapsible (collapsible is false) all links should be visible again
-        return config.collapsible ? refinedD3Link : { ...refinedD3Link, isHidden: false };
+    // every time we toggle directed config all links should be visible again
+    if (toggledDirected) {
+      return { ...refinedD3Link, isHidden: false };
     }
 
-    const highlighted = false;
-    const source = {
-        id: link.source,
-        highlighted,
-    };
-    const target = {
-        id: link.target,
-        highlighted,
-    };
+    // every time we disable collapsible (collapsible is false) all links should be visible again
+    return config.collapsible ? refinedD3Link : { ...refinedD3Link, isHidden: false };
+  }
 
-    return {
-        index,
-        source,
-        target,
-        ...customProps,
-    };
+  const highlighted = false;
+  const source = {
+    id: link.source,
+    highlighted,
+  };
+  const target = {
+    id: link.target,
+    highlighted,
+  };
+
+  return {
+    index,
+    source,
+    target,
+    ...customProps,
+  };
 }
 
 /**
@@ -198,15 +198,15 @@ function _mergeDataLinkWithD3Link(link, index, d3Links = [], config, state: any 
  * @memberof Graph/helper
  */
 function _tagOrphanNodes(nodes, linksMatrix) {
-    return Object.keys(nodes).reduce((acc, nodeId) => {
-        const { inDegree, outDegree } = computeNodeDegree(nodeId, linksMatrix);
-        const node = nodes[nodeId];
-        const taggedNode = inDegree === 0 && outDegree === 0 ? { ...node, _orphan: true } : node;
+  return Object.keys(nodes).reduce((acc, nodeId) => {
+    const { inDegree, outDegree } = computeNodeDegree(nodeId, linksMatrix);
+    const node = nodes[nodeId];
+    const taggedNode = inDegree === 0 && outDegree === 0 ? { ...node, _orphan: true } : node;
 
-        acc[nodeId] = taggedNode;
+    acc[nodeId] = taggedNode;
 
-        return acc;
-    }, {});
+    return acc;
+  }, {});
 }
 
 /**
@@ -220,7 +220,7 @@ function _tagOrphanNodes(nodes, linksMatrix) {
  * @returns {undefined}
  * @memberof Graph/helper
  */
-function _validateGraphData(data: IGraphData): void {
+function _validateGraphData(data: IGraphPropsData): void {
   if (!data.nodes?.length) {
     throwErr("Graph", ERRORS.INSUFFICIENT_DATA);
   }
@@ -250,7 +250,7 @@ const NODE_PROPERTIES_DISCARD_TO_COMPARE = ["x", "y", "vx", "vy", "index"];
  * @memberof Graph/helper
  */
 function _pickId(o) {
-    return pick(o, ["id"]);
+  return pick(o, ["id"]);
 }
 
 /**
@@ -260,7 +260,7 @@ function _pickId(o) {
  * @memberof Graph/helper
  */
 function _pickSourceAndTarget(o) {
-    return pick(o, ["source", "target"]);
+  return pick(o, ["source", "target"]);
 }
 
 /**
@@ -277,21 +277,21 @@ function _pickSourceAndTarget(o) {
  * @memberof Graph/helper
  */
 function checkForGraphElementsChanges(nextProps, currentState) {
-    const nextNodes = nextProps.data.nodes.map(n => antiPick(n, NODE_PROPERTIES_DISCARD_TO_COMPARE));
-    const nextLinks = nextProps.data.links;
-    const stateD3Nodes = currentState.d3Nodes.map(n => antiPick(n, NODE_PROPERTIES_DISCARD_TO_COMPARE));
-    const stateD3Links = currentState.d3Links.map(l => ({
-        source: getId(l.source),
-        target: getId(l.target),
-    }));
-    const graphElementsUpdated = !(isEqual(nextNodes, stateD3Nodes) && isEqual(nextLinks, stateD3Links));
-    const newGraphElements =
-        nextNodes.length !== stateD3Nodes.length ||
-        nextLinks.length !== stateD3Links.length ||
-        !isEqual(nextNodes.map(_pickId), stateD3Nodes.map(_pickId)) ||
-        !isEqual(nextLinks.map(_pickSourceAndTarget), stateD3Links.map(_pickSourceAndTarget));
+  const nextNodes = nextProps.data.nodes.map(n => antiPick(n, NODE_PROPERTIES_DISCARD_TO_COMPARE));
+  const nextLinks = nextProps.data.links;
+  const stateD3Nodes = currentState.d3Nodes.map(n => antiPick(n, NODE_PROPERTIES_DISCARD_TO_COMPARE));
+  const stateD3Links = currentState.d3Links.map(l => ({
+    source: getId(l.source),
+    target: getId(l.target),
+  }));
+  const graphElementsUpdated = !(isEqual(nextNodes, stateD3Nodes) && isEqual(nextLinks, stateD3Links));
+  const newGraphElements =
+    nextNodes.length !== stateD3Nodes.length ||
+    nextLinks.length !== stateD3Links.length ||
+    !isEqual(nextNodes.map(_pickId), stateD3Nodes.map(_pickId)) ||
+    !isEqual(nextLinks.map(_pickSourceAndTarget), stateD3Links.map(_pickSourceAndTarget));
 
-    return { graphElementsUpdated, newGraphElements };
+  return { graphElementsUpdated, newGraphElements };
 }
 
 /**
@@ -304,11 +304,11 @@ function checkForGraphElementsChanges(nextProps, currentState) {
  * @memberof Graph/helper
  */
 function checkForGraphConfigChanges(nextProps, currentState) {
-    const newConfig = nextProps.config || {};
-    const configUpdated = newConfig && !isEmpty(newConfig) && !isEqual(newConfig, currentState.config);
-    const d3ConfigUpdated = newConfig && newConfig.d3 && !isEqual(newConfig.d3, currentState.config.d3);
+  const newConfig = nextProps.config || {};
+  const configUpdated = newConfig && !isEmpty(newConfig) && !isEqual(newConfig, currentState.config);
+  const d3ConfigUpdated = newConfig && newConfig.d3 && !isEqual(newConfig.d3, currentState.config.d3);
 
-    return { configUpdated, d3ConfigUpdated };
+  return { configUpdated, d3ConfigUpdated };
 }
 
 /**
@@ -320,13 +320,13 @@ function checkForGraphConfigChanges(nextProps, currentState) {
  * @memberof Graph/helper
  */
 function getCenterAndZoomTransformation(d3Node, config) {
-    if (!d3Node) {
-        return;
-    }
+  if (!d3Node) {
+    return;
+  }
 
-    const { width, height, focusZoom } = config;
+  const { width, height, focusZoom } = config;
 
-    return `
+  return `
         translate(${width / 2}, ${height / 2})
         scale(${focusZoom})
         translate(${-d3Node.x}, ${-d3Node.y})
@@ -349,7 +349,7 @@ function getCenterAndZoomTransformation(d3Node, config) {
  * @memberof Graph/helper
  */
 function getId(sot) {
-    return sot.id !== undefined && sot.id !== null ? sot.id : sot;
+  return sot.id !== undefined && sot.id !== null ? sot.id : sot;
 }
 
 /**
@@ -366,7 +366,7 @@ function initializeGraphState(props: IGraphProps, state: IGraphState): IGraphSta
   const { id, data, config } = props;
   _validateGraphData(data);
 
-  let graph: IGraphData;
+  let graph: IGraphPropsData;
 
   if (state?.nodes) {
     graph = {
@@ -425,26 +425,26 @@ function initializeGraphState(props: IGraphProps, state: IGraphState): IGraphSta
  * @memberof Graph/helper
  */
 function updateNodeHighlightedValue(nodes, links, config, id, value = false) {
-    const highlightedNode = value ? id : "";
-    const node = { ...nodes[id], highlighted: value };
+  const highlightedNode = value ? id : "";
+  const node = { ...nodes[id], highlighted: value };
 
-    let updatedNodes = { ...nodes, [id]: node };
+  let updatedNodes = { ...nodes, [id]: node };
 
-    // when highlightDegree is 0 we want only to highlight selected node
-    if (links[id] && config.highlightDegree !== 0) {
-        updatedNodes = Object.keys(links[id]).reduce((acc, linkId) => {
-            const updatedNode = { ...updatedNodes[linkId], highlighted: value };
+  // when highlightDegree is 0 we want only to highlight selected node
+  if (links[id] && config.highlightDegree !== 0) {
+    updatedNodes = Object.keys(links[id]).reduce((acc, linkId) => {
+      const updatedNode = { ...updatedNodes[linkId], highlighted: value };
 
-            acc[linkId] = updatedNode;
+      acc[linkId] = updatedNode;
 
-            return acc;
-        }, updatedNodes);
-    }
+      return acc;
+    }, updatedNodes);
+  }
 
-    return {
-        nodes: updatedNodes,
-        highlightedNode,
-    };
+  return {
+    nodes: updatedNodes,
+    highlightedNode,
+  };
 }
 
 /**
@@ -456,8 +456,8 @@ function updateNodeHighlightedValue(nodes, links, config, id, value = false) {
  * @memberof Graph/helper
  */
 function normalize(vector) {
-    const norm = Math.sqrt(Math.pow(vector.x, 2) + Math.pow(vector.y, 2));
-    return { x: vector.x / norm, y: vector.y / norm };
+  const norm = Math.sqrt(Math.pow(vector.x, 2) + Math.pow(vector.y, 2));
+  return { x: vector.x / norm, y: vector.y / norm };
 }
 
 /**
@@ -473,47 +473,47 @@ function normalize(vector) {
  * @memberof Graph/helper
  */
 function getNormalizedNodeCoordinates({ source = {} as any, target = {} as any }, nodes, config, strokeWidth) {
-    if (config.node?.viewGenerator) {
-        return { source, target };
+  if (config.node?.viewGenerator) {
+    return { source, target };
+  }
+
+  let { x: x1, y: y1, id: sourceId } = source;
+  let { x: x2, y: y2, id: targetId } = target;
+
+  switch (config.node?.symbolType) {
+    case CONST.SYMBOLS.CIRCLE: {
+      const directionVector = normalize({ x: x2 - x1, y: y2 - y1 });
+      const strokeSize = strokeWidth * Math.min(config.link.markerWidth, config.link.markerHeight);
+
+      const sourceNodeSize = nodes?.[sourceId]?.size || config.node.size;
+      const targetNodeSize = nodes?.[targetId]?.size || config.node.size;
+
+      const sourceNodeRadius = nodes?.[sourceId]?.radius;
+      const targetNodeRadius = nodes?.[targetId]?.radius;
+
+      // cause this is a circle and A = pi * r^2
+      const sourceRadius = sourceNodeRadius || Math.sqrt(sourceNodeSize / Math.PI);
+      const targetRadius = targetNodeRadius || Math.sqrt(targetNodeSize / Math.PI);
+
+      // points from the source, we move them not to begin in the circle but outside
+      x1 += sourceRadius * directionVector.x;
+      y1 += sourceRadius * directionVector.y;
+      // points from the target, we move the by the size of the radius of the circle + the size of the arrow
+      x2 -= (targetRadius + (config.directed ? strokeSize : 0)) * directionVector.x;
+      y2 -= (targetRadius + (config.directed ? strokeSize : 0)) * directionVector.y;
+      break;
     }
+  }
 
-    let { x: x1, y: y1, id: sourceId } = source;
-    let { x: x2, y: y2, id: targetId } = target;
-
-    switch (config.node?.symbolType) {
-        case CONST.SYMBOLS.CIRCLE: {
-            const directionVector = normalize({ x: x2 - x1, y: y2 - y1 });
-            const strokeSize = strokeWidth * Math.min(config.link.markerWidth, config.link.markerHeight);
-
-            const sourceNodeSize = nodes?.[sourceId]?.size || config.node.size;
-            const targetNodeSize = nodes?.[targetId]?.size || config.node.size;
-
-            const sourceNodeRadius = nodes?.[sourceId]?.radius;
-            const targetNodeRadius = nodes?.[targetId]?.radius;
-
-            // cause this is a circle and A = pi * r^2
-            const sourceRadius = sourceNodeRadius || Math.sqrt(sourceNodeSize / Math.PI);
-            const targetRadius = targetNodeRadius || Math.sqrt(targetNodeSize / Math.PI);
-
-            // points from the source, we move them not to begin in the circle but outside
-            x1 += sourceRadius * directionVector.x;
-            y1 += sourceRadius * directionVector.y;
-            // points from the target, we move the by the size of the radius of the circle + the size of the arrow
-            x2 -= (targetRadius + (config.directed ? strokeSize : 0)) * directionVector.x;
-            y2 -= (targetRadius + (config.directed ? strokeSize : 0)) * directionVector.y;
-            break;
-        }
-    }
-
-    return { source: { x: x1, y: y1 }, target: { x: x2, y: y2 } };
+  return { source: { x: x1, y: y1 }, target: { x: x2, y: y2 } };
 }
 
 export {
-    checkForGraphConfigChanges,
-    checkForGraphElementsChanges,
-    getCenterAndZoomTransformation,
-    getId,
-    initializeGraphState,
-    updateNodeHighlightedValue,
-    getNormalizedNodeCoordinates,
+  checkForGraphConfigChanges,
+  checkForGraphElementsChanges,
+  getCenterAndZoomTransformation,
+  getId,
+  initializeGraphState,
+  updateNodeHighlightedValue,
+  getNormalizedNodeCoordinates,
 };
