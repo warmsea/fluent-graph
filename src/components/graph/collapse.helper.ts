@@ -7,6 +7,7 @@
  */
 import { getId } from "./graph.helper";
 import { logError } from "../../utils";
+import { IGraphConfig } from './Graph.types';
 
 /**
  * For directed graphs.
@@ -97,7 +98,8 @@ function computeNodeDegree(nodeId, linksMatrix = {}) {
  * where A has id equal to rootNodeId and B has inDegree 1 and outDegree 0 (or outDegree 1 but the connection is with A).
  * @memberof Graph/collapse-helper
  */
-function getTargetLeafConnections(rootNodeId, linksMatrix = {}, { directed }) {
+function getTargetLeafConnections(rootNodeId, linksMatrix = {}, config: IGraphConfig) {
+    const { directed } = config;
     const rootConnectionsNodesIds = linksMatrix[rootNodeId] ? Object.keys(linksMatrix[rootNodeId]) : [];
 
     return rootConnectionsNodesIds.reduce((leafConnections: any[], target) => {
@@ -176,7 +178,8 @@ function toggleLinksConnections(d3Links, connectionMatrix) {
  * @returns {Object.<string, Object>} updated linksMatrix
  * @memberof Graph/collapse-helper
  */
-function toggleLinksMatrixConnections(linksMatrix, connections, { directed }) {
+function toggleLinksMatrixConnections(linksMatrix, connections, config: IGraphConfig) {
+    const { directed } = config;
     return connections.reduce(
         (newMatrix, link) => {
             if (!newMatrix[link.source]) {

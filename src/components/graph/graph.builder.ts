@@ -99,14 +99,14 @@ function buildLinkProps(link, nodes, links, config, linkCallbacks, highlightedNo
         strokeWidth += (linkValue * strokeWidth) / 10;
     }
 
-    const markerId = config.directed ? getMarkerId(highlight, transform, config) : null;
+    const markerId = config.directed ? getMarkerId(highlight, transform, config) : undefined;
 
     const t = 1 / transform;
 
-    let fontSize = null,
-        fontColor = null,
-        fontWeight = null,
-        label = null;
+    let fontSize,
+        fontColor,
+        fontWeight,
+        label;
 
     if (config.link.renderLabel) {
         if (typeof config.link.labelProperty === "function") {

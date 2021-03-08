@@ -1,7 +1,7 @@
 export interface IGraphProps {
   id: string;
   data: IGraphData;
-  config?;
+  config: IGraphConfig;
   onClickGraph?;
 
   onClickNode?;
@@ -37,9 +37,32 @@ export interface IGraphDataLink {
   value?: number;
 }
 
+export interface IGraphConfig {
+  automaticRearrangeAfterDropNode: boolean;
+  collapsible: boolean;
+  directed: boolean;
+  focusZoom: number;
+  focusAnimationDuration: number;
+  height: number;
+  nodeHighlightBehavior: boolean;
+  linkHighlightBehavior: boolean;
+  highlightDegree: boolean;
+  highlightOpacity: number;
+  initialZoom: number;
+  maxZoom: number;
+  minZoom: number;
+  panAndZoom: boolean;
+  staticGraph: boolean;
+  staticGraphWithDragAndDrop: boolean;
+  width: number;
+  d3?;
+  node?;
+  link?;
+}
+
 export interface IGraphState {
-  id;
-  config;
+  id: string;
+  config: IGraphConfig;
   links;
   d3Links;
   nodes;

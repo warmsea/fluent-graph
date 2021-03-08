@@ -19,51 +19,8 @@ import {
   initializeGraphState,
 } from "./graph.helper";
 import { renderGraphDefs, renderWithBFS } from "./graph.renderer";
-import { merge, debounce, throwErr } from "../../utils";
-
-export interface IGraphProps {
-  id;
-  data;
-  onClickGraph?;
-
-  onClickNode?;
-  onDoubleClickNode?;
-  onRightClickNode?;
-  onMouseOverNode?;
-  onMouseOutNode?;
-  getLinkAriaLabel?;
-  linkStrokeDashArray?;
-
-  onClickLink?;
-  onRightClickLink?;
-  onMouseOverLink?;
-  onMouseOutLink?;
-  onKeyDownLink?;
-  onNodePositionChange?;
-  onZoomChange?;
-}
-
-export interface IGraphState {
-  id;
-  config;
-  links;
-  d3Links;
-  nodes;
-  d3Nodes;
-  highlightedNode;
-  highlightedLink;
-  simulation;
-  newGraphElements;
-  configUpdated;
-  d3ConfigUpdated;
-  transform;
-  draggedNode;
-  focusedNodeId;
-  enableFocusAnimation;
-  focusTransformation;
-  previousZoom;
-}
 import { throwErr } from "../../utils";
+import { IGraphProps, IGraphState } from './Graph.types';
 
 /**
  * Graph component is the main component for react-d3-graph components, its interface allows its user
@@ -582,7 +539,7 @@ export class Graph extends React.Component<IGraphProps, IGraphState> {
     this.focusAnimationTimeout = null;
     this.nodeClickTimer = null;
     this.isDraggingNode = false;
-    this.state = initializeGraphState(this.props as any, this.state) as any;
+    this.state = initializeGraphState(this.props, this.state);
     this.debouncedOnZoomChange = this.props.onZoomChange ? debounce(this.props.onZoomChange, 100) : null;
   }
 

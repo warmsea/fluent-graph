@@ -33,6 +33,7 @@ import ERRORS from "../../err";
 
 import { antiPick, throwErr } from "../../utils";
 import { computeNodeDegree } from "./collapse.helper";
+import { IGraphConfig, IGraphData, IGraphProps, IGraphState } from './Graph.types';
 
 const NODE_PROPS_WHITELIST = ["id", "highlighted", "x", "y", "index", "vy", "vx"];
 const LINK_PROPS_WHITELIST = ["index", "source", "target", "isHidden"];
@@ -219,36 +220,24 @@ function _tagOrphanNodes(nodes, linksMatrix) {
  * @returns {undefined}
  * @memberof Graph/helper
  */
-function _validateGraphData(data) {
-    if (!data.nodes || !data.nodes.length) {
-        throwErr("Graph", ERRORS.INSUFFICIENT_DATA);
+function _validateGraphData(data: IGraphData): void {
+  if (!data.nodes?.length) {
+    throwErr("Graph", ERRORS.INSUFFICIENT_DATA);
+  }
+
+  if (!data.links) {
+    throwErr("Graph", ERRORS.INSUFFICIENT_LINKS);
+    data.links = []; // TODO: avoid side effect
+  }
+
+  data.links.forEach(l => {
+    if (!data.nodes.find(n => n.id === l.source)) {
+      throwErr("Graph", `${ERRORS.INVALID_LINKS} - "${l.source}" is not a valid source node id`);
     }
-
-    if (!data.links) {
-        logWarning("Graph", ERRORS.INSUFFICIENT_LINKS);
-        data.links = [];
+    if (!data.nodes.find(n => n.id === l.target)) {
+      throwErr("Graph", `${ERRORS.INVALID_LINKS} - "${l.target}" is not a valid target node id`);
     }
-
-    const n = data.links.length;
-
-    for (let i = 0; i < n; i++) {
-        const l = data.links[i];
-
-        if (!data.nodes.find(n => n.id === l.source)) {
-            throwErr("Graph", `${ERRORS.INVALID_LINKS} - "${l.source}" is not a valid source node id`);
-        }
-
-        if (!data.nodes.find(n => n.id === l.target)) {
-            throwErr("Graph", `${ERRORS.INVALID_LINKS} - "${l.target}" is not a valid target node id`);
-        }
-
-        if (l && l.value !== undefined && typeof l.value !== "number") {
-            throwErr(
-                "Graph",
-                `${ERRORS.INVALID_LINK_VALUE} - found in link with source "${l.source}" and target "${l.target}"`
-            );
-        }
-    }
+  });
 }
 
 // list of properties that are of no interest when it comes to nodes and links comparison
@@ -373,55 +362,55 @@ function getId(sot) {
  * @returns {Object} a fully (re)initialized graph state object.
  * @memberof Graph/helper
  */
-function initializeGraphState({ data, id, config }, state) {
-    _validateGraphData(data);
+function initializeGraphState(props: IGraphProps, state: IGraphState): IGraphState {
+  const { id, data, config } = props;
+  _validateGraphData(data);
 
-    let graph;
+  let graph: IGraphData;
 
-    if (state && state.nodes) {
-        graph = {
-            nodes: data.nodes.map(n =>
-                state.nodes[n.id] ? { ...n, ...pick(state.nodes[n.id], NODE_PROPS_WHITELIST) } : { ...n }
-            ),
-            links: data.links.map((l, index) =>
-                _mergeDataLinkWithD3Link(l, index, state && state.d3Links, config, state)
-            ),
-        };
-    } else {
-        graph = {
-            nodes: data.nodes.map(n => ({ ...n })),
-            links: data.links.map(l => ({ ...l })),
-        };
-    }
-
-    let newConfig: any = { ...merge(DEFAULT_CONFIG, config || {}) },
-        links = _initializeLinks(graph.links, newConfig), // matrix of graph connections
-        nodes = _tagOrphanNodes(_initializeNodes(graph.nodes), links);
-    const { nodes: d3Nodes, links: d3Links } = graph;
-    const formatedId = id.replace(/ /g, "_");
-    const simulation = _createForceSimulation(newConfig.width, newConfig.height, newConfig.d3 && newConfig.d3.gravity);
-    const { minZoom, maxZoom, focusZoom } = newConfig;
-
-    if (focusZoom > maxZoom) {
-        newConfig.focusZoom = maxZoom;
-    } else if (focusZoom < minZoom) {
-        newConfig.focusZoom = minZoom;
-    }
-
-    return {
-        id: formatedId,
-        config: newConfig,
-        links,
-        d3Links,
-        nodes,
-        d3Nodes,
-        highlightedNode: "",
-        simulation,
-        newGraphElements: false,
-        configUpdated: false,
-        transform: 1,
-        draggedNode: null,
+  if (state?.nodes) {
+    graph = {
+      nodes: data.nodes.map(n =>
+        state.nodes[n.id] ? { ...n, ...pick(state.nodes[n.id], NODE_PROPS_WHITELIST) } : { ...n }
+      ),
+      links: data.links.map((l, index) =>
+        _mergeDataLinkWithD3Link(l, index, state && state.d3Links, config, state)
+      ),
     };
+  } else {
+    graph = {
+      nodes: data.nodes.map(n => ({ ...n })),
+      links: data.links.map(l => ({ ...l })),
+    };
+  }
+
+  let newConfig: IGraphConfig = { ...DEFAULT_CONFIG, ...config },
+    links = _initializeLinks(graph.links, newConfig), // matrix of graph connections
+    nodes = _tagOrphanNodes(_initializeNodes(graph.nodes), links);
+  const { nodes: d3Nodes, links: d3Links } = graph;
+  const simulation = _createForceSimulation(newConfig.width, newConfig.height, newConfig.d3 && newConfig.d3.gravity);
+  const { minZoom, maxZoom, focusZoom } = newConfig;
+
+  if (focusZoom > maxZoom) {
+    newConfig.focusZoom = maxZoom;
+  } else if (focusZoom < minZoom) {
+    newConfig.focusZoom = minZoom;
+  }
+
+  return {
+    id: id.replace(/ /g, "_"),
+    config: newConfig,
+    links,
+    d3Links,
+    nodes,
+    d3Nodes,
+    highlightedNode: "",
+    simulation,
+    newGraphElements: false,
+    configUpdated: false,
+    transform: 1,
+    draggedNode: null,
+  };
 }
 
 /**
