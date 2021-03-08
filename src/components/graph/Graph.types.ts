@@ -39,7 +39,6 @@ export interface IGraphDataLink {
 
 export interface IGraphConfig {
   automaticRearrangeAfterDropNode: boolean;
-  collapsible: boolean;
   directed: boolean;
   focusZoom: number;
   focusAnimationDuration: number;

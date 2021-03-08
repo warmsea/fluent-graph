@@ -10,7 +10,6 @@ import CONST from "./graph.const";
 import DEFAULT_CONFIG from "./graph.config";
 import ERRORS from "../../err";
 
-import { getTargetLeafConnections, toggleLinksMatrixConnections, toggleLinksConnections } from "./collapse.helper";
 import {
   updateNodeHighlightedValue,
   checkForGraphConfigChanges,
@@ -371,43 +370,14 @@ export class Graph extends React.Component<IGraphProps, IGraphState> {
    * @returns {undefined}
    */
   onClickNode = clickedNodeId => {
-    if (this.state.config.collapsible) {
-      const leafConnections = getTargetLeafConnections(clickedNodeId, this.state.links, this.state.config);
-      const links = toggleLinksMatrixConnections(this.state.links, leafConnections, this.state.config);
-      const d3Links = toggleLinksConnections(this.state.d3Links, links);
-      const firstLeaf = leafConnections?.["0"];
-
-      let isExpanding = false;
-
-      if (firstLeaf) {
-        const visibility = links[firstLeaf.source][firstLeaf.target];
-
-        isExpanding = visibility === 1;
-      }
-
-      this._tick(
-        {
-          links,
-          d3Links,
-        },
-        () => {
-          this.props.onClickNode && this.props.onClickNode(clickedNodeId);
-
-          if (isExpanding) {
-            this._graphNodeDragConfig();
-          }
-        }
-      );
+    if (!this.nodeClickTimer) {
+      this.nodeClickTimer = setTimeout(() => {
+        this.props.onClickNode && this.props.onClickNode(clickedNodeId);
+        this.nodeClickTimer = null;
+      }, CONST.TTL_DOUBLE_CLICK_IN_MS);
     } else {
-      if (!this.nodeClickTimer) {
-        this.nodeClickTimer = setTimeout(() => {
-          this.props.onClickNode && this.props.onClickNode(clickedNodeId);
-          this.nodeClickTimer = null;
-        }, CONST.TTL_DOUBLE_CLICK_IN_MS);
-      } else {
-        this.props.onDoubleClickNode && this.props.onDoubleClickNode(clickedNodeId);
-        this.nodeClickTimer = clearTimeout(this.nodeClickTimer);
-      }
+      this.props.onDoubleClickNode && this.props.onDoubleClickNode(clickedNodeId);
+      this.nodeClickTimer = clearTimeout(this.nodeClickTimer);
     }
   };
 
@@ -559,7 +529,7 @@ export class Graph extends React.Component<IGraphProps, IGraphState> {
     const state = graphElementsUpdated ? initializeGraphState(nextProps, this.state) : this.state;
     const newConfig = nextProps.config || {};
     const { configUpdated, d3ConfigUpdated } = checkForGraphConfigChanges(nextProps, this.state);
-    const config = configUpdated ? { ...DEFAULT_CONFIG, ...newConfig} : this.state.config;
+    const config = configUpdated ? { ...DEFAULT_CONFIG, ...newConfig } : this.state.config;
 
     // in order to properly update graph data we need to pause eventual d3 ongoing animations
     newGraphElements && this.pauseSimulation();
