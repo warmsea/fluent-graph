@@ -3,7 +3,6 @@
  */
 export interface IGraphConfig {
   automaticRearrangeAfterDropNode: boolean;
-  directed: boolean;
   focusZoom: number;
   freezeAllDragEvents: boolean;
   focusAnimationDuration: number;
@@ -70,8 +69,6 @@ export interface IGraphConfigLink {
   renderLabel: boolean;
   semanticStrokeWidth: boolean; // TODO remove it?
   strokeWidth: number;
-  markerHeight: number;
-  markerWidth: number;
   strokeDasharray: number | undefined;
   strokeDashoffset: number | undefined;
   strokeLinecap: string;

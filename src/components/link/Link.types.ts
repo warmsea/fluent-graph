@@ -8,7 +8,6 @@ export interface ILinkProps {
   mouseCursor?: string;
   stroke?: string;
   opacity?: string | number;
-  markerId?: string;
   linkStrokeDashArray?: (source: string, target: string) => string;
 
   linkFocusable?: boolean;

@@ -6,7 +6,6 @@
 import CONST from "./graph.const";
 
 import { buildLinkPathDefinition } from "../link/link.helper";
-import { getMarkerId } from "../marker/marker.helper";
 import { getNormalizedNodeCoordinates } from "./graph.helper";
 
 /**
@@ -99,8 +98,6 @@ function buildLinkProps(link, nodes, links, config, linkCallbacks, highlightedNo
         strokeWidth += (linkValue * strokeWidth) / 10;
     }
 
-    const markerId = config.directed ? getMarkerId(highlight, transform, config) : undefined;
-
     const t = 1 / transform;
 
     let fontSize,
@@ -123,8 +120,7 @@ function buildLinkProps(link, nodes, links, config, linkCallbacks, highlightedNo
     const normalizedNodeCoordinates = getNormalizedNodeCoordinates(
         { source: { x: x1, y: y1, id: source }, target: { x: x2, y: y2, id: target } },
         nodes,
-        config,
-        strokeWidth
+        config
     );
     const d = buildLinkPathDefinition(normalizedNodeCoordinates);
 
@@ -135,7 +131,6 @@ function buildLinkProps(link, nodes, links, config, linkCallbacks, highlightedNo
         fontSize: (fontSize as unknown as number) * t,
         fontWeight,
         label,
-        markerId,
         mouseCursor: config.link.mouseCursor,
         opacity,
         source,

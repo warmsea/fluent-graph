@@ -44,15 +44,6 @@ import { IGraphConfig } from './Graph.types';
  * <li><b>automaticRearrangeAfterDropNode</b> needs to be set before the first graph render. Only the first set value will take effect.</li>
  * <li><b>automaticRearrangeAfterDropNode</b> won't work together with <b>nodeHighlightBehavior</b> (currently a known limitation, to be address in the future <a href="https://github.com/danielcaldas/react-d3-graph/issues/261" target="_blank">GitHub issue #261</a>).</li>
  * </ul>
- * @param {boolean} [collapsible=false] - <a id="collapsible" href="#collapsible">🔗</a> 🚅🚅🚅 Allow leaf neighbors nodes to be collapsed (folded), this will allow users to clear the way out and focus on the parts of the graph that really matter.
- * To see an example of this behavior you can access <a href="https://danielcaldas.github.io/react-d3-graph/sandbox/index.html?data=marvel" target="_blank" title="sandbox collapsible example">this sandbox link</a> that has a specific set up to experiment this feature. <b>NOTE</b>: At this moment
- * nodes without connections (orphan nodes) are not rendered when this property is activated (see <a target="_blank" href="https://github.com/danielcaldas/react-d3-graph/issues/129">GitHub issue #129</a>).
- * </br>
- * <img src="https://github.com/danielcaldas/react-d3-graph/blob/master/docs/rd3g-collapsible.gif?raw=true" width="820" height="480"/>
- * @param {boolean} [directed=false] - <a id="directed" href="#directed">🔗</a> This property makes react-d3-graph handle your graph as a directed graph. It will
- * out of the box provide the look and feel of a directed graph and add directional semantic to links. You can see a sample in the image below.
- * </br>
- * <img src="https://github.com/danielcaldas/react-d3-graph/blob/master/docs/rd3g-directed.gif?raw=true" width="820" height="480"/>
  * @param {number} [focusZoom=1] - <a id="focus-zoom" href="#focus-zoom">🔗</a> zoom that will be applied when the graph view is focused in a node. Its value must be between
  * <i>minZoom</i> and <i>maxZoom</i>. If the specified <i>focusZoom</i> is out of this range, <i>minZoom</i> or <i>maxZoom</i> will be applied instead.</br>
  * <b>NOTE</b>: This animation is not trigger by default. In order to trigger it you need to pass down to <code>react-d3-graph</code> the
@@ -212,10 +203,6 @@ import { IGraphConfig } from './Graph.types';
  * ```javascript
  * link.strokeWidth * (1 / transform); // transform is a zoom delta Δ value
  * ```
- * @param {number} [link.markerHeight=6] - <a id="link-marker-height" href="#link-marker-height">🔗</a> <a target="_blank" href="https://developer.mozilla.org/en/docs/Web/SVG/Attribute/markerHeight">markerHeight</a>
- * property for the link arrowhead height. *Note: this property can only be set in the first mount, it does not update dynamically.*
- * @param {number} [link.markerWidth=6] - <a id="link-marker-width" href="#link-marker-width">🔗</a> <a target="_blank" href="https://developer.mozilla.org/en/docs/Web/SVG/Attribute/markerWidth">markerWidth</a>
- * property for the link arrowhead width. *Note: this property can only be set in the first mount, it does not update dynamically.*
  * @param {string} [link.type="STRAIGHT"] - <a id="link-type" href="#link-type">🔗</a> 🔍🔍🔍 the type of line to draw, available types at this point are:
  * - "STRAIGHT" <small>(default)</small> - a straight line.
  * - "CURVE_SMOOTH" - a slight curve between two nodes
@@ -241,7 +228,6 @@ import { IGraphConfig } from './Graph.types';
  */
 export const DEFAULT_CONFIG: IGraphConfig = {
   automaticRearrangeAfterDropNode: false,
-  directed: false,
   freezeAllDragEvents: false,
   focusAnimationDuration: 0.75,
   focusZoom: 1,
@@ -301,8 +287,6 @@ export const DEFAULT_CONFIG: IGraphConfig = {
     renderLabel: false,
     semanticStrokeWidth: false,
     strokeWidth: 1.5,
-    markerHeight: 6,
-    markerWidth: 6,
     strokeDasharray: undefined,
     strokeDashoffset: undefined,
     strokeLinecap: "butt",

@@ -25,7 +25,6 @@ import { ILinkProps } from './Link.types';
  *     d="M1..."
  *     source="idSourceNode"
  *     target="idTargetNode"
- *     markerId="marker-small"
  *     strokeWidth=1.5
  *     stroke="green"
  *     className="link"
@@ -70,7 +69,6 @@ export const Link: FC<ILinkProps> = (props: ILinkProps) => {
     d: props.d,
     style: lineStyle,
     strokeDasharray: props.linkStrokeDashArray?.(props.source, props.target),
-    markerEnd: props.markerId ? `url(#${props.markerId})` : undefined ,
 
     onClick: handleOnClickLink,
     onContextMenu: handleOnRightClickLink,

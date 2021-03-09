@@ -36,7 +36,7 @@ import { computeNodeDegree } from "./collapse.helper";
 import { IGraphPropsData, IGraphProps, IGraphState, IGraphConfig } from './Graph.types';
 
 const NODE_PROPS_WHITELIST = ["id", "highlighted", "x", "y", "index", "vy", "vx"];
-const LINK_PROPS_WHITELIST = ["index", "source", "target", "isHidden"];
+const LINK_PROPS_WHITELIST = ["index", "source", "target"];
 
 /**
  * Create d3 forceSimulation to be applied on the graph.<br/>
@@ -70,7 +70,7 @@ function _createForceSimulation(width, height, gravity) {
  * there is an object that maps adjacent nodes ids (string) and their values (number).
  * @memberof Graph/helper
  */
-function _initializeLinks(graphLinks, config) {
+function _initializeLinks(graphLinks) {
   return graphLinks.reduce((links, l) => {
     const source = getId(l.source);
     const target = getId(l.target);
@@ -83,13 +83,7 @@ function _initializeLinks(graphLinks, config) {
       links[target] = {};
     }
 
-    const value = config.collapsible && l.isHidden ? 0 : l.value || 1;
-
-    links[source][target] = value;
-
-    if (!config.directed) {
-      links[target][source] = value;
-    }
+    links[source][target] = links[target][source] = l.value || 1;
 
     return links;
   }, {});
@@ -145,30 +139,20 @@ function _initializeNodes(graphNodes) {
  * @returns {Object} a d3Link.
  * @memberof Graph/helper
  */
-function _mergeDataLinkWithD3Link(link, index, d3Links = [], config, state: any = {}) {
+function _mergeDataLinkWithD3Link(link, index, d3Links = []) {
   // find the matching link if it exists
   const tmp = d3Links.find((l: any) => l.source.id === link.source && l.target.id === link.target);
   const d3Link: any = tmp && pick(tmp, LINK_PROPS_WHITELIST);
   const customProps = antiPick(link, ["source", "target"]);
 
   if (d3Link) {
-    const toggledDirected =
-      state.config &&
-      Object.prototype.hasOwnProperty.call(state.config, "directed") &&
-      config.directed !== state.config.directed;
     const refinedD3Link = {
       index,
       ...d3Link,
       ...customProps,
     };
 
-    // every time we toggle directed config all links should be visible again
-    if (toggledDirected) {
-      return { ...refinedD3Link, isHidden: false };
-    }
-
-    // every time we disable collapsible (collapsible is false) all links should be visible again
-    return config.collapsible ? refinedD3Link : { ...refinedD3Link, isHidden: false };
+    return { ...refinedD3Link };
   }
 
   const highlighted = false;
@@ -374,7 +358,7 @@ function initializeGraphState(props: IGraphProps, state: IGraphState): IGraphSta
         state.nodes[n.id] ? { ...n, ...pick(state.nodes[n.id], NODE_PROPS_WHITELIST) } : { ...n }
       ),
       links: data.links.map((l, index) =>
-        _mergeDataLinkWithD3Link(l, index, state && state.d3Links, config, state)
+        _mergeDataLinkWithD3Link(l, index, state && state.d3Links)
       ),
     };
   } else {
@@ -385,7 +369,7 @@ function initializeGraphState(props: IGraphProps, state: IGraphState): IGraphSta
   }
 
   let newConfig: IGraphConfig = { ...DEFAULT_CONFIG, ...config },
-    links = _initializeLinks(graph.links, newConfig), // matrix of graph connections
+    links = _initializeLinks(graph.links), // matrix of graph connections
     nodes = _tagOrphanNodes(_initializeNodes(graph.nodes), links);
   const { nodes: d3Nodes, links: d3Links } = graph;
   const simulation = _createForceSimulation(newConfig.width, newConfig.height, newConfig.d3 && newConfig.d3.gravity);
@@ -472,7 +456,7 @@ function normalize(vector) {
  * @returns {Object} new nodes coordinates
  * @memberof Graph/helper
  */
-function getNormalizedNodeCoordinates({ source = {} as any, target = {} as any }, nodes, config, strokeWidth) {
+function getNormalizedNodeCoordinates({ source = {} as any, target = {} as any }, nodes, config) {
   if (config.node?.viewGenerator) {
     return { source, target };
   }
@@ -483,7 +467,6 @@ function getNormalizedNodeCoordinates({ source = {} as any, target = {} as any }
   switch (config.node?.symbolType) {
     case CONST.SYMBOLS.CIRCLE: {
       const directionVector = normalize({ x: x2 - x1, y: y2 - y1 });
-      const strokeSize = strokeWidth * Math.min(config.link.markerWidth, config.link.markerHeight);
 
       const sourceNodeSize = nodes?.[sourceId]?.size || config.node.size;
       const targetNodeSize = nodes?.[targetId]?.size || config.node.size;
@@ -499,8 +482,8 @@ function getNormalizedNodeCoordinates({ source = {} as any, target = {} as any }
       x1 += sourceRadius * directionVector.x;
       y1 += sourceRadius * directionVector.y;
       // points from the target, we move the by the size of the radius of the circle + the size of the arrow
-      x2 -= (targetRadius + (config.directed ? strokeSize : 0)) * directionVector.x;
-      y2 -= (targetRadius + (config.directed ? strokeSize : 0)) * directionVector.y;
+      x2 -= targetRadius * directionVector.x;
+      y2 -= targetRadius * directionVector.y;
       break;
     }
   }

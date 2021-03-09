@@ -17,7 +17,7 @@ import {
   getCenterAndZoomTransformation,
   initializeGraphState,
 } from "./graph.helper";
-import { renderGraphDefs, renderWithBFS } from "./graph.renderer";
+import { renderWithBFS } from "./graph.renderer";
 import { throwErr } from "../../utils";
 import { IGraphProps, IGraphState } from './Graph.types';
 
@@ -609,8 +609,6 @@ export class Graph extends React.Component<IGraphProps, IGraphState> {
   }
 
   render() {
-    const defs = renderGraphDefs(this.state.config);
-
     const elements = renderWithBFS(
       this.state.nodes,
       {
@@ -647,7 +645,6 @@ export class Graph extends React.Component<IGraphProps, IGraphState> {
     return (
       <div id={`${this.state.id}-${CONST.GRAPH_WRAPPER_ID}`}>
         <svg name={`svg-container-${this.state.id}`} style={svgStyle} onClick={this.onClickGraph}>
-          {defs}
           <g id={`${this.state.id}-${CONST.GRAPH_CONTAINER_ID}`} {...containerProps}>
             {elements}
           </g>
