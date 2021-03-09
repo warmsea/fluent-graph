@@ -32,8 +32,7 @@ import { DEFAULT_CONFIG } from "./graph.config";
 import ERRORS from "../../err";
 
 import { antiPick, throwErr } from "../../utils";
-import { computeNodeDegree } from "./collapse.helper";
-import { IGraphPropsData, IGraphProps, IGraphState, IGraphConfig } from './Graph.types';
+import { IGraphPropsData, IGraphProps, IGraphState, IGraphLinkMap, IGraphPropsDataLink } from './Graph.types';
 
 const NODE_PROPS_WHITELIST = ["id", "highlighted", "x", "y", "index", "vy", "vx"];
 const LINK_PROPS_WHITELIST = ["index", "source", "target"];
@@ -70,8 +69,8 @@ function _createForceSimulation(width, height, gravity) {
  * there is an object that maps adjacent nodes ids (string) and their values (number).
  * @memberof Graph/helper
  */
-function _initializeLinks(graphLinks) {
-  return graphLinks.reduce((links, l) => {
+function _initializeLinks(graphLinks: IGraphPropsDataLink[]): IGraphLinkMap {
+  return graphLinks.reduce((links: IGraphLinkMap, l) => {
     const source = getId(l.source);
     const target = getId(l.target);
 
@@ -171,26 +170,6 @@ function _mergeDataLinkWithD3Link(link, index, d3Links = []) {
     target,
     ...customProps,
   };
-}
-
-/**
- * Tags orphan nodes with a `_orphan` flag.
- * @param {Object.<string, Object>} nodes - nodes mapped by their id.
- * @param {Object.<string, Object>} linksMatrix - an object containing a matrix of connections of the graph, for each nodeId,
- * there is an object that maps adjacent nodes ids (string) and their values (number).
- * @returns {Object.<string, Object>} same input nodes structure with tagged orphans nodes where applicable.
- * @memberof Graph/helper
- */
-function _tagOrphanNodes(nodes, linksMatrix) {
-  return Object.keys(nodes).reduce((acc, nodeId) => {
-    const { inDegree, outDegree } = computeNodeDegree(nodeId, linksMatrix);
-    const node = nodes[nodeId];
-    const taggedNode = inDegree === 0 && outDegree === 0 ? { ...node, _orphan: true } : node;
-
-    acc[nodeId] = taggedNode;
-
-    return acc;
-  }, {});
 }
 
 /**
@@ -347,7 +326,8 @@ function getId(sot) {
  * @memberof Graph/helper
  */
 function initializeGraphState(props: IGraphProps, state: IGraphState): IGraphState {
-  const { id, data, config } = props;
+  const graphConfig = { ...DEFAULT_CONFIG, ...props.config };
+  const { data } = props;
   _validateGraphData(data);
 
   let graph: IGraphPropsData;
@@ -368,22 +348,21 @@ function initializeGraphState(props: IGraphProps, state: IGraphState): IGraphSta
     };
   }
 
-  let newConfig: IGraphConfig = { ...DEFAULT_CONFIG, ...config },
-    links = _initializeLinks(graph.links), // matrix of graph connections
-    nodes = _tagOrphanNodes(_initializeNodes(graph.nodes), links);
+  const links = _initializeLinks(graph.links); // matrix of graph connections
+  const nodes = _initializeNodes(graph.nodes);
   const { nodes: d3Nodes, links: d3Links } = graph;
-  const simulation = _createForceSimulation(newConfig.width, newConfig.height, newConfig.d3 && newConfig.d3.gravity);
-  const { minZoom, maxZoom, focusZoom } = newConfig;
+  const simulation = _createForceSimulation(graphConfig.width, graphConfig.height, graphConfig.d3.gravity);
+  const { minZoom, maxZoom, focusZoom } = graphConfig;
 
   if (focusZoom > maxZoom) {
-    newConfig.focusZoom = maxZoom;
+    graphConfig.focusZoom = maxZoom;
   } else if (focusZoom < minZoom) {
-    newConfig.focusZoom = minZoom;
+    graphConfig.focusZoom = minZoom;
   }
 
   return {
-    id: id.replace(/ /g, "_"),
-    config: newConfig,
+    id: props.id.replace(/ /g, "_"),
+    config: graphConfig,
     links,
     d3Links,
     nodes,

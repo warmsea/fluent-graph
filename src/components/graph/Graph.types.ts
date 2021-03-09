@@ -136,3 +136,13 @@ export interface IGraphState {
   focusTransformation?;
   previousZoom?;
 }
+
+export interface IGraphLinkMap {
+  [sourceNodeId: string]: {
+    [targetNodeId: string]: number;
+  }
+}
+
+export interface IGraphNodeMap {
+  [nodeId: string]: any;
+}
