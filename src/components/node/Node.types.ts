@@ -1,4 +1,4 @@
-export type LabelPosition = 'left' | 'right' | 'top' | 'bottom' | 'center';
+export type LabelPosition = "left" | "right" | "top" | "bottom" | "center";
 
 export interface ILabelPlacementProps {
   dx: string;
@@ -32,8 +32,20 @@ export interface INodeProps {
   stroke?: string;
   strokeWidth?: string | number;
 
-  onClickNode?: (event: React.MouseEvent<SVGPathElement, MouseEvent>, nodeId: string) => void;
-  onRightClickNode?: (event: React.MouseEvent<SVGPathElement, MouseEvent>, nodeId: string) => void;
-  onMouseOverNode?: (event: React.MouseEvent<SVGPathElement, MouseEvent>, nodeId: string) => void;
-  onMouseOut?: (event: React.MouseEvent<SVGPathElement, MouseEvent>, nodeId: string) => void;
+  onClickNode?: (
+    event: React.MouseEvent<SVGPathElement, MouseEvent>,
+    nodeId: string
+  ) => void;
+  onRightClickNode?: (
+    event: React.MouseEvent<SVGPathElement, MouseEvent>,
+    nodeId: string
+  ) => void;
+  onMouseOverNode?: (
+    event: React.MouseEvent<SVGPathElement, MouseEvent>,
+    nodeId: string
+  ) => void;
+  onMouseOut?: (
+    event: React.MouseEvent<SVGPathElement, MouseEvent>,
+    nodeId: string
+  ) => void;
 }

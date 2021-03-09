@@ -1,6 +1,6 @@
 import React, { CSSProperties, FC, SVGAttributes, useCallback } from "react";
 
-import { ILinkProps } from './Link.types';
+import { ILinkProps } from "./Link.types";
 
 /**
  * Link component is responsible for encapsulating link render.
@@ -36,32 +36,37 @@ import { ILinkProps } from './Link.types';
  *     onMouseOutLink={onMouseOutLink} />
  */
 export const Link: FC<ILinkProps> = (props: ILinkProps) => {
-  const handleOnClickLink = useCallback(event => {
-    props.onClickLink?.(event, props.source, props.target);
-  }, [props.onClickLink]);
+  const handleOnClickLink = useCallback(
+    event => props.onClickLink?.(event, props.source, props.target),
+    [props.onClickLink, props.source, props.target]
+  );
 
-  const handleOnRightClickLink = useCallback(event => {
-    props.onRightClickLink?.(event, props.source, props.target);
-  }, [props.onRightClickLink]);
+  const handleOnRightClickLink = useCallback(
+    event => props.onRightClickLink?.(event, props.source, props.target),
+    [props.onRightClickLink, props.source, props.target]
+  );
 
-  const handleOnMouseOverLink = useCallback(event => {
-    props.onMouseOverLink?.(event, props.source, props.target);
-  }, [props.onMouseOverLink]);
+  const handleOnMouseOverLink = useCallback(
+    event => props.onMouseOverLink?.(event, props.source, props.target),
+    [props.onMouseOverLink, props.source, props.target]
+  );
 
-  const handleOnMouseOutLink = useCallback(event => {
-    props.onMouseOutLink?.(event, props.source, props.target);
-  }, [props.onMouseOutLink]);
+  const handleOnMouseOutLink = useCallback(
+    event => props.onMouseOutLink?.(event, props.source, props.target),
+    [props.onMouseOutLink, props.source, props.target]
+  );
 
-  const handleOnKeyDownLink = useCallback(event => {
-    props.onKeyDownLink?.(event, props.source, props.target);
-  }, [props.onKeyDownLink]);
+  const handleOnKeyDownLink = useCallback(
+    event => props.onKeyDownLink?.(event, props.source, props.target),
+    [props.onKeyDownLink, props.source, props.target]
+  );
 
   const lineStyle: CSSProperties = {
     cursor: props.mouseCursor,
     stroke: props.stroke,
     strokeWidth: props.strokeWidth,
     opacity: props.opacity,
-    fill: "none",
+    fill: "none"
   };
 
   const lineProps: SVGAttributes<SVGPathElement> = {
@@ -77,7 +82,7 @@ export const Link: FC<ILinkProps> = (props: ILinkProps) => {
     onKeyDown: handleOnKeyDownLink,
 
     tabIndex: props.linkFocusable ? 0 : undefined,
-    "aria-label": props.getLinkAriaLabel?.(props.source, props.target),
+    "aria-label": props.getLinkAriaLabel?.(props.source, props.target)
   };
 
   const { label, id } = props;
@@ -87,30 +92,33 @@ export const Link: FC<ILinkProps> = (props: ILinkProps) => {
       fill: props.fontColor,
       fontSize: props.fontSize,
       fontWeight: props.fontWeight as any,
-      textAnchor: "middle",
-    },
+      textAnchor: "middle"
+    }
   };
 
   const STROKE_WIDTH_LIMIT: number = 12;
 
-  const needClickHelperPath: boolean = !!props.onClickLink && props.strokeWidth < STROKE_WIDTH_LIMIT;
+  const needClickHelperPath: boolean =
+    !!props.onClickLink && props.strokeWidth < STROKE_WIDTH_LIMIT;
 
   const clickHelperLineStyle: CSSProperties = {
     cursor: props.mouseCursor,
     strokeWidth: STROKE_WIDTH_LIMIT,
     stroke: props.stroke,
-    opacity: 0,
+    opacity: 0
   };
   const clickHelperLineProps: SVGAttributes<SVGPathElement> = {
     className: props.className,
     style: clickHelperLineStyle,
     d: props.d,
-    onClick: handleOnClickLink,
+    onClick: handleOnClickLink
   };
   return (
     <g>
       <path {...lineProps} id={id} />
-      {needClickHelperPath && <path {...clickHelperLineProps} id={`clickHelper-${id}`} />}
+      {needClickHelperPath && (
+        <path {...clickHelperLineProps} id={`clickHelper-${id}`} />
+      )}
       {label && (
         <text {...textProps}>
           <textPath href={`#${id}`} startOffset="50%">

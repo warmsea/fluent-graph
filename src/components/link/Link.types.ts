@@ -17,9 +17,29 @@ export interface ILinkProps {
   fontWeight?: string | number;
   getLinkAriaLabel?: (source: string, target: string) => string;
 
-  onClickLink?: (event: React.MouseEvent<SVGPathElement, MouseEvent>, source: string, target: string) => void;
-  onRightClickLink?: (event: React.MouseEvent<SVGPathElement, MouseEvent>, source: string, target: string) => void;
-  onMouseOverLink?: (event: React.MouseEvent<SVGPathElement, MouseEvent>, source: string, target: string) => void;
-  onMouseOutLink?: (event: React.MouseEvent<SVGPathElement, MouseEvent>, source: string, target: string) => void;
-  onKeyDownLink?: (event: React.KeyboardEvent<SVGPathElement>, source: string, target: string) => void;
+  onClickLink?: (
+    event: React.MouseEvent<SVGPathElement, MouseEvent>,
+    source: string,
+    target: string
+  ) => void;
+  onRightClickLink?: (
+    event: React.MouseEvent<SVGPathElement, MouseEvent>,
+    source: string,
+    target: string
+  ) => void;
+  onMouseOverLink?: (
+    event: React.MouseEvent<SVGPathElement, MouseEvent>,
+    source: string,
+    target: string
+  ) => void;
+  onMouseOutLink?: (
+    event: React.MouseEvent<SVGPathElement, MouseEvent>,
+    source: string,
+    target: string
+  ) => void;
+  onKeyDownLink?: (
+    event: React.KeyboardEvent<SVGPathElement>,
+    source: string,
+    target: string
+  ) => void;
 }

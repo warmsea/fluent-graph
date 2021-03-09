@@ -1,7 +1,7 @@
 import React, { FC, SVGAttributes, useCallback } from "react";
 
 import { buildSvgSymbol, getLabelPlacementProps } from "./node.helper";
-import { INodeProps } from './Node.types';
+import { INodeProps } from "./Node.types";
 
 /**
  * Node component is responsible for encapsulating node render.
@@ -52,22 +52,25 @@ import { INodeProps } from './Node.types';
  *     onMouseOutNode={onMouseOutNode} />
  */
 export const Node: FC<INodeProps> = (props: INodeProps) => {
+  const handleOnClickNode = useCallback(
+    event => props.onClickNode?.(event, props.id),
+    [props.onClickNode, props.id]
+  );
 
-  const handleOnClickNode = useCallback(event => {
-    props.onClickNode?.(event, props.id);
-  }, [props.onClickNode]);
+  const handleOnRightClickNode = useCallback(
+    event => props.onRightClickNode?.(event, props.id),
+    [props.onRightClickNode, props.id]
+  );
 
-  const handleOnRightClickNode = useCallback(event => {
-    props.onRightClickNode?.(event, props.id);
-  }, [props.onRightClickNode]);
+  const handleOnMouseOverNode = useCallback(
+    event => props.onMouseOverNode?.(event, props.id),
+    [props.onMouseOverNode, props.id]
+  );
 
-  const handleOnMouseOverNode = useCallback(event => {
-    props.onMouseOverNode?.(event, props.id)
-  }, [props.onMouseOverNode]);
-
-  const handleOnMouseOutNode = useCallback(event => {
-    props.onMouseOut?.(event, props.id);
-  }, [props.onMouseOut]);
+  const handleOnMouseOutNode = useCallback(
+    event => props.onMouseOut?.(event, props.id),
+    [props.onMouseOut, props.id]
+  );
 
   const nodeProps: SVGAttributes<SVGElement> = {
     cursor: props.cursor,
@@ -75,7 +78,7 @@ export const Node: FC<INodeProps> = (props: INodeProps) => {
     onClick: handleOnClickNode,
     onContextMenu: handleOnRightClickNode,
     onMouseOut: handleOnMouseOutNode,
-    onMouseOver: handleOnMouseOverNode,
+    onMouseOver: handleOnMouseOverNode
   };
 
   const textProps: SVGAttributes<SVGTextElement> = {
@@ -83,7 +86,7 @@ export const Node: FC<INodeProps> = (props: INodeProps) => {
     fill: props.fontColor,
     fontSize: props.fontSize,
     fontWeight: props.fontWeight,
-    opacity: props.opacity,
+    opacity: props.opacity
   };
 
   let size = props.size;
@@ -110,14 +113,22 @@ export const Node: FC<INodeProps> = (props: INodeProps) => {
       node = (
         <svg {...nodeProps} width={size} height={size}>
           <foreignObject x="0" y="0" width="100%" height="100%">
-            <section style={{ height: size, width: size, backgroundColor: "transparent" }}>
+            <section
+              style={{
+                height: size,
+                width: size,
+                backgroundColor: "transparent"
+              }}
+            >
               {props.viewGenerator(props)}
             </section>
           </foreignObject>
         </svg>
       );
     } else {
-      node = <image {...nodeProps} href={props.svg} width={size} height={size} />;
+      node = (
+        <image {...nodeProps} href={props.svg} width={size} height={size} />
+      );
     }
 
     // svg offset transform regarding svg width/height
@@ -138,7 +149,7 @@ export const Node: FC<INodeProps> = (props: INodeProps) => {
     className: props.className,
     cx: props.cx,
     cy: props.cy,
-    transform: `translate(${gtx},${gty})`,
+    transform: `translate(${gtx},${gty})`
   };
 
   return (
@@ -147,4 +158,4 @@ export const Node: FC<INodeProps> = (props: INodeProps) => {
       {props.renderLabel && label}
     </g>
   );
-}
+};

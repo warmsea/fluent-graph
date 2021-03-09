@@ -15,7 +15,10 @@
  * @returns {string} the path definition for the requested link
  * @memberof Link/helper
  */
-export function buildLinkPathDefinition({ source = {} as any, target = {} as any }): string {
+export function buildLinkPathDefinition({
+  source = {} as any,
+  target = {} as any
+}): string {
   const { x: sx, y: sy } = source;
   const { x: tx, y: ty } = target;
   const radius = 0; // straight line

@@ -12,11 +12,11 @@ import {
   symbolStar,
   symbolTriangle,
   symbolWye,
-  SymbolType,
+  SymbolType
 } from "d3-shape";
 
 import CONST from "./node.const";
-import { ILabelPlacementProps, LabelPosition } from './Node.types';
+import { ILabelPlacementProps, LabelPosition } from "./Node.types";
 
 /**
  * Converts a string that specifies a symbol into a concrete instance
@@ -59,9 +59,11 @@ export function buildSvgSymbol(
   size: number = CONST.DEFAULT_NODE_SIZE,
   symbolTypeDesc: string = CONST.SYMBOLS.CIRCLE
 ): string | undefined {
-  return symbol()
-    .size(() => size)
-    .type(() => _convertTypeToD3Symbol(symbolTypeDesc))() || undefined;
+  return (
+    symbol()
+      .size(() => size)
+      .type(() => _convertTypeToD3Symbol(symbolTypeDesc))() || undefined
+  );
 }
 
 /**
@@ -72,47 +74,50 @@ export function buildSvgSymbol(
  * props to put text svg for label in correct spot. default case returns just dx and dy, without textAnchor and dominantBaseline
  * @memberof Node/helper
  */
-export function getLabelPlacementProps(dx?: number, labelPosition?: LabelPosition): ILabelPlacementProps {
+export function getLabelPlacementProps(
+  dx?: number,
+  labelPosition?: LabelPosition
+): ILabelPlacementProps {
   switch (labelPosition) {
     case "right":
       return {
         dx: dx ? `${dx}` : CONST.NODE_LABEL_DX,
         dy: "0",
         dominantBaseline: "middle",
-        textAnchor: "start",
+        textAnchor: "start"
       };
     case "left":
       return {
         dx: dx ? `${-dx}` : `-${CONST.NODE_LABEL_DX}`,
         dy: "0",
         dominantBaseline: "middle",
-        textAnchor: "end",
+        textAnchor: "end"
       };
     case "top":
       return {
         dx: "0",
         dy: dx ? `${-dx}` : `-${CONST.NODE_LABEL_DX}`,
         dominantBaseline: "baseline",
-        textAnchor: "middle",
+        textAnchor: "middle"
       };
     case "bottom":
       return {
         dx: "0",
         dy: dx ? `${dx}` : CONST.NODE_LABEL_DX,
         dominantBaseline: "hanging",
-        textAnchor: "middle",
+        textAnchor: "middle"
       };
     case "center":
       return {
         dx: "0",
         dy: "0",
         dominantBaseline: "middle",
-        textAnchor: "middle",
+        textAnchor: "middle"
       };
     default:
       return {
         dx: dx ? `${dx}` : CONST.NODE_LABEL_DX,
-        dy: CONST.NODE_LABEL_DY,
+        dy: CONST.NODE_LABEL_DY
       };
   }
 }
