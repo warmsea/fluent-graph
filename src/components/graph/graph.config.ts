@@ -1,4 +1,4 @@
-import { IGraphConfig } from './Graph.types';
+import { IGraphConfig } from "./Graph.types";
 
 /**
  * <div style="text-align: right;"><i>This is certainly the only extra piece of documentation that you will ever need</i></div>
@@ -42,7 +42,6 @@ import { IGraphConfig } from './Graph.types';
  * rearrange all nodes positions based on new position of dragged node (note: <b>staticGraph</b> should be false). A few notes on this property:
  * <ul>
  * <li><b>automaticRearrangeAfterDropNode</b> needs to be set before the first graph render. Only the first set value will take effect.</li>
- * <li><b>automaticRearrangeAfterDropNode</b> won't work together with <b>nodeHighlightBehavior</b> (currently a known limitation, to be address in the future <a href="https://github.com/danielcaldas/react-d3-graph/issues/261" target="_blank">GitHub issue #261</a>).</li>
  * </ul>
  * @param {number} [focusZoom=1] - <a id="focus-zoom" href="#focus-zoom">🔗</a> zoom that will be applied when the graph view is focused in a node. Its value must be between
  * <i>minZoom</i> and <i>maxZoom</i>. If the specified <i>focusZoom</i> is out of this range, <i>minZoom</i> or <i>maxZoom</i> will be applied instead.</br>
@@ -61,16 +60,6 @@ import { IGraphConfig } from './Graph.types';
  *
  * @param {number} [focusAnimationDuration=0.75] - <a id="focus-animation-duration" href="#focus-animation-duration">🔗</a> duration (in seconds) for the animation that takes place when focusing the graph on a node.
  * @param {number} [height=400] - <a id="height" href="#height">🔗</a> the height of the (svg) area where the graph will be rendered.
- * @param {boolean} [nodeHighlightBehavior=false] - <a id="node-highlight-behavior" href="#node-highlight-behavior">🔗</a> 🚅🚅🚅 when user mouse hovers a node that node and adjacent common
- * connections will be highlighted (depending on the <i>highlightDegree</i> value). All the remaining nodes and links assume opacity value equal to <b>highlightOpacity</b>.
- * @param {boolean} [linkHighlightBehavior=false] - <a id="link-highlight-behavior" href="#link-highlight-behavior">🔗</a> 🚅🚅🚅 when the user mouse hovers some link that link and the correspondent nodes will be highlighted, this is a similar behavior
- * to <i>nodeHighlightBehavior</i> but for links <small>(just for historical reference this property was introduced in <a target="_blank" href="https://github.com/danielcaldas/react-d3-graph/releases/tag/1.0.0">v1.0.0</a>)</small>.
- * @param {number} [highlightDegree=1] - <a id="highlight-degree" href="#highlight-degree">🔗</a> <b>Possible values: 0, 1 or 2</b>. This value represents the range of the
- * highlight behavior when some node is highlighted. If the value is set to <b>0</b> only the selected node will be
- * highlighted. If the value is set to <b>1</b> the selected node and his 1st degree connections will be highlighted. If
- * the value is set to <b>2</b> the selected node will be highlighted as well as the 1st and 2nd common degree connections.
- * @param {number} [highlightOpacity=1] - <a id="highlight-opacity" href="#highlight-opacity">🔗</a> this value is used to highlight nodes in the network. The lower
- * the value the more the less highlighted nodes will be visible (related to <i>nodeHighlightBehavior</i>).
  * @param {number} [initialZoom=null] - <a id="max-zoom" href="#initial-zoom">🔗</a> initial zoom that can be set on the graph.
  * @param {number} [maxZoom=8] - <a id="max-zoom" href="#max-zoom">🔗</a> max zoom that can be performed against the graph.
  * @param {number} [minZoom=0.1] - <a id="min-zoom" href="#min-zoom">🔗</a> min zoom that can be performed against the graph.
@@ -106,12 +95,6 @@ import { IGraphConfig } from './Graph.types';
  * property for all nodes" labels.
  * @param {string} [node.fontWeight="normal"] - <a id="node-font-weight" href="#node-font-weight">🔗</a> <a target="_blank" href="https://developer.mozilla.org/en/docs/Web/CSS/font-weight?v=control">font-weight</a>
  * property for all nodes" labels.
- * @param {string} [node.highlightColor="SAME"] - <a id="node-highlight-color" href="#node-highlight-color">🔗</a> color for all highlighted nodes (use string "SAME" if you
- * want the node to keep its color in highlighted state).
- * @param {number} [node.highlightFontSize=8] - <a id="node-highlight-font-size" href="#node-highlight-font-size">🔗</a> fontSize in highlighted state.
- * @param {string} [node.highlightFontWeight="normal"] - <a id="node-highlight-font-weight" href="#node-highlight-font-weight">🔗</a> fontWeight in highlighted state.
- * @param {string} [node.highlightStrokeColor="SAME"] - <a id="node-stroke-color" href="#node-stroke-color">🔗</a> strokeColor in highlighted state.
- * @param {number} [node.highlightStrokeWidth="SAME"] - <a id="node-stroke-width" href="#node-stroke-width">🔗</a> strokeWidth in highlighted state.
  * @param {string} [node.labelPosition=null] - <a id="node-label-position" href="#node-label-position">🔗</a> 🔍🔍🔍 location to place node label relative to node.
  * The placement options are:
  *   - "left"
@@ -178,10 +161,6 @@ import { IGraphConfig } from './Graph.types';
  * property for all links' labels.
  * @param {string} [link.fontWeight="normal"] - <a id="link-font-weight" href="#link-font-weight">🔗</a> <a target="_blank" href="https://developer.mozilla.org/en/docs/Web/CSS/font-weight?v=control">font-weight</a>
  * property for all links' labels.
- * @param {string} [link.highlightColor="SAME"] - <a id="link-highlight-color" href="#link-highlight-color">🔗</a> links' color in highlight state, default being the same color as `link.color`.
- * <img src="https://github.com/danielcaldas/react-d3-graph/blob/master/docs/rd3g-bend.gif?raw=true" width="820" height="480"/>
- * @param {number} [link.highlightFontSize=8] - <a id="link-highlight-font-size" href="#link-highlight-font-size">🔗</a> <a target="_blank" href="https://developer.mozilla.org/en-US/docs/Web/CSS/font-size?v=control">font-size</a> in highlighted state.
- * @param {string} [link.highlightFontWeight="normal"] - <a id="link-highlight-font-weight" href="#link-highlight-font-weight">🔗</a> <a target="_blank" href="https://developer.mozilla.org/en/docs/Web/CSS/font-weight?v=control">font-weight</a> in highlighted state.
  * @param {string|Function} [link.labelProperty="label"] - <a id="link-label-property" href="#link-label-property">🔗</a> the property that will be rendered as label within some link. Note that</br>
  * this property needs to be passed along the link payload (along side with source and target). This property can also be a function</br>
  * that receives the link itself as argument and returns a custom string, similarly to what happens with <code>node.labelProperty</code>.</br>
@@ -213,15 +192,10 @@ import { IGraphConfig } from './Graph.types';
  * @example
  * // A simple config that uses some properties
  * const myConfig = {
- *     nodeHighlightBehavior: true,
  *     node: {
  *         color: "lightgreen",
- *         size: 120,
- *         highlightStrokeColor: "blue"
+ *         size: 120
  *     },
- *     link: {
- *         highlightColor: "lightblue"
- *     }
  * };
  *
  * // Sorry for the long config description, here"s a potato 🥔.
@@ -232,13 +206,9 @@ export const DEFAULT_CONFIG: IGraphConfig = {
   focusAnimationDuration: 0.75,
   focusZoom: 1,
   height: 400,
-  highlightDegree: 1,
-  highlightOpacity: 1,
-  linkHighlightBehavior: false,
   maxZoom: 8,
   minZoom: 0.1,
   initialZoom: undefined,
-  nodeHighlightBehavior: false,
   panAndZoom: false,
   staticGraph: false,
   staticGraphWithDragAndDrop: false,
@@ -248,18 +218,13 @@ export const DEFAULT_CONFIG: IGraphConfig = {
     gravity: -100,
     linkLength: 100,
     linkStrength: 1,
-    disableLinkForce: false,
+    disableLinkForce: false
   },
   node: {
     color: "#d3d3d3",
     fontColor: "black",
     fontSize: 8,
     fontWeight: "normal",
-    highlightColor: "SAME",
-    highlightFontSize: 8,
-    highlightFontWeight: "normal",
-    highlightStrokeColor: "SAME",
-    highlightStrokeWidth: "SAME",
     labelProperty: "id",
     labelPosition: undefined,
     mouseCursor: "pointer",
@@ -270,7 +235,7 @@ export const DEFAULT_CONFIG: IGraphConfig = {
     strokeWidth: 1.5,
     svg: "",
     symbolType: "circle",
-    viewGenerator: undefined,
+    viewGenerator: undefined
   },
   link: {
     focusable: true,
@@ -278,9 +243,6 @@ export const DEFAULT_CONFIG: IGraphConfig = {
     fontColor: "black",
     fontSize: 8,
     fontWeight: "normal",
-    highlightColor: "SAME",
-    highlightFontSize: 8,
-    highlightFontWeight: "normal",
     labelProperty: "label",
     mouseCursor: "pointer",
     opacity: 1,
@@ -289,6 +251,6 @@ export const DEFAULT_CONFIG: IGraphConfig = {
     strokeWidth: 1.5,
     strokeDasharray: undefined,
     strokeDashoffset: undefined,
-    strokeLinecap: "butt",
-  },
+    strokeLinecap: "butt"
+  }
 };

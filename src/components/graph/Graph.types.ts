@@ -7,10 +7,6 @@ export interface IGraphConfig {
   freezeAllDragEvents: boolean;
   focusAnimationDuration: number;
   height: number;
-  nodeHighlightBehavior: boolean;
-  linkHighlightBehavior: boolean;
-  highlightDegree: number;
-  highlightOpacity: number;
   initialZoom: number | undefined;
   maxZoom: number;
   minZoom: number;
@@ -36,13 +32,8 @@ export interface IGraphConfigNode {
   fontColor: string;
   fontSize: number;
   fontWeight: string;
-  highlightColor: string;
-  highlightFontSize: number;
-  highlightFontWeight: string;
-  highlightStrokeColor: string;
-  highlightStrokeWidth: number | string; // TODO should not allow string
   labelPosition: string | undefined; // TODO should not allow undefined
-  labelProperty: string | Function ;
+  labelProperty: string | Function;
   mouseCursor: string;
   opacity: number;
   renderLabel: boolean;
@@ -60,9 +51,6 @@ export interface IGraphConfigLink {
   fontColor: string;
   fontSize: number;
   fontWeight: string;
-  highlightColor: string;
-  highlightFontSize: number;
-  highlightFontWeight: string;
   labelProperty: string | Function;
   mouseCursor: string;
   opacity: number;
@@ -73,7 +61,6 @@ export interface IGraphConfigLink {
   strokeDashoffset: number | undefined;
   strokeLinecap: string;
 }
-
 
 export interface IGraphProps {
   id: string;
@@ -123,8 +110,6 @@ export interface IGraphState {
   d3Links;
   nodes;
   d3Nodes;
-  highlightedNode;
-  highlightedLink?;
   simulation;
   newGraphElements;
   configUpdated;
@@ -140,7 +125,7 @@ export interface IGraphState {
 export interface IGraphLinkMap {
   [sourceNodeId: string]: {
     [targetNodeId: string]: number;
-  }
+  };
 }
 
 export interface IGraphNodeMap {

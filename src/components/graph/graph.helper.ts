@@ -23,18 +23,24 @@ import {
   forceX as d3ForceX,
   forceY as d3ForceY,
   forceSimulation as d3ForceSimulation,
-  forceManyBody as d3ForceManyBody,
+  forceManyBody as d3ForceManyBody
 } from "d3-force";
-import { pick, isEqual, isEmpty } from 'lodash';
+import { pick, isEqual, isEmpty } from "lodash";
 
 import CONST from "./graph.const";
 import { DEFAULT_CONFIG } from "./graph.config";
 import ERRORS from "../../err";
 
 import { antiPick, throwErr } from "../../utils";
-import { IGraphPropsData, IGraphProps, IGraphState, IGraphLinkMap, IGraphPropsDataLink } from './Graph.types';
+import {
+  IGraphPropsData,
+  IGraphProps,
+  IGraphState,
+  IGraphLinkMap,
+  IGraphPropsDataLink
+} from "./Graph.types";
 
-const NODE_PROPS_WHITELIST = ["id", "highlighted", "x", "y", "index", "vy", "vx"];
+const NODE_PROPS_WHITELIST = ["id", "x", "y", "index", "vy", "vx"];
 const LINK_PROPS_WHITELIST = ["index", "source", "target"];
 
 /**
@@ -93,8 +99,7 @@ function _initializeLinks(graphLinks: IGraphPropsDataLink[]): IGraphLinkMap {
  * that are optional for the user. Also it generates an index mapping, this maps nodes ids the their index in the array
  * of nodes. This is needed because d3 callbacks such as node click and link click return the index of the node.
  * @param  {Array.<Node>} graphNodes - the array of nodes provided by the rd3g consumer.
- * @returns {Object.<string, Object>} returns the nodes ready to be used within rd3g with additional properties such as x, y
- * and highlighted values.
+ * @returns {Object.<string, Object>} returns the nodes ready to be used within rd3g with additional properties such as x, y.
  * @memberof Graph/helper
  */
 function _initializeNodes(graphNodes) {
@@ -103,8 +108,6 @@ function _initializeNodes(graphNodes) {
 
   for (let i = 0; i < n; i++) {
     const node = graphNodes[i];
-
-    node.highlighted = false;
 
     // if an fx (forced x) is given, we want to use that
     if (Object.prototype.hasOwnProperty.call(node, "fx")) {
@@ -140,7 +143,9 @@ function _initializeNodes(graphNodes) {
  */
 function _mergeDataLinkWithD3Link(link, index, d3Links = []) {
   // find the matching link if it exists
-  const tmp = d3Links.find((l: any) => l.source.id === link.source && l.target.id === link.target);
+  const tmp = d3Links.find(
+    (l: any) => l.source.id === link.source && l.target.id === link.target
+  );
   const d3Link: any = tmp && pick(tmp, LINK_PROPS_WHITELIST);
   const customProps = antiPick(link, ["source", "target"]);
 
@@ -148,27 +153,24 @@ function _mergeDataLinkWithD3Link(link, index, d3Links = []) {
     const refinedD3Link = {
       index,
       ...d3Link,
-      ...customProps,
+      ...customProps
     };
 
     return { ...refinedD3Link };
   }
 
-  const highlighted = false;
   const source = {
-    id: link.source,
-    highlighted,
+    id: link.source
   };
   const target = {
-    id: link.target,
-    highlighted,
+    id: link.target
   };
 
   return {
     index,
     source,
     target,
-    ...customProps,
+    ...customProps
   };
 }
 
@@ -195,10 +197,16 @@ function _validateGraphData(data: IGraphPropsData): void {
 
   data.links.forEach(l => {
     if (!data.nodes.find(n => n.id === l.source)) {
-      throwErr("Graph", `${ERRORS.INVALID_LINKS} - "${l.source}" is not a valid source node id`);
+      throwErr(
+        "Graph",
+        `${ERRORS.INVALID_LINKS} - "${l.source}" is not a valid source node id`
+      );
     }
     if (!data.nodes.find(n => n.id === l.target)) {
-      throwErr("Graph", `${ERRORS.INVALID_LINKS} - "${l.target}" is not a valid target node id`);
+      throwErr(
+        "Graph",
+        `${ERRORS.INVALID_LINKS} - "${l.target}" is not a valid target node id`
+      );
     }
   });
 }
@@ -240,19 +248,28 @@ function _pickSourceAndTarget(o) {
  * @memberof Graph/helper
  */
 function checkForGraphElementsChanges(nextProps, currentState) {
-  const nextNodes = nextProps.data.nodes.map(n => antiPick(n, NODE_PROPERTIES_DISCARD_TO_COMPARE));
+  const nextNodes = nextProps.data.nodes.map(n =>
+    antiPick(n, NODE_PROPERTIES_DISCARD_TO_COMPARE)
+  );
   const nextLinks = nextProps.data.links;
-  const stateD3Nodes = currentState.d3Nodes.map(n => antiPick(n, NODE_PROPERTIES_DISCARD_TO_COMPARE));
+  const stateD3Nodes = currentState.d3Nodes.map(n =>
+    antiPick(n, NODE_PROPERTIES_DISCARD_TO_COMPARE)
+  );
   const stateD3Links = currentState.d3Links.map(l => ({
     source: getId(l.source),
-    target: getId(l.target),
+    target: getId(l.target)
   }));
-  const graphElementsUpdated = !(isEqual(nextNodes, stateD3Nodes) && isEqual(nextLinks, stateD3Links));
+  const graphElementsUpdated = !(
+    isEqual(nextNodes, stateD3Nodes) && isEqual(nextLinks, stateD3Links)
+  );
   const newGraphElements =
     nextNodes.length !== stateD3Nodes.length ||
     nextLinks.length !== stateD3Links.length ||
     !isEqual(nextNodes.map(_pickId), stateD3Nodes.map(_pickId)) ||
-    !isEqual(nextLinks.map(_pickSourceAndTarget), stateD3Links.map(_pickSourceAndTarget));
+    !isEqual(
+      nextLinks.map(_pickSourceAndTarget),
+      stateD3Links.map(_pickSourceAndTarget)
+    );
 
   return { graphElementsUpdated, newGraphElements };
 }
@@ -268,8 +285,12 @@ function checkForGraphElementsChanges(nextProps, currentState) {
  */
 function checkForGraphConfigChanges(nextProps, currentState) {
   const newConfig = nextProps.config || {};
-  const configUpdated = newConfig && !isEmpty(newConfig) && !isEqual(newConfig, currentState.config);
-  const d3ConfigUpdated = newConfig && newConfig.d3 && !isEqual(newConfig.d3, currentState.config.d3);
+  const configUpdated =
+    newConfig &&
+    !isEmpty(newConfig) &&
+    !isEqual(newConfig, currentState.config);
+  const d3ConfigUpdated =
+    newConfig && newConfig.d3 && !isEqual(newConfig.d3, currentState.config.d3);
 
   return { configUpdated, d3ConfigUpdated };
 }
@@ -325,7 +346,10 @@ function getId(sot) {
  * @returns {Object} a fully (re)initialized graph state object.
  * @memberof Graph/helper
  */
-function initializeGraphState(props: IGraphProps, state: IGraphState): IGraphState {
+function initializeGraphState(
+  props: IGraphProps,
+  state: IGraphState
+): IGraphState {
   const graphConfig = { ...DEFAULT_CONFIG, ...props.config };
   const { data } = props;
   _validateGraphData(data);
@@ -335,23 +359,29 @@ function initializeGraphState(props: IGraphProps, state: IGraphState): IGraphSta
   if (state?.nodes) {
     graph = {
       nodes: data.nodes.map(n =>
-        state.nodes[n.id] ? { ...n, ...pick(state.nodes[n.id], NODE_PROPS_WHITELIST) } : { ...n }
+        state.nodes[n.id]
+          ? { ...n, ...pick(state.nodes[n.id], NODE_PROPS_WHITELIST) }
+          : { ...n }
       ),
       links: data.links.map((l, index) =>
         _mergeDataLinkWithD3Link(l, index, state && state.d3Links)
-      ),
+      )
     };
   } else {
     graph = {
       nodes: data.nodes.map(n => ({ ...n })),
-      links: data.links.map(l => ({ ...l })),
+      links: data.links.map(l => ({ ...l }))
     };
   }
 
   const links = _initializeLinks(graph.links); // matrix of graph connections
   const nodes = _initializeNodes(graph.nodes);
   const { nodes: d3Nodes, links: d3Links } = graph;
-  const simulation = _createForceSimulation(graphConfig.width, graphConfig.height, graphConfig.d3.gravity);
+  const simulation = _createForceSimulation(
+    graphConfig.width,
+    graphConfig.height,
+    graphConfig.d3.gravity
+  );
   const { minZoom, maxZoom, focusZoom } = graphConfig;
 
   if (focusZoom > maxZoom) {
@@ -367,46 +397,11 @@ function initializeGraphState(props: IGraphProps, state: IGraphState): IGraphSta
     d3Links,
     nodes,
     d3Nodes,
-    highlightedNode: "",
     simulation,
     newGraphElements: false,
     configUpdated: false,
     transform: 1,
-    draggedNode: null,
-  };
-}
-
-/**
- * This function updates the highlighted value for a given node and also updates highlight props.
- * @param {Object.<string, Object>} nodes - an object containing all nodes mapped by their id.
- * @param {Object.<string, Object>} links - an object containing a matrix of connections of the graph.
- * @param {Object} config - an object containing rd3g consumer defined configurations {@link #config config} for the graph.
- * @param {string} id - identifier of node to update.
- * @param {string} value - new highlight value for given node.
- * @returns {Object} returns an object containing the updated nodes
- * and the id of the highlighted node.
- * @memberof Graph/helper
- */
-function updateNodeHighlightedValue(nodes, links, config, id, value = false) {
-  const highlightedNode = value ? id : "";
-  const node = { ...nodes[id], highlighted: value };
-
-  let updatedNodes = { ...nodes, [id]: node };
-
-  // when highlightDegree is 0 we want only to highlight selected node
-  if (links[id] && config.highlightDegree !== 0) {
-    updatedNodes = Object.keys(links[id]).reduce((acc, linkId) => {
-      const updatedNode = { ...updatedNodes[linkId], highlighted: value };
-
-      acc[linkId] = updatedNode;
-
-      return acc;
-    }, updatedNodes);
-  }
-
-  return {
-    nodes: updatedNodes,
-    highlightedNode,
+    draggedNode: null
   };
 }
 
@@ -435,7 +430,11 @@ function normalize(vector) {
  * @returns {Object} new nodes coordinates
  * @memberof Graph/helper
  */
-function getNormalizedNodeCoordinates({ source = {} as any, target = {} as any }, nodes, config) {
+function getNormalizedNodeCoordinates(
+  { source = {} as any, target = {} as any },
+  nodes,
+  config
+) {
   if (config.node?.viewGenerator) {
     return { source, target };
   }
@@ -454,8 +453,10 @@ function getNormalizedNodeCoordinates({ source = {} as any, target = {} as any }
       const targetNodeRadius = nodes?.[targetId]?.radius;
 
       // cause this is a circle and A = pi * r^2
-      const sourceRadius = sourceNodeRadius || Math.sqrt(sourceNodeSize / Math.PI);
-      const targetRadius = targetNodeRadius || Math.sqrt(targetNodeSize / Math.PI);
+      const sourceRadius =
+        sourceNodeRadius || Math.sqrt(sourceNodeSize / Math.PI);
+      const targetRadius =
+        targetNodeRadius || Math.sqrt(targetNodeSize / Math.PI);
 
       // points from the source, we move them not to begin in the circle but outside
       x1 += sourceRadius * directionVector.x;
@@ -476,6 +477,5 @@ export {
   getCenterAndZoomTransformation,
   getId,
   initializeGraphState,
-  updateNodeHighlightedValue,
-  getNormalizedNodeCoordinates,
+  getNormalizedNodeCoordinates
 };
