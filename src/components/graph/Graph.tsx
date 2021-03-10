@@ -8,7 +8,7 @@ import {
   event as d3Event
 } from "d3-selection";
 import { zoom as d3Zoom } from "d3-zoom";
-import { debounce } from "lodash";
+import { clamp, debounce } from "lodash";
 
 import CONST from "./graph.const";
 import { DEFAULT_CONFIG } from "./graph.config";
@@ -64,10 +64,6 @@ import { IGraphProps, IGraphState } from "./Graph.types";
  *      window.alert('Clicked node ${nodeId}');
  * };
  *
- * const onDoubleClickNode = function(nodeId) {
- *      window.alert('Double clicked node ${nodeId}');
- * };
- *
  * const onRightClickNode = function(event, nodeId) {
  *      window.alert('Right clicked node ${nodeId}');
  * };
@@ -114,7 +110,6 @@ import { IGraphProps, IGraphState } from "./Graph.types";
  *      config={myConfig}
  *      onClickGraph={onClickGraph}
  *      onClickNode={onClickNode}
- *      onDoubleClickNode={onDoubleClickNode}
  *      onRightClickNode={onRightClickNode}
  *      onClickLink={onClickLink}
  *      onRightClickLink={onRightClickLink}
@@ -128,8 +123,6 @@ export class Graph extends React.Component<IGraphProps, IGraphState> {
   focusAnimationTimeout;
   isDraggingNode;
   debouncedOnZoomChange;
-  nodeClickTimer;
-  onDoubleClickNode;
 
   /**
    * Obtain a set of properties which will be used to perform the focus and zoom animation if
@@ -254,8 +247,8 @@ export class Graph extends React.Component<IGraphProps, IGraphState> {
       const top = adjustSize;
       const bottom = height - adjustSize;
 
-      draggedNode.x = this._clamp(draggedNode.x, left, right);
-      draggedNode.y = this._clamp(draggedNode.y, top, bottom);
+      draggedNode.x = clamp(draggedNode.x, left, right);
+      draggedNode.y = clamp(draggedNode.y, top, bottom);
 
       // set nodes fixing coords fx and fy
       draggedNode["fx"] = draggedNode.x;
@@ -263,12 +256,6 @@ export class Graph extends React.Component<IGraphProps, IGraphState> {
 
       this._tick({ draggedNode });
     }
-  };
-
-  _clamp = (value, low, high) => {
-    if (value < low) return low;
-    if (value > high) return high;
-    return value;
   };
 
   /**
@@ -291,8 +278,7 @@ export class Graph extends React.Component<IGraphProps, IGraphState> {
    * @param {Function} [cb] - optional callback to fed in to {@link setState()|https://reactjs.org/docs/react-component.html#setstate}.
    * @returns {undefined}
    */
-  _tick = (state = {}, cb?) =>
-    cb ? this.setState(state, cb) : this.setState(state);
+  _tick = (state = {}, cb?) => this.setState(state, cb);
 
   /**
    * Configures zoom upon graph with default or user provided values.<br/>
@@ -361,29 +347,6 @@ export class Graph extends React.Component<IGraphProps, IGraphState> {
     }
   };
 
-  /**
-   * Collapses the nodes, then checks if the click is doubled and calls the callback passed to the component.
-   * @param  {string} clickedNodeId - The id of the node where the click was performed.
-   * @returns {undefined}
-   */
-  onClickNode = clickedNodeId => {
-    if (!this.nodeClickTimer) {
-      this.nodeClickTimer = setTimeout(() => {
-        this.props.onClickNode && this.props.onClickNode(clickedNodeId);
-        this.nodeClickTimer = null;
-      }, CONST.TTL_DOUBLE_CLICK_IN_MS);
-    } else {
-      this.props.onDoubleClickNode &&
-        this.props.onDoubleClickNode(clickedNodeId);
-      this.nodeClickTimer = clearTimeout(this.nodeClickTimer);
-    }
-  };
-
-  /**
-   * Handles mouse over node event.
-   * @param  {string} id - id of the node that participates in the event.
-   * @returns {undefined}
-   */
   onMouseOverNode = id => {
     if (this.isDraggingNode) {
       return;
@@ -392,11 +355,6 @@ export class Graph extends React.Component<IGraphProps, IGraphState> {
     this.props.onMouseOverNode && this.props.onMouseOverNode(id);
   };
 
-  /**
-   * Handles mouse out node event.
-   * @param  {string} id - id of the node that participates in the event.
-   * @returns {undefined}
-   */
   onMouseOutNode = id => {
     if (this.isDraggingNode) {
       return;
@@ -406,42 +364,12 @@ export class Graph extends React.Component<IGraphProps, IGraphState> {
   };
 
   /**
-   * Handles mouse over link event.
-   * @param  {string} source - id of the source node that participates in the event.
-   * @param  {string} target - id of the target node that participates in the event.
-   * @returns {undefined}
-   */
-  onMouseOverLink = (source, target) => {
-    this.props.onMouseOverLink?.(source, target);
-  };
-
-  /**
-   * Handles mouse out link event.
-   * @param  {string} source - id of the source node that participates in the event.
-   * @param  {string} target - id of the target node that participates in the event.
-   * @returns {undefined}
-   */
-  onMouseOutLink = (source, target) => {
-    this.props.onMouseOutLink?.(source, target);
-  };
-
-  onKeyDownLink = (event, source, target) => {
-    this.props.onKeyDownLink && this.props.onKeyDownLink(event, source, target);
-  };
-
-  /**
    * Handles node position change.
    * @param {Object} node - an object holding information about the dragged node.
    * @returns {undefined}
    */
   onNodePositionChange = node => {
-    if (!this.props.onNodePositionChange) {
-      return;
-    }
-
-    const { id, x, y } = node;
-
-    this.props.onNodePositionChange(id, x, y);
+    this.props.onNodePositionChange?.(node.id, node.x, node.y);
   };
 
   /**
@@ -492,7 +420,6 @@ export class Graph extends React.Component<IGraphProps, IGraphState> {
     }
 
     this.focusAnimationTimeout = null;
-    this.nodeClickTimer = null;
     this.isDraggingNode = false;
     this.state = initializeGraphState(this.props, this.state);
     this.debouncedOnZoomChange = this.props.onZoomChange
@@ -608,11 +535,6 @@ export class Graph extends React.Component<IGraphProps, IGraphState> {
   componentWillUnmount() {
     this.pauseSimulation();
 
-    if (this.nodeClickTimer) {
-      clearTimeout(this.nodeClickTimer);
-      this.nodeClickTimer = null;
-    }
-
     if (this.focusAnimationTimeout) {
       clearTimeout(this.focusAnimationTimeout);
       this.focusAnimationTimeout = null;
@@ -623,8 +545,7 @@ export class Graph extends React.Component<IGraphProps, IGraphState> {
     const elements = renderWithBFS(
       this.state.nodes,
       {
-        onClickNode: this.onClickNode,
-        onDoubleClickNode: this.onDoubleClickNode,
+        onClickNode: this.props.onClickNode,
         onRightClickNode: this.props.onRightClickNode,
         onMouseOverNode: this.onMouseOverNode,
         onMouseOut: this.onMouseOutNode
@@ -636,9 +557,9 @@ export class Graph extends React.Component<IGraphProps, IGraphState> {
       {
         onClickLink: this.props.onClickLink,
         onRightClickLink: this.props.onRightClickLink,
-        onMouseOverLink: this.onMouseOverLink,
-        onMouseOutLink: this.onMouseOutLink,
-        onKeyDownLink: this.onKeyDownLink,
+        onMouseOverLink: this.props.onMouseOverLink,
+        onMouseOutLink: this.props.onMouseOutLink,
+        onKeyDownLink: this.props.onKeyDownLink,
         getLinkAriaLabel: this.props.getLinkAriaLabel, // (source, target) => ariaLabel
         linkStrokeDashArray: this.props.linkStrokeDashArray
       }

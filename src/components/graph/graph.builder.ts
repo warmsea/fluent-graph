@@ -9,17 +9,6 @@ import { buildLinkPathDefinition } from "../link/link.helper";
 import { getNormalizedNodeCoordinates } from "./graph.helper";
 
 /**
- * Get the correct node opacity.
- * @param  {Object} node - the node object for whom we will generate properties.
- * @param  {Object} config - same as {@link #graphrenderer|config in renderGraph}.
- * @returns {number} the opacity value for the given node.
- * @memberof Graph/builder
- */
-function _getNodeOpacity(node, config) {
-  return node.opacity || config.node.opacity;
-}
-
-/**
  * Build some Link properties based on given parameters.
  * @param  {Object} link - the link object for which we will generate properties.
  * @param  {Object.<string, Object>} nodes - same as {@link #graphrenderer|nodes in renderGraph}.
@@ -110,7 +99,7 @@ function buildLinkProps(link, nodes, links, config, linkCallbacks, transform) {
  * @memberof Graph/builder
  */
 function buildNodeProps(node, config, nodeCallbacks: any = {}, transform) {
-  const opacity = _getNodeOpacity(node, config);
+  const opacity = node.opacity || config.node.opacity;
 
   let fill = node.color || config.node.color;
 

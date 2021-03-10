@@ -25,7 +25,7 @@ import {
   forceSimulation as d3ForceSimulation,
   forceManyBody as d3ForceManyBody
 } from "d3-force";
-import { pick, isEqual, isEmpty } from "lodash";
+import { pick, isEqual, isEmpty, clamp } from "lodash";
 
 import CONST from "./graph.const";
 import { DEFAULT_CONFIG } from "./graph.config";
@@ -110,18 +110,10 @@ function _initializeNodes(graphNodes) {
     const node = graphNodes[i];
 
     // if an fx (forced x) is given, we want to use that
-    if (Object.prototype.hasOwnProperty.call(node, "fx")) {
-      node.x = node.fx;
-    } else if (!Object.prototype.hasOwnProperty.call(node, "x")) {
-      node.x = 0;
-    }
+    node.x = node.fx ?? node.x ?? 0;
 
     // if an fy (forced y) is given, we want to use that
-    if (Object.prototype.hasOwnProperty.call(node, "fy")) {
-      node.y = node.fy;
-    } else if (!Object.prototype.hasOwnProperty.call(node, "y")) {
-      node.y = 0;
-    }
+    node.y = node.fy ?? node.y ?? 0;
 
     nodes[node.id.toString()] = node;
   }
@@ -382,13 +374,11 @@ function initializeGraphState(
     graphConfig.height,
     graphConfig.d3.gravity
   );
-  const { minZoom, maxZoom, focusZoom } = graphConfig;
-
-  if (focusZoom > maxZoom) {
-    graphConfig.focusZoom = maxZoom;
-  } else if (focusZoom < minZoom) {
-    graphConfig.focusZoom = minZoom;
-  }
+  graphConfig.focusZoom = clamp(
+    graphConfig.focusZoom,
+    graphConfig.minZoom,
+    graphConfig.maxZoom
+  );
 
   return {
     id: props.id.replace(/ /g, "_"),

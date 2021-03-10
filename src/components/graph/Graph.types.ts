@@ -69,7 +69,6 @@ export interface IGraphProps {
   onClickGraph?;
 
   onClickNode?;
-  onDoubleClickNode?;
   onRightClickNode?;
   onMouseOverNode?;
   onMouseOutNode?;
