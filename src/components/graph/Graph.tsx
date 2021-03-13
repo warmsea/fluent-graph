@@ -551,7 +551,6 @@ export class Graph extends React.Component<IGraphProps, IGraphState> {
         onMouseOut: this.onMouseOutNode
       },
       this.state.config,
-      this.state.transform,
       this.state.d3Links,
       {
         onClickLink: this.props.onClickLink,

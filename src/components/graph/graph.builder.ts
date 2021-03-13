@@ -18,7 +18,6 @@ import { ILinkProps } from "../link/Link.types";
  * @param  {Object.<string, Object>} links - same as {@link #graphrenderer|links in renderGraph}.
  * @param  {Object} config - same as {@link #graphrenderer|config in renderGraph}.
  * @param  {Function[]} linkCallbacks - same as {@link #graphrenderer|linkCallbacks in renderGraph}.
- * @param  {number} transform - value that indicates the amount of zoom transformation.
  * @returns {Object} returns an object that aggregates all props for creating respective Link component instance.
  * @memberof Graph/builder
  */
@@ -27,7 +26,6 @@ export function buildLinkProps(
   nodes,
   config,
   linkCallbacks,
-  transform,
   key
 ): ILinkProps {
   const { source, target } = link;
@@ -36,9 +34,7 @@ export function buildLinkProps(
   let x2 = nodes?.[target]?.x || 0;
   let y2 = nodes?.[target]?.y || 0;
 
-  const t = 1 / transform;
-
-  let strokeWidth = (link.strokeWidth ?? config.link.strokeWidth) * t;
+  let strokeWidth = link.strokeWidth ?? config.link.strokeWidth;
 
   const lineStyle: CSSProperties = {
     cursor: config.link.lineStyle.cursor,
@@ -48,7 +44,7 @@ export function buildLinkProps(
   };
 
   const labelStyle: CSSProperties = {
-    fontSize: (link.fontSize ?? config.link.lineStyle.fontSize) * t,
+    fontSize: link.fontSize ?? config.link.lineStyle.fontSize,
     color: link.fontColor ?? config.link.lineStyle.color,
     fontWeight: config.link.fontWeight
   };
@@ -94,17 +90,15 @@ export function buildLinkProps(
 export function buildNodeProps(
   node,
   config,
-  nodeCallbacks: any = {},
-  transform
+  nodeCallbacks: any = {}
 ): INodeProps {
   let label = node.label ?? node.id;
-  const t = 1 / transform;
   const nodeSize = node.size || config.node.size;
 
   let offset = nodeSize;
 
   const fontSize = config.node.fontSize;
-  const labelOffset = fontSize * t + offset / 100 + 1.5;
+  const labelOffset = fontSize + offset / 100 + 1.5;
 
   const nodeStyle = {
     ...node.nodeStyle,
@@ -118,7 +112,7 @@ export function buildNodeProps(
 
   return {
     id: node.id,
-    size: nodeSize * t,
+    size: nodeSize,
     cx: node?.x || "0",
     cy: node?.y || "0",
     type: node.symbolType || config.node.symbolType,

@@ -16,25 +16,16 @@ import { getId } from "./graph.helper";
  * @param {Object.<string, Object>} nodes - an object containing all nodes mapped by their id.
  * @param {Function[]} nodeCallbacks - array of callbacks for used defined event handler for node interactions.
  * @param {Object} config - an object containing rd3g consumer defined configurations {@link #config config} for the graph.
- * @param {number} transform - value that indicates the amount of zoom transformation.
  * @param {Array.<Object>} linksMatrix - array of links {@link #Link|Link}.
  * @param {Array.<Object>} links - array of links {@link #Link|Link}.
  * @param {Function[]} linkCallbacks - same as {@link #graphrenderer|linkCallbacks in renderGraph}.
  */
-function renderWithBFS(
-  nodes,
-  nodeCallbacks,
-  config,
-  transform,
-  links,
-  linkCallbacks
-) {
+function renderWithBFS(nodes, nodeCallbacks, config, links, linkCallbacks) {
   function _renderNode(nodeId) {
     const props = buildNodeProps(
       { ...nodes[nodeId], id: `${nodeId}` },
       config,
-      nodeCallbacks,
-      transform
+      nodeCallbacks
     );
 
     return <Node key={nodeId} {...props} />;
@@ -50,7 +41,6 @@ function renderWithBFS(
       nodes,
       config,
       linkCallbacks,
-      transform,
       key
     );
 
