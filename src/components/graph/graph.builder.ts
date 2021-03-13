@@ -7,6 +7,7 @@ import CONST from "./graph.const";
 
 import { buildLinkPathDefinition } from "../link/link.helper";
 import { getNormalizedNodeCoordinates } from "./graph.helper";
+import { INodeProps } from "../node/Node.types";
 
 /**
  * Build some Link properties based on given parameters.
@@ -19,7 +20,14 @@ import { getNormalizedNodeCoordinates } from "./graph.helper";
  * @returns {Object} returns an object that aggregates all props for creating respective Link component instance.
  * @memberof Graph/builder
  */
-function buildLinkProps(link, nodes, links, config, linkCallbacks, transform) {
+export function buildLinkProps(
+  link,
+  nodes,
+  links,
+  config,
+  linkCallbacks,
+  transform
+) {
   const { source, target } = link;
   let x1 = nodes?.[source]?.x || 0;
   let y1 = nodes?.[source]?.y || 0;
@@ -98,77 +106,48 @@ function buildLinkProps(link, nodes, links, config, linkCallbacks, transform) {
  * @returns {Object} returns object that contain Link props ready to be feeded to the Link component.
  * @memberof Graph/builder
  */
-function buildNodeProps(node, config, nodeCallbacks: any = {}, transform) {
-  const opacity = node.opacity || config.node.opacity;
-
-  let fill = node.color || config.node.color;
-
-  let stroke = node.strokeColor || config.node.strokeColor;
-
-  let label = node[config.node.labelProperty] || node.id;
-
-  if (typeof config.node.labelProperty === "function") {
-    label = config.node.labelProperty(node);
-  }
-
-  let labelPosition = node.labelPosition || config.node.labelPosition;
-
-  let strokeWidth = node.strokeWidth || config.node.strokeWidth;
-
+export function buildNodeProps(
+  node,
+  config,
+  nodeCallbacks: any = {},
+  transform
+): INodeProps {
+  let label = node.label ?? node.id;
   const t = 1 / transform;
   const nodeSize = node.size || config.node.size;
 
-  let offset;
-  const isSizeNumericValue = typeof nodeSize !== "object";
-
-  if (isSizeNumericValue) {
-    offset = nodeSize;
-  } else if (labelPosition === "top" || labelPosition === "bottom") {
-    offset = nodeSize.height;
-  } else {
-    offset = nodeSize.width;
-  }
+  let offset = nodeSize;
 
   const fontSize = config.node.fontSize;
-  const dx = fontSize * t + offset / 100 + 1.5;
-  const svg = node.svg || config.node.svg;
-  const fontColor = node.fontColor || config.node.fontColor;
+  const labelOffset = fontSize * t + offset / 100 + 1.5;
 
-  let renderLabel = config.node.renderLabel;
-  if (node.renderLabel !== undefined && typeof node.renderLabel === "boolean") {
-    renderLabel = node.renderLabel;
-  }
+  const nodeStyle = {
+    ...node.nodeStyle,
+    ...config.node.nodeStyle
+  };
+
+  const labelStyle = {
+    ...node.labelStyle,
+    ...config.node.labelStyle
+  };
 
   return {
-    ...node,
-    className: CONST.NODE_CLASS_NAME,
-    cursor: config.node.mouseCursor,
+    id: node.id,
+    size: nodeSize * t,
     cx: node?.x || "0",
     cy: node?.y || "0",
-    dx,
-    fill,
-    fontColor,
-    fontSize: fontSize * t,
-    fontWeight: config.node.fontWeight,
-    id: node.id,
-    label,
-    labelPosition,
-    opacity,
-    overrideGlobalViewGenerator: !node.viewGenerator && node.svg,
-    renderLabel,
-    size: isSizeNumericValue
-      ? nodeSize * t
-      : { height: nodeSize.height * t, width: nodeSize.width * t },
-    stroke,
-    strokeWidth: strokeWidth * t,
-    svg,
     type: node.symbolType || config.node.symbolType,
     viewGenerator: node.viewGenerator || config.node.viewGenerator,
+    svg: node.svg ?? config.node.svg,
+    className: CONST.NODE_CLASS_NAME,
+    nodeStyle,
+    label,
+    labelPosition: node.labelPosition ?? config.node.labelPosition,
+    labelOffset,
+    labelStyle,
     onClickNode: nodeCallbacks.onClickNode,
     onMouseOut: nodeCallbacks.onMouseOut,
     onMouseOverNode: nodeCallbacks.onMouseOverNode,
     onRightClickNode: nodeCallbacks.onRightClickNode
   };
 }
-
-export { buildLinkProps, buildNodeProps };

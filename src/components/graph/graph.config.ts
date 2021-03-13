@@ -221,21 +221,23 @@ export const DEFAULT_CONFIG: IGraphConfig = {
     disableLinkForce: false
   },
   node: {
-    color: "#d3d3d3",
-    fontColor: "black",
-    fontSize: 8,
-    fontWeight: "normal",
-    labelProperty: "id",
-    labelPosition: undefined,
-    mouseCursor: "pointer",
-    opacity: 1,
-    renderLabel: true,
     size: 200,
-    strokeColor: "none",
-    strokeWidth: 1.5,
+    viewGenerator: undefined,
     svg: "",
     symbolType: "circle",
-    viewGenerator: undefined
+    nodeStyle: {
+      cursor: "pointer",
+      fill: "#d3d3d3",
+      opacity: 1,
+      stroke: "none",
+      strokeWidth: 1.5
+    },
+    labelPosition: undefined,
+    labelStyle: {
+      color: "black",
+      fontSize: 8,
+      fontWeight: "normal"
+    }
   },
   link: {
     focusable: true,

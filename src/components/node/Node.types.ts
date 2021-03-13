@@ -1,3 +1,5 @@
+import React from "react";
+
 export type LabelPosition = "left" | "right" | "top" | "bottom" | "center";
 
 export interface ILabelPlacementProps {
@@ -13,24 +15,16 @@ export interface INodeProps {
   cx: number;
   cy: number;
   type?: string;
-  svg?: string;
   viewGenerator?: (nodeProps: INodeProps) => JSX.Element;
-  overrideGlobalViewGenerator?: boolean;
+  svg?: string;
 
   className?: string;
-  cursor?: string;
-  opacity?: number;
-  fontColor?: string;
-  fontSize?: string | number;
-  fontWeight?: string | number;
-  dx?: number;
-  labelPosition?: LabelPosition;
-  label?: string;
-  renderLabel?: boolean;
+  nodeStyle?: React.CSSProperties;
 
-  fill?: string;
-  stroke?: string;
-  strokeWidth?: string | number;
+  label?: string;
+  labelPosition?: LabelPosition;
+  labelOffset?: number;
+  labelStyle?: React.CSSProperties;
 
   onClickNode?: (
     event: React.MouseEvent<SVGPathElement, MouseEvent>,

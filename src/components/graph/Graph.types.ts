@@ -1,3 +1,5 @@
+import React from "react";
+
 /**
  * Full set of graph configuration.
  */
@@ -28,18 +30,10 @@ export interface IGraphConfigD3 {
 }
 
 export interface IGraphConfigNode {
-  color: string;
-  fontColor: string;
-  fontSize: number;
-  fontWeight: string;
+  nodeStyle: React.CSSProperties;
+  labelStyle: React.CSSProperties;
   labelPosition: string | undefined; // TODO should not allow undefined
-  labelProperty: string | Function;
-  mouseCursor: string;
-  opacity: number;
-  renderLabel: boolean;
   size: number;
-  strokeColor: string;
-  strokeWidth: number;
   svg: string;
   symbolType: string;
   viewGenerator: Function | undefined;

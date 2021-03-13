@@ -34,7 +34,7 @@ import { INodeProps } from "./Node.types";
  *     fontSize=10
  *     fontColor='black'
  *     fontWeight='normal'
- *     dx=90
+ *     labelOffset=90
  *     label='label text'
  *     labelPosition='top'
  *     opacity=1
@@ -73,8 +73,8 @@ export const Node: FC<INodeProps> = (props: INodeProps) => {
   );
 
   const nodeProps: SVGAttributes<SVGElement> = {
-    cursor: props.cursor,
-    opacity: props.opacity,
+    style: props.nodeStyle,
+
     onClick: handleOnClickNode,
     onContextMenu: handleOnRightClickNode,
     onMouseOut: handleOnMouseOutNode,
@@ -82,19 +82,16 @@ export const Node: FC<INodeProps> = (props: INodeProps) => {
   };
 
   const textProps: SVGAttributes<SVGTextElement> = {
-    ...getLabelPlacementProps(props.dx, props.labelPosition),
-    fill: props.fontColor,
-    fontSize: props.fontSize,
-    fontWeight: props.fontWeight,
-    opacity: props.opacity
+    ...getLabelPlacementProps(props.labelOffset, props.labelPosition),
+    style: props.labelStyle
   };
 
   let size = props.size;
 
   let gtx = props.cx,
     gty = props.cy,
-    label,
-    node;
+    labelElement: JSX.Element,
+    node: JSX.Element;
 
   if (props.svg || props.viewGenerator) {
     const { size } = props;
@@ -102,14 +99,14 @@ export const Node: FC<INodeProps> = (props: INodeProps) => {
     const ty = size / 2;
     const transform = `translate(${tx},${ty})`;
 
-    label = (
+    labelElement = (
       <text {...textProps} transform={transform}>
         {props.label}
       </text>
     );
 
     // By default, if a view generator is set, it takes precedence over any svg image url
-    if (props.viewGenerator && !props.overrideGlobalViewGenerator) {
+    if (props.viewGenerator) {
       node = (
         <svg {...nodeProps} width={size} height={size}>
           <foreignObject x="0" y="0" width="100%" height="100%">
@@ -126,6 +123,7 @@ export const Node: FC<INodeProps> = (props: INodeProps) => {
         </svg>
       );
     } else {
+      // props.svg
       node = (
         <image {...nodeProps} href={props.svg} width={size} height={size} />
       );
@@ -136,11 +134,9 @@ export const Node: FC<INodeProps> = (props: INodeProps) => {
     gty -= ty;
   } else {
     nodeProps.d = buildSvgSymbol(size, props.type);
-    nodeProps.fill = props.fill;
-    nodeProps.stroke = props.stroke;
-    nodeProps.strokeWidth = props.strokeWidth;
+    nodeProps.style = { ...props.nodeStyle };
 
-    label = <text {...textProps}>{props.label}</text>;
+    labelElement = <text {...textProps}>{props.label}</text>;
     node = <path tabIndex={0} {...nodeProps} />;
   }
 
@@ -155,7 +151,7 @@ export const Node: FC<INodeProps> = (props: INodeProps) => {
   return (
     <g {...gProps}>
       {node}
-      {props.renderLabel && label}
+      {props.label && labelElement}
     </g>
   );
 };
