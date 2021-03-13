@@ -552,7 +552,6 @@ export class Graph extends React.Component<IGraphProps, IGraphState> {
       },
       this.state.config,
       this.state.transform,
-      this.state.links,
       this.state.d3Links,
       {
         onClickLink: this.props.onClickLink,

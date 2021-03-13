@@ -1,4 +1,4 @@
-import React from "react";
+import { CSSProperties } from "react";
 
 /**
  * Full set of graph configuration.
@@ -30,8 +30,8 @@ export interface IGraphConfigD3 {
 }
 
 export interface IGraphConfigNode {
-  nodeStyle: React.CSSProperties;
-  labelStyle: React.CSSProperties;
+  nodeStyle: CSSProperties;
+  labelStyle: CSSProperties;
   labelPosition: string | undefined; // TODO should not allow undefined
   size: number;
   svg: string;
@@ -40,20 +40,9 @@ export interface IGraphConfigNode {
 }
 
 export interface IGraphConfigLink {
-  color: string;
   focusable: boolean;
-  fontColor: string;
-  fontSize: number;
-  fontWeight: string;
-  labelProperty: string | Function;
-  mouseCursor: string;
-  opacity: number;
-  renderLabel: boolean;
-  semanticStrokeWidth: boolean; // TODO remove it?
-  strokeWidth: number;
-  strokeDasharray: number | undefined;
-  strokeDashoffset: number | undefined;
-  strokeLinecap: string;
+  lineStyle: CSSProperties;
+  labelStyle: CSSProperties;
 }
 
 export interface IGraphProps {

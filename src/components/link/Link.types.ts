@@ -1,21 +1,17 @@
+import React, { CSSProperties } from "react";
+
 export interface ILinkProps {
   id: string;
   source: string;
   target: string;
-  strokeWidth: number;
   d?: string;
   className?: string;
-  mouseCursor?: string;
-  stroke?: string;
-  opacity?: string | number;
-  linkStrokeDashArray?: (source: string, target: string) => string;
+  lineStyle?: CSSProperties;
 
   linkFocusable?: boolean;
   label?: string;
-  fontColor?: string;
-  fontSize?: string | number;
-  fontWeight?: string | number;
-  getLinkAriaLabel?: (source: string, target: string) => string;
+  labelStyle?: CSSProperties;
+  getLinkAriaLabel?: (source: string, target: string) => string; // TODO want a better way
 
   onClickLink?: (
     event: React.MouseEvent<SVGPathElement, MouseEvent>,

@@ -1,3 +1,4 @@
+import { isNumber } from "lodash";
 import React, { CSSProperties, FC, SVGAttributes, useCallback } from "react";
 
 import { ILinkProps } from "./Link.types";
@@ -62,18 +63,14 @@ export const Link: FC<ILinkProps> = (props: ILinkProps) => {
   );
 
   const lineStyle: CSSProperties = {
-    cursor: props.mouseCursor,
-    stroke: props.stroke,
-    strokeWidth: props.strokeWidth,
-    opacity: props.opacity,
-    fill: "none"
+    fill: "none", // TODO do we need it?,
+    ...props.lineStyle
   };
 
   const lineProps: SVGAttributes<SVGPathElement> = {
     className: props.className,
     d: props.d,
     style: lineStyle,
-    strokeDasharray: props.linkStrokeDashArray?.(props.source, props.target),
 
     onClick: handleOnClickLink,
     onContextMenu: handleOnRightClickLink,
@@ -85,27 +82,28 @@ export const Link: FC<ILinkProps> = (props: ILinkProps) => {
     "aria-label": props.getLinkAriaLabel?.(props.source, props.target)
   };
 
+  const lableStyle: CSSProperties = {
+    textAnchor: "middle",
+    ...props.labelStyle
+  };
+
   const { label, id } = props;
   const textProps: SVGAttributes<SVGTextElement> = {
     dy: -1,
-    style: {
-      fill: props.fontColor,
-      fontSize: props.fontSize,
-      fontWeight: props.fontWeight as any,
-      textAnchor: "middle"
-    }
+    style: lableStyle
   };
 
   const STROKE_WIDTH_LIMIT: number = 12;
 
   const needClickHelperPath: boolean =
-    !!props.onClickLink && props.strokeWidth < STROKE_WIDTH_LIMIT;
+    !!props.onClickLink &&
+    isNumber(lineStyle.strokeWidth) &&
+    lineStyle.strokeWidth < STROKE_WIDTH_LIMIT;
 
   const clickHelperLineStyle: CSSProperties = {
-    cursor: props.mouseCursor,
-    strokeWidth: STROKE_WIDTH_LIMIT,
-    stroke: props.stroke,
-    opacity: 0
+    ...props.lineStyle,
+    opacity: 0,
+    strokeWidth: STROKE_WIDTH_LIMIT
   };
   const clickHelperLineProps: SVGAttributes<SVGPathElement> = {
     className: props.className,

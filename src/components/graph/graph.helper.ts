@@ -25,7 +25,7 @@ import {
   forceSimulation as d3ForceSimulation,
   forceManyBody as d3ForceManyBody
 } from "d3-force";
-import { pick, isEqual, isEmpty, clamp } from "lodash";
+import { pick, isEqual, isEmpty, clamp, merge } from "lodash";
 
 import CONST from "./graph.const";
 import { DEFAULT_CONFIG } from "./graph.config";
@@ -342,7 +342,7 @@ function initializeGraphState(
   props: IGraphProps,
   state: IGraphState
 ): IGraphState {
-  const graphConfig = { ...DEFAULT_CONFIG, ...props.config };
+  const graphConfig = merge({}, DEFAULT_CONFIG, props.config);
   const { data } = props;
   _validateGraphData(data);
 

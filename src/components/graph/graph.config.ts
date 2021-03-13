@@ -241,18 +241,17 @@ export const DEFAULT_CONFIG: IGraphConfig = {
   },
   link: {
     focusable: true,
-    color: "#d3d3d3",
-    fontColor: "black",
-    fontSize: 8,
-    fontWeight: "normal",
-    labelProperty: "label",
-    mouseCursor: "pointer",
-    opacity: 1,
-    renderLabel: false,
-    semanticStrokeWidth: false,
-    strokeWidth: 1.5,
-    strokeDasharray: undefined,
-    strokeDashoffset: undefined,
-    strokeLinecap: "butt"
+    lineStyle: {
+      cursor: "pointer",
+      opacity: 1,
+      stroke: "#d3d3d3",
+      strokeDasharray: undefined,
+      strokeWidth: 1.5
+    },
+    labelStyle: {
+      color: "black",
+      fontSize: 8,
+      fontWeight: "normal"
+    }
   }
 };

@@ -26,7 +26,6 @@ function renderWithBFS(
   nodeCallbacks,
   config,
   transform,
-  linksMatrix,
   links,
   linkCallbacks
 ) {
@@ -49,13 +48,13 @@ function renderWithBFS(
     const props = buildLinkProps(
       { ...link, source: `${sourceId}`, target: `${targetId}` },
       nodes,
-      linksMatrix,
       config,
       linkCallbacks,
-      transform
+      transform,
+      key
     );
 
-    return <Link key={key} id={key} {...props} />;
+    return <Link key={key} {...props} />;
   }
 
   const visitedNodeIds: string[] = [];

@@ -8,6 +8,8 @@ import CONST from "./graph.const";
 import { buildLinkPathDefinition } from "../link/link.helper";
 import { getNormalizedNodeCoordinates } from "./graph.helper";
 import { INodeProps } from "../node/Node.types";
+import { CSSProperties } from "react";
+import { ILinkProps } from "../link/Link.types";
 
 /**
  * Build some Link properties based on given parameters.
@@ -23,45 +25,33 @@ import { INodeProps } from "../node/Node.types";
 export function buildLinkProps(
   link,
   nodes,
-  links,
   config,
   linkCallbacks,
-  transform
-) {
+  transform,
+  key
+): ILinkProps {
   const { source, target } = link;
   let x1 = nodes?.[source]?.x || 0;
   let y1 = nodes?.[source]?.y || 0;
   let x2 = nodes?.[target]?.x || 0;
   let y2 = nodes?.[target]?.y || 0;
 
-  let opacity = link.opacity || config.link.opacity;
-
-  let stroke = link.color || config.link.color;
-
-  let strokeWidth =
-    (link.strokeWidth || config.link.strokeWidth) * (1 / transform);
-
-  if (config.link.semanticStrokeWidth) {
-    const linkValue = links[source][target] || links[target][source] || 1;
-
-    strokeWidth += (linkValue * strokeWidth) / 10;
-  }
-
   const t = 1 / transform;
 
-  let fontSize, fontColor, fontWeight, label;
+  let strokeWidth = (link.strokeWidth ?? config.link.strokeWidth) * t;
 
-  if (config.link.renderLabel) {
-    if (typeof config.link.labelProperty === "function") {
-      label = config.link.labelProperty(link);
-    } else {
-      label = link[config.link.labelProperty];
-    }
+  const lineStyle: CSSProperties = {
+    cursor: config.link.lineStyle.cursor,
+    opacity: link.opacity ?? config.link.lineStyle.opacity,
+    stroke: link.color ?? config.link.lineStyle.stroke,
+    strokeWidth
+  };
 
-    fontSize = link.fontSize || config.link.fontSize;
-    fontColor = link.fontColor || config.link.fontColor;
-    fontWeight = config.link.fontWeight;
-  }
+  const labelStyle: CSSProperties = {
+    fontSize: (link.fontSize ?? config.link.lineStyle.fontSize) * t,
+    color: link.fontColor ?? config.link.lineStyle.color,
+    fontWeight: config.link.fontWeight
+  };
 
   const normalizedNodeCoordinates = getNormalizedNodeCoordinates(
     {
@@ -74,24 +64,19 @@ export function buildLinkProps(
   const d = buildLinkPathDefinition(normalizedNodeCoordinates);
 
   return {
+    id: key,
     className: CONST.LINK_CLASS_NAME,
     d,
-    fontColor,
-    fontSize: ((fontSize as unknown) as number) * t,
-    fontWeight,
-    label,
-    mouseCursor: config.link.mouseCursor,
-    opacity,
     source,
-    stroke,
-    strokeWidth,
     target,
+    lineStyle,
+    label: link.label,
+    labelStyle,
     onClickLink: linkCallbacks.onClickLink,
     onMouseOutLink: linkCallbacks.onMouseOutLink,
     onMouseOverLink: linkCallbacks.onMouseOverLink,
     onRightClickLink: linkCallbacks.onRightClickLink,
     onKeyDownLink: linkCallbacks.onKeyDownLink,
-    linkStrokeDashArray: linkCallbacks.linkStrokeDashArray,
     getLinkAriaLabel: linkCallbacks.getLinkAriaLabel,
     linkFocusable: config.link.linkFocusable
   };
