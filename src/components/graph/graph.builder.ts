@@ -5,8 +5,6 @@
  */
 import CONST from "./graph.const";
 
-import { buildLinkPathDefinition } from "../link/link.helper";
-import { getNormalizedNodeCoordinates } from "./graph.helper";
 import { INodeProps } from "../node/Node.types";
 import { CSSProperties } from "react";
 import { ILinkProps } from "../link/Link.types";
@@ -49,20 +47,11 @@ export function buildLinkProps(
     fontWeight: config.link.fontWeight
   };
 
-  const normalizedNodeCoordinates = getNormalizedNodeCoordinates(
-    {
-      source: { x: x1, y: y1, id: source },
-      target: { x: x2, y: y2, id: target }
-    },
-    nodes,
-    config
-  );
-  const d = buildLinkPathDefinition(normalizedNodeCoordinates);
-
   return {
     id: key,
     className: CONST.LINK_CLASS_NAME,
-    d,
+    start: { x: x1, y: y1 },
+    end: { x: x2, y: y2 },
     source,
     target,
     lineStyle,
@@ -71,7 +60,6 @@ export function buildLinkProps(
     onClickLink: linkCallbacks.onClickLink,
     onMouseOutLink: linkCallbacks.onMouseOutLink,
     onMouseOverLink: linkCallbacks.onMouseOverLink,
-    onRightClickLink: linkCallbacks.onRightClickLink,
     onKeyDownLink: linkCallbacks.onKeyDownLink,
     getLinkAriaLabel: linkCallbacks.getLinkAriaLabel,
     linkFocusable: config.link.linkFocusable

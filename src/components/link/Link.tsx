@@ -1,50 +1,23 @@
-import { isNumber } from "lodash";
+import { isNumber, merge } from "lodash";
 import React, { CSSProperties, FC, SVGAttributes, useCallback } from "react";
 
 import { ILinkProps } from "./Link.types";
 
-/**
- * Link component is responsible for encapsulating link render.
- * @example
- * const onClickLink = function(source, target) {
- *      window.alert(`Clicked link between ${source} and ${target}`);
- * };
- *
- * const onRightClickLink = function(source, target) {
- *      window.alert(`Right clicked link between ${source} and ${target}`);
- * };
- *
- * const onMouseOverLink = function(source, target) {
- *      window.alert(`Mouse over in link between ${source} and ${target}`);
- * };
- *
- * const onMouseOutLink = function(source, target) {
- *      window.alert(`Mouse out link between ${source} and ${target}`);
- * };
- *
- * <Link
- *     d="M1..."
- *     source="idSourceNode"
- *     target="idTargetNode"
- *     strokeWidth=1.5
- *     stroke="green"
- *     className="link"
- *     opacity=1
- *     mouseCursor="pointer"
- *     onClickLink={onClickLink}
- *     onRightClickLink={onRightClickLink}
- *     onMouseOverLink={onMouseOverLink}
- *     onMouseOutLink={onMouseOutLink} />
- */
+export const CLICK_HELPER_THRESHOLD: number = 12;
+
+export const DEFAULT_LINK_PROPS: Partial<ILinkProps> = {
+  lineStyle: {
+    stroke: "gray",
+    strokeWidth: 1.5
+  }
+};
+
 export const Link: FC<ILinkProps> = (props: ILinkProps) => {
+  props = merge({}, DEFAULT_LINK_PROPS, props);
+
   const handleOnClickLink = useCallback(
     event => props.onClickLink?.(event, props.source, props.target),
     [props.onClickLink, props.source, props.target]
-  );
-
-  const handleOnRightClickLink = useCallback(
-    event => props.onRightClickLink?.(event, props.source, props.target),
-    [props.onRightClickLink, props.source, props.target]
   );
 
   const handleOnMouseOverLink = useCallback(
@@ -62,18 +35,14 @@ export const Link: FC<ILinkProps> = (props: ILinkProps) => {
     [props.onKeyDownLink, props.source, props.target]
   );
 
-  const lineStyle: CSSProperties = {
-    fill: "none", // TODO do we need it?,
-    ...props.lineStyle
-  };
+  const d: string = `M${props.start.x},${props.start.y}L${props.end.x},${props.end.y}Z`;
 
   const lineProps: SVGAttributes<SVGPathElement> = {
+    d: d,
     className: props.className,
-    d: props.d,
-    style: lineStyle,
+    style: props.lineStyle,
 
     onClick: handleOnClickLink,
-    onContextMenu: handleOnRightClickLink,
     onMouseOut: handleOnMouseOutLink,
     onMouseOver: handleOnMouseOverLink,
     onKeyDown: handleOnKeyDownLink,
@@ -82,8 +51,24 @@ export const Link: FC<ILinkProps> = (props: ILinkProps) => {
     "aria-label": props.getLinkAriaLabel?.(props.source, props.target)
   };
 
+  const strokeWidth: string | number | undefined = props.lineStyle?.strokeWidth;
+  const needClickHelper: boolean =
+    !!props.onClickLink &&
+    (!isNumber(strokeWidth) || strokeWidth < CLICK_HELPER_THRESHOLD);
+
+  const clickHelperLineStyle: CSSProperties = {
+    ...props.lineStyle,
+    opacity: 0,
+    strokeWidth: CLICK_HELPER_THRESHOLD
+  };
+  const clickHelperLineProps: SVGAttributes<SVGPathElement> = {
+    d: d,
+    className: props.className,
+    style: clickHelperLineStyle,
+    onClick: handleOnClickLink
+  };
+
   const lableStyle: CSSProperties = {
-    textAnchor: "middle",
     ...props.labelStyle
   };
 
@@ -93,35 +78,15 @@ export const Link: FC<ILinkProps> = (props: ILinkProps) => {
     style: lableStyle
   };
 
-  const STROKE_WIDTH_LIMIT: number = 12;
-
-  const needClickHelperPath: boolean =
-    !!props.onClickLink &&
-    isNumber(lineStyle.strokeWidth) &&
-    lineStyle.strokeWidth < STROKE_WIDTH_LIMIT;
-
-  const clickHelperLineStyle: CSSProperties = {
-    ...props.lineStyle,
-    opacity: 0,
-    strokeWidth: STROKE_WIDTH_LIMIT
-  };
-  const clickHelperLineProps: SVGAttributes<SVGPathElement> = {
-    className: props.className,
-    style: clickHelperLineStyle,
-    d: props.d,
-    onClick: handleOnClickLink
-  };
   return (
     <g>
       <path {...lineProps} id={id} />
-      {needClickHelperPath && (
+      {needClickHelper && (
         <path {...clickHelperLineProps} id={`clickHelper-${id}`} />
       )}
       {label && (
         <text {...textProps}>
-          <textPath href={`#${id}`} startOffset="50%">
-            {label}
-          </textPath>
+          <textPath href={`#${id}`}>{label}</textPath>
         </text>
       )}
     </g>

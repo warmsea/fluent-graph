@@ -1,9 +1,11 @@
 import React, { CSSProperties } from "react";
 
-export interface ILinkProps {
+export interface ILinkProps extends ILinkEventHandlers {
   id: string;
-  source: string;
-  target: string;
+  start: IPoint;
+  end: IPoint;
+  source: string; // TODO put into data:any?
+  target: string; // TODO put into data:any?
   d?: string;
   className?: string;
   lineStyle?: CSSProperties;
@@ -12,13 +14,10 @@ export interface ILinkProps {
   label?: string;
   labelStyle?: CSSProperties;
   getLinkAriaLabel?: (source: string, target: string) => string; // TODO want a better way
+}
 
+export interface ILinkEventHandlers {
   onClickLink?: (
-    event: React.MouseEvent<SVGPathElement, MouseEvent>,
-    source: string,
-    target: string
-  ) => void;
-  onRightClickLink?: (
     event: React.MouseEvent<SVGPathElement, MouseEvent>,
     source: string,
     target: string
@@ -38,4 +37,9 @@ export interface ILinkProps {
     source: string,
     target: string
   ) => void;
+}
+
+export interface IPoint {
+  x: number;
+  y: number;
 }
