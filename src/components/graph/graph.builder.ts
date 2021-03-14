@@ -32,19 +32,14 @@ export function buildLinkProps(
   let x2 = nodes?.[target]?.x || 0;
   let y2 = nodes?.[target]?.y || 0;
 
-  let strokeWidth = link.strokeWidth ?? config.link.strokeWidth;
-
   const lineStyle: CSSProperties = {
-    cursor: config.link.lineStyle.cursor,
-    opacity: link.opacity ?? config.link.lineStyle.opacity,
-    stroke: link.color ?? config.link.lineStyle.stroke,
-    strokeWidth
+    ...link.lineStyle,
+    ...config.link.lineStyle,
   };
 
   const labelStyle: CSSProperties = {
-    fontSize: link.fontSize ?? config.link.lineStyle.fontSize,
-    color: link.fontColor ?? config.link.lineStyle.color,
-    fontWeight: config.link.fontWeight
+    ...link.labelStyle,
+    ...config.link.labelStyle
   };
 
   return {

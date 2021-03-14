@@ -8,11 +8,10 @@ import {
   event as d3Event
 } from "d3-selection";
 import { zoom as d3Zoom } from "d3-zoom";
-import { clamp, debounce } from "lodash";
+import { clamp, debounce, merge } from "lodash";
 
 import CONST from "./graph.const";
 import { DEFAULT_CONFIG } from "./graph.config";
-import ERRORS from "../../err";
 
 import {
   checkForGraphConfigChanges,
@@ -21,7 +20,6 @@ import {
   initializeGraphState
 } from "./graph.helper";
 import { renderWithBFS } from "./graph.renderer";
-import { throwErr } from "../../utils";
 import { IGraphProps, IGraphState } from "./Graph.types";
 
 /**
@@ -412,21 +410,6 @@ export class Graph extends React.Component<IGraphProps, IGraphState> {
   restartSimulation = () =>
     !this.state.config.staticGraph && this.state.simulation.restart();
 
-  constructor(props) {
-    super(props);
-
-    if (!this.props.id) {
-      throwErr(this.constructor.name, ERRORS.GRAPH_NO_ID_PROP);
-    }
-
-    this.focusAnimationTimeout = null;
-    this.isDraggingNode = false;
-    this.state = initializeGraphState(this.props, this.state);
-    this.debouncedOnZoomChange = this.props.onZoomChange
-      ? debounce(this.props.onZoomChange, 100)
-      : null;
-  }
-
   /**
    * @deprecated
    * `componentWillReceiveProps` has a replacement method in react v16.3 onwards.
@@ -539,6 +522,16 @@ export class Graph extends React.Component<IGraphProps, IGraphState> {
       clearTimeout(this.focusAnimationTimeout);
       this.focusAnimationTimeout = null;
     }
+  }
+
+  constructor(props) {
+    super(props);
+    this.focusAnimationTimeout = null;
+    this.isDraggingNode = false;
+    this.state = initializeGraphState(this.props, this.state);
+    this.debouncedOnZoomChange = this.props.onZoomChange
+      ? debounce(this.props.onZoomChange, 100)
+      : null;
   }
 
   render() {

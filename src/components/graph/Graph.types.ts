@@ -91,7 +91,7 @@ export interface IGraphPropsDataLink {
 export type IGraphPropsConfig = DeepPartial<IGraphConfig>;
 
 export interface IGraphState {
-  id: string; // TODO remove it
+  id?: string;
   config: IGraphConfig;
   links;
   d3Links;

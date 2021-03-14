@@ -381,7 +381,6 @@ function initializeGraphState(
   );
 
   return {
-    id: props.id.replace(/ /g, "_"),
     config: graphConfig,
     links,
     d3Links,

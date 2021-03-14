@@ -35,3 +35,35 @@ Basic.args = {
     }
   }
 };
+
+export const Styled: Story<ITemplateArgs> = Template.bind({});
+Styled.args = {
+  graphProps: {
+    id: "graph",
+    data: {
+      nodes: [{ id: "Fluent Graph" }, { id: "React" }, { id: "D3" }],
+      links: [
+        { source: "Fluent Graph", target: "React" },
+        { source: "Fluent Graph", target: "D3" },
+      ],
+    },
+    config: {
+      minZoom: 0.75,
+      maxZoom: 1.5,
+      node: {
+        nodeStyle: {
+          fill: "skyblue"
+        },
+        labelStyle: {
+          fill: "darkgray",
+          fontSize: 12
+        }
+      },
+      link: {
+        lineStyle: {
+          fill: "blue"
+        }
+      }
+    }
+  }
+};
