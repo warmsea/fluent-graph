@@ -5,7 +5,6 @@
  */
 import React from "react";
 
-import CONST from "./graph.const";
 import { Link } from "../link/Link";
 import { Node } from "../node/Node";
 import { buildLinkProps, buildNodeProps } from "./graph.builder";
@@ -20,19 +19,11 @@ import { getId } from "./graph.helper";
  * @param {Array.<Object>} links - array of links {@link #Link|Link}.
  * @param {Function[]} linkCallbacks - same as {@link #graphrenderer|linkCallbacks in renderGraph}.
  */
-function renderWithBFS(
-  nodes,
-  nodeCallbacks,
-  links,
-  linkCallbacks,
-  nodeConfig,
-  linkConfig
-) {
+function renderWithBFS(nodes, links, nodeConfig, linkConfig) {
   function _renderNode(nodeId) {
     const props = buildNodeProps(
       { ...nodes[nodeId], id: `${nodeId}` },
-      nodeConfig,
-      nodeCallbacks
+      nodeConfig
     );
 
     return <Node key={nodeId} {...props} />;
@@ -42,16 +33,13 @@ function renderWithBFS(
     const { source, target } = link;
     const sourceId = getId(source);
     const targetId = getId(target);
-    const key = `${sourceId}${CONST.COORDS_SEPARATOR}${targetId}`;
     const props = buildLinkProps(
       { ...link, source: `${sourceId}`, target: `${targetId}` },
       nodes,
-      linkConfig,
-      linkCallbacks,
-      key
+      linkConfig
     );
 
-    return <Link key={key} {...props} />;
+    return <Link {...props} />;
   }
 
   const visitedNodeIds: string[] = [];

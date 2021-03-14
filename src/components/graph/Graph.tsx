@@ -537,19 +537,12 @@ export class Graph extends React.Component<IGraphProps, IGraphState> {
   render() {
     const elements = renderWithBFS(
       this.state.nodes,
+      this.state.d3Links,
       {
-        onClickNode: this.props.nodeConfig?.onClickNode,
+        ...this.props.nodeConfig,
         onMouseOverNode: this.onMouseOverNode,
         onMouseOut: this.onMouseOutNode
       },
-      this.state.d3Links,
-      {
-        onClickLink: this.props.linkConfig?.onClickLink,
-        onMouseOverLink: this.props.linkConfig?.onMouseOverLink,
-        onMouseOutLink: this.props.linkConfig?.onMouseOutLink,
-        onKeyDownLink: this.props.linkConfig?.onKeyDownLink
-      },
-      this.props.nodeConfig,
       this.props.linkConfig
     );
 

@@ -6,8 +6,8 @@
 import CONST from "./graph.const";
 
 import { INodeCommonConfig, INodeProps } from "../node/Node.types";
-import { CSSProperties } from "react";
 import { ILinkCommonConfig, ILinkProps } from "../link/Link.types";
+import { merge, pick } from "lodash";
 
 /**
  * Build some Link properties based on given parameters.
@@ -22,43 +22,22 @@ import { ILinkCommonConfig, ILinkProps } from "../link/Link.types";
 export function buildLinkProps(
   link,
   nodes,
-  linkConfig: ILinkCommonConfig = {},
-  linkCallbacks,
-  key
+  linkConfig: ILinkCommonConfig = {}
 ): ILinkProps {
   const { source, target } = link;
+  const key = `${source}${CONST.COORDS_SEPARATOR}${target}`;
   let x1 = nodes?.[source]?.x || 0;
   let y1 = nodes?.[source]?.y || 0;
   let x2 = nodes?.[target]?.x || 0;
   let y2 = nodes?.[target]?.y || 0;
 
-  const lineStyle: CSSProperties = {
-    ...link.lineStyle,
-    ...linkConfig.lineStyle
-  };
-
-  const labelStyle: CSSProperties = {
-    ...link.labelStyle,
-    ...linkConfig.labelStyle
-  };
-
-  return {
+  return merge({}, linkConfig, pick(link, ["source", "target", "label"]), {
     id: key,
-    className: CONST.LINK_CLASS_NAME,
+    key: key,
     start: { x: x1, y: y1 },
     end: { x: x2, y: y2 },
-    source,
-    target,
-    lineStyle,
-    label: link.label,
-    labelStyle,
-    onClickLink: linkCallbacks.onClickLink,
-    onMouseOutLink: linkCallbacks.onMouseOutLink,
-    onMouseOverLink: linkCallbacks.onMouseOverLink,
-    onKeyDownLink: linkCallbacks.onKeyDownLink,
-    getLinkAriaLabel: linkCallbacks.getLinkAriaLabel,
-    focusable: linkConfig.focusable
-  };
+    className: CONST.LINK_CLASS_NAME
+  });
 }
 
 /**
@@ -72,34 +51,12 @@ export function buildLinkProps(
  */
 export function buildNodeProps(
   node,
-  nodeConfig: INodeCommonConfig = {},
-  nodeCallbacks: any = {}
+  nodeConfig: INodeCommonConfig = {}
 ): INodeProps {
-  let label = node.label ?? node.id;
-  const nodeSize = node.size ?? nodeConfig.size;
-
-  const nodeStyle = {
-    ...node.nodeStyle,
-    ...nodeConfig.nodeStyle
-  };
-
-  const labelStyle = {
-    ...node.labelStyle,
-    ...nodeConfig.labelStyle
-  };
-
-  return {
-    id: node.id,
-    size: nodeSize,
+  return merge({}, nodeConfig, pick(node, ["id", "size"]), {
     x: node?.x || "0",
     y: node?.y || "0",
     className: CONST.NODE_CLASS_NAME,
-    nodeStyle,
-    label,
-    labelPosition: node.labelPosition ?? nodeConfig.labelPosition,
-    labelStyle,
-    onClickNode: nodeCallbacks.onClickNode,
-    onMouseOutNode: nodeCallbacks.onMouseOut,
-    onMouseOverNode: nodeCallbacks.onMouseOverNode
-  };
+    label: node.label ?? node.id
+  });
 }
