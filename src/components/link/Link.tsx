@@ -47,7 +47,7 @@ export const Link: FC<ILinkProps> = (props: ILinkProps) => {
     onMouseOver: handleOnMouseOverLink,
     onKeyDown: handleOnKeyDownLink,
 
-    tabIndex: props.linkFocusable ? 0 : undefined,
+    tabIndex: props.focusable ? 0 : undefined,
     "aria-label": props.getLinkAriaLabel?.(props.source, props.target)
   };
 

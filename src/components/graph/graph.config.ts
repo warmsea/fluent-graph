@@ -220,25 +220,7 @@ export const DEFAULT_CONFIG: IGraphConfig = {
     linkStrength: 1,
     disableLinkForce: false
   },
-  node: {
-    size: 200,
-    viewGenerator: undefined,
-    svg: "",
-    symbolType: "circle",
-    nodeStyle: {
-      cursor: "pointer",
-      fill: "#d3d3d3",
-      opacity: 1,
-      stroke: "none",
-      strokeWidth: 1.5
-    },
-    labelPosition: undefined,
-    labelStyle: {
-      color: "black",
-      fontSize: 8,
-      fontWeight: "normal"
-    }
-  },
+  node: {},
   link: {
     focusable: true,
     lineStyle: {

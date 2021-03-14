@@ -1,19 +1,21 @@
 import React, { CSSProperties } from "react";
 
-export interface ILinkProps extends ILinkEventHandlers {
+export interface ILinkProps extends ILinkCommonConfig {
   id: string;
   start: IPoint;
   end: IPoint;
   source: string; // TODO put into data:any?
   target: string; // TODO put into data:any?
-  d?: string;
+  getLinkAriaLabel?: (source: string, target: string) => string; // TODO find a better way?
+}
+
+export interface ILinkCommonConfig extends ILinkEventHandlers {
   className?: string;
   lineStyle?: CSSProperties;
 
-  linkFocusable?: boolean;
+  focusable?: boolean;
   label?: string;
   labelStyle?: CSSProperties;
-  getLinkAriaLabel?: (source: string, target: string) => string; // TODO want a better way
 }
 
 export interface ILinkEventHandlers {

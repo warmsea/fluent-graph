@@ -454,7 +454,7 @@ export class Graph extends React.Component<IGraphProps, IGraphState> {
       this.state.config
     );
     const enableFocusAnimation =
-      this.props.data.focusedNodeId !== nextProps.data.focusedNodeId;
+      this.props.focusedNodeId !== nextProps.focusedNodeId;
 
     // if we're given a function to call when the zoom changes, we create a debounced version of it
     // this is because this function gets called in very rapid succession when zooming

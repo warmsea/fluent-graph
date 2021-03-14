@@ -177,24 +177,15 @@ function _mergeDataLinkWithD3Link(link, index, d3Links = []) {
  * @returns {undefined}
  * @memberof Graph/helper
  */
-function _validateGraphData(data: IGraphPropsData): void {
-  if (!data.nodes?.length) {
-    throwErr("Graph", ERRORS.INSUFFICIENT_DATA);
-  }
-
-  if (!data.links) {
-    throwErr("Graph", ERRORS.INSUFFICIENT_LINKS);
-    data.links = []; // TODO: avoid side effect
-  }
-
-  data.links.forEach(l => {
-    if (!data.nodes.find(n => n.id === l.source)) {
+function _validateGraphData(nodes, links): void {
+  links.forEach(l => {
+    if (!nodes.find(n => n.id === l.source)) {
       throwErr(
         "Graph",
         `${ERRORS.INVALID_LINKS} - "${l.source}" is not a valid source node id`
       );
     }
-    if (!data.nodes.find(n => n.id === l.target)) {
+    if (!nodes.find(n => n.id === l.target)) {
       throwErr(
         "Graph",
         `${ERRORS.INVALID_LINKS} - "${l.target}" is not a valid target node id`
@@ -343,26 +334,25 @@ function initializeGraphState(
   state: IGraphState
 ): IGraphState {
   const graphConfig = merge({}, DEFAULT_CONFIG, props.config);
-  const { data } = props;
-  _validateGraphData(data);
+  _validateGraphData(props.nodes, props.links);
 
   let graph: IGraphPropsData;
 
   if (state?.nodes) {
     graph = {
-      nodes: data.nodes.map(n =>
+      nodes: props.nodes.map(n =>
         state.nodes[n.id]
           ? { ...n, ...pick(state.nodes[n.id], NODE_PROPS_WHITELIST) }
           : { ...n }
       ),
-      links: data.links.map((l, index) =>
+      links: props.links.map((l, index) =>
         _mergeDataLinkWithD3Link(l, index, state && state.d3Links)
       )
     };
   } else {
     graph = {
-      nodes: data.nodes.map(n => ({ ...n })),
-      links: data.links.map(l => ({ ...l }))
+      nodes: props.nodes.map(n => ({ ...n })),
+      links: props.links.map(l => ({ ...l }))
     };
   }
 

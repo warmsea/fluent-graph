@@ -57,7 +57,7 @@ export function buildLinkProps(
     onMouseOverLink: linkCallbacks.onMouseOverLink,
     onKeyDownLink: linkCallbacks.onKeyDownLink,
     getLinkAriaLabel: linkCallbacks.getLinkAriaLabel,
-    linkFocusable: config.link.linkFocusable
+    focusable: config.link.focusable
   };
 }
 

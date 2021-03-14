@@ -1,5 +1,6 @@
 import { CSSProperties } from "react";
-import { INodeEventHandlers } from "../node/Node.types";
+import { ILinkCommonConfig } from "../link/Link.types";
+import { INodeCommonConfig, INodeProps } from "../node/Node.types";
 
 type DeepPartial<T> = {
   [P in keyof T]?: DeepPartial<T[P]>;
@@ -22,8 +23,8 @@ export interface IGraphConfig {
   staticGraphWithDragAndDrop: boolean;
   width: number;
   d3: IGraphConfigD3;
-  node: IGraphConfigNode;
-  link: IGraphConfigLink;
+  node: INodeCommonConfig;
+  link: ILinkCommonConfig;
 }
 
 export interface IGraphConfigD3 {
@@ -34,16 +35,6 @@ export interface IGraphConfigD3 {
   disableLinkForce: boolean;
 }
 
-export interface IGraphConfigNode extends INodeEventHandlers {
-  nodeStyle: CSSProperties;
-  labelStyle: CSSProperties;
-  labelPosition: string | undefined; // TODO should not allow undefined
-  size: number;
-  svg: string;
-  symbolType: string;
-  viewGenerator: Function | undefined;
-}
-
 export interface IGraphConfigLink {
   focusable: boolean;
   lineStyle: CSSProperties;
@@ -52,7 +43,9 @@ export interface IGraphConfigLink {
 
 export interface IGraphProps {
   id: string;
-  data: IGraphPropsData;
+  nodes: IGraphPropsNode[];
+  links: IGraphPropsLink[];
+  focusedNodeId?: string;
   config?: IGraphPropsConfig;
   onClickGraph?;
 
@@ -70,6 +63,13 @@ export interface IGraphProps {
   onKeyDownLink?;
   onNodePositionChange?;
   onZoomChange?;
+}
+
+export interface IGraphPropsNode extends INodeProps {}
+
+export interface IGraphPropsLink extends ILinkCommonConfig {
+  source: string;
+  target: string;
 }
 
 export interface IGraphPropsData {
