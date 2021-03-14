@@ -34,7 +34,7 @@ export function buildLinkProps(
 
   const lineStyle: CSSProperties = {
     ...link.lineStyle,
-    ...config.link.lineStyle,
+    ...config.link.lineStyle
   };
 
   const labelStyle: CSSProperties = {

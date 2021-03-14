@@ -8,7 +8,7 @@ import {
   event as d3Event
 } from "d3-selection";
 import { zoom as d3Zoom } from "d3-zoom";
-import { clamp, debounce, merge } from "lodash";
+import { clamp, debounce } from "lodash";
 
 import CONST from "./graph.const";
 import { DEFAULT_CONFIG } from "./graph.config";
