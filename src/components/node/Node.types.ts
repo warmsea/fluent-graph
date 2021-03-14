@@ -9,28 +9,31 @@ export interface ILabelPlacementProps {
   textAnchor?: string;
 }
 
-export interface INodeProps {
+export interface INodeProps extends INodeCommonConfig {
   id: string;
-  size: number;
-  cx: number;
-  cy: number;
-  type?: string;
-  viewGenerator?: (nodeProps: INodeProps) => JSX.Element;
-  svg?: string;
+  x?: number; // TODO should a Node know its position?
+  y?: number;
+  label?: string;
+}
 
+/**
+ * Node configuration that can potential apply to all nodes.
+ */
+export interface INodeCommonConfig extends INodeEventHandlers {
+  size?: number;
   className?: string;
   nodeStyle?: React.CSSProperties;
 
-  label?: string;
   labelPosition?: LabelPosition;
   labelOffset?: number;
   labelStyle?: React.CSSProperties;
 
+  onRenderNode?: (props: INodeProps) => JSX.Element;
+  onRenderLabel?: (props: INodeProps) => JSX.Element;
+}
+
+export interface INodeEventHandlers {
   onClickNode?: (
-    event: React.MouseEvent<SVGPathElement, MouseEvent>,
-    nodeId: string
-  ) => void;
-  onRightClickNode?: (
     event: React.MouseEvent<SVGPathElement, MouseEvent>,
     nodeId: string
   ) => void;
@@ -38,7 +41,7 @@ export interface INodeProps {
     event: React.MouseEvent<SVGPathElement, MouseEvent>,
     nodeId: string
   ) => void;
-  onMouseOut?: (
+  onMouseOutNode?: (
     event: React.MouseEvent<SVGPathElement, MouseEvent>,
     nodeId: string
   ) => void;

@@ -113,11 +113,8 @@ export function buildNodeProps(
   return {
     id: node.id,
     size: nodeSize,
-    cx: node?.x || "0",
-    cy: node?.y || "0",
-    type: node.symbolType || config.node.symbolType,
-    viewGenerator: node.viewGenerator || config.node.viewGenerator,
-    svg: node.svg ?? config.node.svg,
+    x: node?.x || "0",
+    y: node?.y || "0",
     className: CONST.NODE_CLASS_NAME,
     nodeStyle,
     label,
@@ -125,8 +122,7 @@ export function buildNodeProps(
     labelOffset,
     labelStyle,
     onClickNode: nodeCallbacks.onClickNode,
-    onMouseOut: nodeCallbacks.onMouseOut,
-    onMouseOverNode: nodeCallbacks.onMouseOverNode,
-    onRightClickNode: nodeCallbacks.onRightClickNode
+    onMouseOutNode: nodeCallbacks.onMouseOut,
+    onMouseOverNode: nodeCallbacks.onMouseOverNode
   };
 }

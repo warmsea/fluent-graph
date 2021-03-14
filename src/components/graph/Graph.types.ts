@@ -1,4 +1,9 @@
 import { CSSProperties } from "react";
+import { INodeEventHandlers } from "../node/Node.types";
+
+type DeepPartial<T> = {
+  [P in keyof T]?: DeepPartial<T[P]>;
+};
 
 /**
  * Full set of graph configuration.
@@ -29,7 +34,7 @@ export interface IGraphConfigD3 {
   disableLinkForce: boolean;
 }
 
-export interface IGraphConfigNode {
+export interface IGraphConfigNode extends INodeEventHandlers {
   nodeStyle: CSSProperties;
   labelStyle: CSSProperties;
   labelPosition: string | undefined; // TODO should not allow undefined
@@ -83,7 +88,7 @@ export interface IGraphPropsDataLink {
   value?: number;
 }
 
-export type IGraphPropsConfig = Partial<IGraphConfig>;
+export type IGraphPropsConfig = DeepPartial<IGraphConfig>;
 
 export interface IGraphState {
   id: string; // TODO remove it

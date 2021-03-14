@@ -75,8 +75,8 @@ export function buildSvgSymbol(
  * @memberof Node/helper
  */
 export function getLabelPlacementProps(
-  dx?: number,
-  labelPosition?: LabelPosition
+  labelPosition?: LabelPosition,
+  dx?: number
 ): ILabelPlacementProps {
   switch (labelPosition) {
     case "right":
