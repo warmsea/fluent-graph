@@ -5,9 +5,9 @@
  */
 import CONST from "./graph.const";
 
-import { INodeProps } from "../node/Node.types";
+import { INodeCommonConfig, INodeProps } from "../node/Node.types";
 import { CSSProperties } from "react";
-import { ILinkProps } from "../link/Link.types";
+import { ILinkCommonConfig, ILinkProps } from "../link/Link.types";
 
 /**
  * Build some Link properties based on given parameters.
@@ -22,7 +22,7 @@ import { ILinkProps } from "../link/Link.types";
 export function buildLinkProps(
   link,
   nodes,
-  config,
+  linkConfig: ILinkCommonConfig = {},
   linkCallbacks,
   key
 ): ILinkProps {
@@ -34,12 +34,12 @@ export function buildLinkProps(
 
   const lineStyle: CSSProperties = {
     ...link.lineStyle,
-    ...config.link.lineStyle
+    ...linkConfig.lineStyle
   };
 
   const labelStyle: CSSProperties = {
     ...link.labelStyle,
-    ...config.link.labelStyle
+    ...linkConfig.labelStyle
   };
 
   return {
@@ -57,7 +57,7 @@ export function buildLinkProps(
     onMouseOverLink: linkCallbacks.onMouseOverLink,
     onKeyDownLink: linkCallbacks.onKeyDownLink,
     getLinkAriaLabel: linkCallbacks.getLinkAriaLabel,
-    focusable: config.link.focusable
+    focusable: linkConfig.focusable
   };
 }
 
@@ -72,25 +72,20 @@ export function buildLinkProps(
  */
 export function buildNodeProps(
   node,
-  config,
+  nodeConfig: INodeCommonConfig = {},
   nodeCallbacks: any = {}
 ): INodeProps {
   let label = node.label ?? node.id;
-  const nodeSize = node.size || config.node.size;
-
-  let offset = nodeSize;
-
-  const fontSize = config.node.fontSize;
-  const labelOffset = fontSize + offset / 100 + 1.5;
+  const nodeSize = node.size ?? nodeConfig.size;
 
   const nodeStyle = {
     ...node.nodeStyle,
-    ...config.node.nodeStyle
+    ...nodeConfig.nodeStyle
   };
 
   const labelStyle = {
     ...node.labelStyle,
-    ...config.node.labelStyle
+    ...nodeConfig.labelStyle
   };
 
   return {
@@ -101,8 +96,7 @@ export function buildNodeProps(
     className: CONST.NODE_CLASS_NAME,
     nodeStyle,
     label,
-    labelPosition: node.labelPosition ?? config.node.labelPosition,
-    labelOffset,
+    labelPosition: node.labelPosition ?? nodeConfig.labelPosition,
     labelStyle,
     onClickNode: nodeCallbacks.onClickNode,
     onMouseOutNode: nodeCallbacks.onMouseOut,

@@ -414,10 +414,6 @@ function getNormalizedNodeCoordinates(
   nodes,
   config
 ) {
-  if (config.node?.viewGenerator) {
-    return { source, target };
-  }
-
   let { x: x1, y: y1, id: sourceId } = source;
   let { x: x2, y: y2, id: targetId } = target;
 

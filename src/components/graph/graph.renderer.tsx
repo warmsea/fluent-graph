@@ -20,11 +20,18 @@ import { getId } from "./graph.helper";
  * @param {Array.<Object>} links - array of links {@link #Link|Link}.
  * @param {Function[]} linkCallbacks - same as {@link #graphrenderer|linkCallbacks in renderGraph}.
  */
-function renderWithBFS(nodes, nodeCallbacks, config, links, linkCallbacks) {
+function renderWithBFS(
+  nodes,
+  nodeCallbacks,
+  links,
+  linkCallbacks,
+  nodeConfig,
+  linkConfig
+) {
   function _renderNode(nodeId) {
     const props = buildNodeProps(
       { ...nodes[nodeId], id: `${nodeId}` },
-      config,
+      nodeConfig,
       nodeCallbacks
     );
 
@@ -39,7 +46,7 @@ function renderWithBFS(nodes, nodeCallbacks, config, links, linkCallbacks) {
     const props = buildLinkProps(
       { ...link, source: `${sourceId}`, target: `${targetId}` },
       nodes,
-      config,
+      linkConfig,
       linkCallbacks,
       key
     );

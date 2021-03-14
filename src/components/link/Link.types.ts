@@ -7,6 +7,7 @@ export interface ILinkProps extends ILinkCommonConfig {
   source: string; // TODO put into data:any?
   target: string; // TODO put into data:any?
   getLinkAriaLabel?: (source: string, target: string) => string; // TODO find a better way?
+  // TODO accept offset for start and end
 }
 
 export interface ILinkCommonConfig extends ILinkEventHandlers {

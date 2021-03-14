@@ -150,8 +150,6 @@ import { IGraphConfig } from "./Graph.types";
  *   - "wye"
  *
  * <b>[note]</b> react-d3-graph will map this values to <a target="_blank" href="https://github.com/d3/d3-shape#symbols">d3 symbols</a>
- * @param {Function} [node.viewGenerator=null] - <a id="node-view-generator" href="#node-view-generator">🔗</a> 🔍🔍🔍 function that receives a node and returns a JSX view.
- * </br>
  * @param {Object} link link object is explained in the next section. ⬇️
  * <h2 id="config-link"><a href="#config-link">#</a> Link level configurations</h2>
  * @param {string} [link.color="#d3d3d3"] - <a id="link-color" href="#link-color">🔗</a> 🔍🔍🔍 the color for links
@@ -219,21 +217,5 @@ export const DEFAULT_CONFIG: IGraphConfig = {
     linkLength: 100,
     linkStrength: 1,
     disableLinkForce: false
-  },
-  node: {},
-  link: {
-    focusable: true,
-    lineStyle: {
-      cursor: "pointer",
-      opacity: 1,
-      stroke: "#d3d3d3",
-      strokeDasharray: undefined,
-      strokeWidth: 1.5
-    },
-    labelStyle: {
-      color: "black",
-      fontSize: 8,
-      fontWeight: "normal"
-    }
   }
 };

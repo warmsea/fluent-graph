@@ -1,10 +1,17 @@
 import * as d3 from "d3";
 import { merge } from "lodash";
 import React, { FC, SVGAttributes, useCallback } from "react";
-import { DEFAULT_NODE_PROPS } from "./node.const";
 
 import { getLabelPlacementProps } from "./node.helper";
 import { INodeProps } from "./Node.types";
+
+const DEFAULT_NODE_PROPS: Partial<INodeProps> = {
+  size: 200,
+  nodeStyle: {
+    fill: "#d3d3d3"
+  },
+  labelPosition: "bottom"
+};
 
 export const Node: FC<INodeProps> = (props: INodeProps) => {
   props = merge({}, DEFAULT_NODE_PROPS, props);

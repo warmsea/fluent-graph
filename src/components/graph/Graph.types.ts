@@ -23,8 +23,6 @@ export interface IGraphConfig {
   staticGraphWithDragAndDrop: boolean;
   width: number;
   d3: IGraphConfigD3;
-  node: INodeCommonConfig;
-  link: ILinkCommonConfig;
 }
 
 export interface IGraphConfigD3 {
@@ -46,21 +44,11 @@ export interface IGraphProps {
   nodes: IGraphPropsNode[];
   links: IGraphPropsLink[];
   focusedNodeId?: string;
+  nodeConfig?: INodeCommonConfig;
+  linkConfig?: ILinkCommonConfig;
   config?: IGraphPropsConfig;
+
   onClickGraph?;
-
-  onClickNode?;
-  onRightClickNode?;
-  onMouseOverNode?;
-  onMouseOutNode?;
-  getLinkAriaLabel?;
-  linkStrokeDashArray?;
-
-  onClickLink?;
-  onRightClickLink?;
-  onMouseOverLink?;
-  onMouseOutLink?;
-  onKeyDownLink?;
   onNodePositionChange?;
   onZoomChange?;
 }

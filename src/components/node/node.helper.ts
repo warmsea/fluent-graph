@@ -3,8 +3,10 @@
  * @description
  * Some methods that help no the process of rendering a node.
  */
-import CONST from "./node.const";
 import { ILabelPlacementProps, LabelPosition } from "./Node.types";
+
+const NODE_LABEL_DX: string = ".90em";
+const NODE_LABEL_DY: string = ".35em";
 
 /**
  * return dx, dy, and potentially alignmentBaseline and textAnchor props to put label in correct position relative to node
@@ -21,14 +23,14 @@ export function getLabelPlacementProps(
   switch (labelPosition) {
     case "right":
       return {
-        dx: dx ? `${dx}` : CONST.NODE_LABEL_DX,
+        dx: dx ? `${dx}` : NODE_LABEL_DX,
         dy: "0",
         dominantBaseline: "middle",
         textAnchor: "start"
       };
     case "left":
       return {
-        dx: dx ? `${-dx}` : `-${CONST.NODE_LABEL_DX}`,
+        dx: dx ? `${-dx}` : `-${NODE_LABEL_DX}`,
         dy: "0",
         dominantBaseline: "middle",
         textAnchor: "end"
@@ -36,14 +38,14 @@ export function getLabelPlacementProps(
     case "top":
       return {
         dx: "0",
-        dy: dx ? `${-dx}` : `-${CONST.NODE_LABEL_DX}`,
+        dy: dx ? `${-dx}` : `-${NODE_LABEL_DX}`,
         dominantBaseline: "baseline",
         textAnchor: "middle"
       };
     case "bottom":
       return {
         dx: "0",
-        dy: dx ? `${dx}` : CONST.NODE_LABEL_DX,
+        dy: dx ? `${dx}` : NODE_LABEL_DX,
         dominantBaseline: "hanging",
         textAnchor: "middle"
       };
@@ -56,8 +58,8 @@ export function getLabelPlacementProps(
       };
     default:
       return {
-        dx: dx ? `${dx}` : CONST.NODE_LABEL_DX,
-        dy: CONST.NODE_LABEL_DY
+        dx: dx ? `${dx}` : NODE_LABEL_DX,
+        dy: NODE_LABEL_DY
       };
   }
 }

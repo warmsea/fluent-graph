@@ -43,22 +43,18 @@ Styled.args = {
       { source: "Fluent Graph", target: "React" },
       { source: "Fluent Graph", target: "D3" },
     ],
-    config: {
-      minZoom: 0.75,
-      maxZoom: 1.5,
-      node: {
-        nodeStyle: {
-          fill: "skyblue"
-        },
-        labelStyle: {
-          fill: "darkgray",
-          fontSize: 12
-        }
+    nodeConfig: {
+      nodeStyle: {
+        fill: "skyblue"
       },
-      link: {
-        lineStyle: {
-          fill: "blue"
-        }
+      labelStyle: {
+        fill: "darkgray",
+        fontSize: 12
+      }
+    },
+    linkConfig: {
+      lineStyle: {
+        stroke: "deepskyblue"
       }
     }
   }

@@ -345,20 +345,20 @@ export class Graph extends React.Component<IGraphProps, IGraphState> {
     }
   };
 
-  onMouseOverNode = id => {
+  onMouseOverNode = (event, node) => {
     if (this.isDraggingNode) {
       return;
     }
 
-    this.props.onMouseOverNode && this.props.onMouseOverNode(id);
+    this.props.nodeConfig?.onMouseOverNode?.(event, node);
   };
 
-  onMouseOutNode = id => {
+  onMouseOutNode = (event, node) => {
     if (this.isDraggingNode) {
       return;
     }
 
-    this.props.onMouseOutNode?.(id);
+    this.props.nodeConfig?.onMouseOutNode?.(event, node);
   };
 
   /**
@@ -538,22 +538,19 @@ export class Graph extends React.Component<IGraphProps, IGraphState> {
     const elements = renderWithBFS(
       this.state.nodes,
       {
-        onClickNode: this.props.onClickNode,
-        onRightClickNode: this.props.onRightClickNode,
+        onClickNode: this.props.nodeConfig?.onClickNode,
         onMouseOverNode: this.onMouseOverNode,
         onMouseOut: this.onMouseOutNode
       },
-      this.state.config,
       this.state.d3Links,
       {
-        onClickLink: this.props.onClickLink,
-        onRightClickLink: this.props.onRightClickLink,
-        onMouseOverLink: this.props.onMouseOverLink,
-        onMouseOutLink: this.props.onMouseOutLink,
-        onKeyDownLink: this.props.onKeyDownLink,
-        getLinkAriaLabel: this.props.getLinkAriaLabel, // (source, target) => ariaLabel
-        linkStrokeDashArray: this.props.linkStrokeDashArray
-      }
+        onClickLink: this.props.linkConfig?.onClickLink,
+        onMouseOverLink: this.props.linkConfig?.onMouseOverLink,
+        onMouseOutLink: this.props.linkConfig?.onMouseOutLink,
+        onKeyDownLink: this.props.linkConfig?.onKeyDownLink
+      },
+      this.props.nodeConfig,
+      this.props.linkConfig
     );
 
     const svgStyle = {
