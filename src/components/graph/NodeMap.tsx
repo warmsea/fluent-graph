@@ -1,7 +1,7 @@
-import { SimulationNodeDatum } from 'd3';
-import { INodeCommonConfig } from '../node/Node.types';
-import { IGraphPropsNode } from './Graph.types';
-import { NodeModel } from './NodeModel';
+import { SimulationNodeDatum } from "d3";
+import { INodeCommonConfig } from "../node/Node.types";
+import { IGraphPropsNode } from "./Graph.types";
+import { NodeModel } from "./NodeModel";
 
 export class NodeMap {
   public rootNode: NodeModel | undefined;
@@ -12,7 +12,10 @@ export class NodeMap {
     this._map = new Map();
   }
 
-  public updateNodeMap(nodes: IGraphPropsNode[], nodeConfig: INodeCommonConfig): void {
+  public updateNodeMap(
+    nodes: IGraphPropsNode[],
+    nodeConfig: INodeCommonConfig
+  ): void {
     nodes.forEach((node: IGraphPropsNode) => {
       if (this._map.has(node.id)) {
         // TODO handle existing nodes

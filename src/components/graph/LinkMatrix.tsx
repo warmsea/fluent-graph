@@ -1,7 +1,7 @@
-import { ILinkCommonConfig } from '../link/Link.types';
-import { IGraphPropsLink } from './Graph.types';
-import { LinkModel } from './LinkModel';
-import { NodeMap } from './NodeMap';
+import { ILinkCommonConfig } from "../link/Link.types";
+import { IGraphPropsLink } from "./Graph.types";
+import { LinkModel } from "./LinkModel";
+import { NodeMap } from "./NodeMap";
 
 export class LinkMatrix {
   private _matrix: Map<string, Map<string, LinkModel>>;
@@ -10,7 +10,11 @@ export class LinkMatrix {
     this._matrix = new Map();
   }
 
-  public updateMatrix(links: IGraphPropsLink[], linkConfig: ILinkCommonConfig, nodeMap: NodeMap): void {
+  public updateMatrix(
+    links: IGraphPropsLink[],
+    linkConfig: ILinkCommonConfig,
+    nodeMap: NodeMap
+  ): void {
     links.forEach((link: IGraphPropsLink) => {
       const { source, target } = link;
       if (this._matrix.get(source)?.has(target)) {
@@ -29,16 +33,23 @@ export class LinkMatrix {
         }
 
         // The later one wins on duplicate
-        this._matrix.get(source)!.set(target, new LinkModel(link, linkConfig, nodeMap));
+        this._matrix
+          .get(source)!
+          .set(target, new LinkModel(link, linkConfig, nodeMap));
 
         if (!this._matrix.get(target)!.has(source)) {
-          this._matrix.get(target)!.set(source, this._matrix.get(source)!.get(target)!);
+          this._matrix
+            .get(target)!
+            .set(source, this._matrix.get(source)!.get(target)!);
         }
       }
     });
   }
 
-  public forEachWithSource(sourceId: string, callback: (link: LinkModel) => void) {
+  public forEachWithSource(
+    sourceId: string,
+    callback: (link: LinkModel) => void
+  ) {
     this._matrix.get(sourceId)?.forEach(callback);
   }
 }

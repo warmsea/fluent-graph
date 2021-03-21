@@ -1,25 +1,33 @@
-import * as d3 from 'd3';
-import React, { FC, MutableRefObject, useCallback, useEffect, useMemo, useReducer, useRef } from "react";
-import {
-  IGraphConfig,
-  IGraphProps,
-} from "./Graph.types";
-import { NodeMap } from './NodeMap';
-import { LinkMatrix } from './LinkMatrix';
-import { throttle } from 'lodash';
-import { mergeConfig } from '../../utils';
-import { DEFAULT_CONFIG } from './graph.config';
-import { NodeModel } from './NodeModel';
-import { LinkModel } from './LinkModel';
+import * as d3 from "d3";
+import React, {
+  FC,
+  MutableRefObject,
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useRef
+} from "react";
+import { IGraphConfig, IGraphProps } from "./Graph.types";
+import { NodeMap } from "./NodeMap";
+import { LinkMatrix } from "./LinkMatrix";
+import { throttle } from "lodash";
+import { mergeConfig } from "../../utils";
+import { DEFAULT_CONFIG } from "./graph.config";
+import { NodeModel } from "./NodeModel";
+import { LinkModel } from "./LinkModel";
 
 const CLASS_NAME_ROOT_SVG: string = "fg-root-svg";
 
 export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   const nodeMapRef: MutableRefObject<NodeMap> = useRef(new NodeMap());
   const linkMatrixRef: MutableRefObject<LinkMatrix> = useRef(new LinkMatrix());
-  const simulationRef: MutableRefObject<d3.Simulation<d3.SimulationNodeDatum, undefined> | undefined> = useRef();
+  const simulationRef: MutableRefObject<
+    d3.Simulation<d3.SimulationNodeDatum, undefined> | undefined
+  > = useRef();
 
   // @ts-ignore: Unused locals
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [ignored, forceUpdateDispatch] = useReducer(x => x + 1, 0);
 
   const forceUpdate = throttle(forceUpdateDispatch, 50);
@@ -31,24 +39,30 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
 
   useEffect(() => {
     if (!simulationRef.current) {
-      simulationRef.current = d3.forceSimulation(nodeMap.getSimulationNodeDatums());
+      simulationRef.current = d3.forceSimulation(
+        nodeMap.getSimulationNodeDatums()
+      );
       simulationRef.current
         .force("charge", d3.forceManyBody())
-        .on('tick', forceUpdate);
+        .on("tick", forceUpdate);
       // TODO stop simulation earlier
     }
   });
 
-  const onClickGraph = useCallback(event => {
-    // TODO pause animation?
-    if (
-      (event.target as SVGSVGElement)?.classList.contains(CLASS_NAME_ROOT_SVG)
-    ) {
-      props.onClickGraph?.(event);
-    }
-  }, []);
+  const onClickGraph = useCallback(
+    event => {
+      // TODO pause animation?
+      if (
+        (event.target as SVGSVGElement)?.classList.contains(CLASS_NAME_ROOT_SVG)
+      ) {
+        props.onClickGraph?.(event);
+      }
+    },
+    [props.onClickGraph]
+  );
 
-  const rootId: string | undefined = props.nodes.length > 0 ? props.nodes[0].id : undefined;
+  const rootId: string | undefined =
+    props.nodes.length > 0 ? props.nodes[0].id : undefined;
   const nodeMap: NodeMap = nodeMapRef.current;
   const linkMatrix: LinkMatrix = linkMatrixRef.current;
   const { width, height } = graphConfig;
@@ -66,15 +80,17 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
         viewBox={`${-width / 2},${-height / 2},${width},${height}`}
         onClick={onClickGraph}
       >
-        <g>
-          {elements}
-        </g>
+        <g>{elements}</g>
       </svg>
     </div>
   );
 };
 
-export function onRenderElements(rootId: string | undefined, nodeMap: NodeMap, linkMatrix: LinkMatrix): JSX.Element {
+export function onRenderElements(
+  rootId: string | undefined,
+  nodeMap: NodeMap,
+  linkMatrix: LinkMatrix
+): JSX.Element {
   if (!rootId) {
     return <></>;
   }

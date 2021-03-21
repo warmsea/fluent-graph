@@ -1,10 +1,10 @@
-import React from 'react';
-import { mergeConfig } from '../../utils';
-import { Link } from '../link/Link';
-import { ILinkCommonConfig } from '../link/Link.types';
-import { IGraphPropsLink } from './Graph.types';
-import { NodeMap } from './NodeMap';
-import { NodeModel } from './NodeModel';
+import React from "react";
+import { mergeConfig } from "../../utils";
+import { Link } from "../link/Link";
+import { ILinkCommonConfig } from "../link/Link.types";
+import { IGraphPropsLink } from "./Graph.types";
+import { NodeMap } from "./NodeMap";
+import { NodeModel } from "./NodeModel";
 
 export class LinkModel {
   public sourceNode: NodeModel;
@@ -13,7 +13,11 @@ export class LinkModel {
   private id: string;
   private props: IGraphPropsLink;
 
-  constructor(props: IGraphPropsLink, linkConfig: ILinkCommonConfig, nodeMap: NodeMap) {
+  constructor(
+    props: IGraphPropsLink,
+    linkConfig: ILinkCommonConfig,
+    nodeMap: NodeMap
+  ) {
     this.props = mergeConfig(linkConfig, props);
     this.id = `${this.props.source},${this.props.target}`; // TODO do we need it?
     this.sourceNode = nodeMap.get(this.props.source);
