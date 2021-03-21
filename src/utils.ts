@@ -5,7 +5,7 @@
  * that are common across rd3g such as error logging.
  */
 
-import { pick } from "lodash";
+import { merge, pick } from "lodash";
 
 /**
  * Picks all props except the ones passed in the props array.
@@ -62,4 +62,11 @@ export function logError(component, msg) {
 export function logWarning(component, msg) {
   const warning = `fluent-graph :: ${component} :: ${msg}`;
   console.warn(warning);
+}
+
+export function mergeConfig<D = any, E = any>(
+  defaults: D,
+  explicits: E
+): D & E {
+  return merge({}, defaults, explicits);
 }

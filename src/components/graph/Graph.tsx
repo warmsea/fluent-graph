@@ -1,573 +1,100 @@
-import React from "react";
-
-import { drag as d3Drag } from "d3-drag";
-import { forceLink as d3ForceLink } from "d3-force";
+import * as d3 from 'd3';
+import React, { FC, MutableRefObject, useCallback, useEffect, useMemo, useReducer, useRef } from "react";
 import {
-  select as d3Select,
-  selectAll as d3SelectAll,
-  event as d3Event
-} from "d3-selection";
-import { zoom as d3Zoom } from "d3-zoom";
-import { clamp, debounce } from "lodash";
+  IGraphConfig,
+  IGraphProps,
+} from "./Graph.types";
+import { NodeMap } from './NodeMap';
+import { LinkMatrix } from './LinkMatrix';
+import { throttle } from 'lodash';
+import { mergeConfig } from '../../utils';
+import { DEFAULT_CONFIG } from './graph.config';
+import { NodeModel } from './NodeModel';
+import { LinkModel } from './LinkModel';
 
-import CONST from "./graph.const";
-import { DEFAULT_CONFIG } from "./graph.config";
+const CLASS_NAME_ROOT_SVG: string = "fg-root-svg";
 
-import {
-  checkForGraphConfigChanges,
-  checkForGraphElementsChanges,
-  getCenterAndZoomTransformation,
-  initializeGraphState
-} from "./graph.helper";
-import { renderWithBFS } from "./graph.renderer";
-import { IGraphProps, IGraphState } from "./Graph.types";
+export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
+  const nodeMapRef: MutableRefObject<NodeMap> = useRef(new NodeMap());
+  const linkMatrixRef: MutableRefObject<LinkMatrix> = useRef(new LinkMatrix());
+  const simulationRef: MutableRefObject<d3.Simulation<d3.SimulationNodeDatum, undefined> | undefined> = useRef();
 
-/**
- * Graph component is the main component for react-d3-graph components, its interface allows its user
- * to build the graph once the user provides the data, configuration (optional) and callback interactions (also optional).
- * The code for the [live example](https://danielcaldas.github.io/react-d3-graph/sandbox/index.html)
- * can be consulted [here](https://github.com/danielcaldas/react-d3-graph/blob/master/sandbox/Sandbox.jsx)
- * @example
- * import { Graph } from 'react-d3-graph';
- *
- * // graph payload (with minimalist structure)
- * const data = {
- *     nodes: [
- *       {id: 'Harry'},
- *       {id: 'Sally'},
- *       {id: 'Alice'}
- *     ],
- *     links: [
- *         {source: 'Harry', target: 'Sally'},
- *         {source: 'Harry', target: 'Alice'},
- *     ]
- * };
- *
- * // the graph configuration, you only need to pass down properties
- * // that you want to override, otherwise default ones will be used
- * const myConfig = {
- *     node: {
- *         color: 'lightgreen',
- *         size: 120,
- *     }
- * };
- *
- * // Callback to handle click on the graph.
- * // @param {Object} event click dom event
- * const onClickGraph = function(event) {
- *      window.alert('Clicked the graph background');
- * };
- *
- * const onClickNode = function(nodeId) {
- *      window.alert('Clicked node ${nodeId}');
- * };
- *
- * const onRightClickNode = function(event, nodeId) {
- *      window.alert('Right clicked node ${nodeId}');
- * };
- *
- * const onMouseOverNode = function(nodeId) {
- *      window.alert(`Mouse over node ${nodeId}`);
- * };
- *
- * const onMouseOutNode = function(nodeId) {
- *      window.alert(`Mouse out node ${nodeId}`);
- * };
- *
- * const onClickLink = function(source, target) {
- *      window.alert(`Clicked link between ${source} and ${target}`);
- * };
- *
- * const onRightClickLink = function(event, source, target) {
- *      window.alert('Right clicked link between ${source} and ${target}');
- * };
- *
- * const onMouseOverLink = function(source, target) {
- *      window.alert(`Mouse over in link between ${source} and ${target}`);
- * };
- *
- * const onMouseOutLink = function(source, target) {
- *      window.alert(`Mouse out link between ${source} and ${target}`);
- * };
- *
- * const onNodePositionChange = function(nodeId, x, y) {
- *      window.alert(`Node ${nodeId} moved to new position x= ${x} y= ${y}`);
- * };
- *
- * // Callback that's called whenever the graph is zoomed in/out
- * // @param {number} previousZoom the previous graph zoom
- * // @param {number} newZoom the new graph zoom
- * const onZoomChange = function(previousZoom, newZoom) {
- *      window.alert(`Graph is now zoomed at ${newZoom} from ${previousZoom}`);
- * };
- *
- *
- * <Graph
- *      id='graph-id' // id is mandatory, if no id is defined rd3g will throw an error
- *      data={data}
- *      config={myConfig}
- *      onClickGraph={onClickGraph}
- *      onClickNode={onClickNode}
- *      onRightClickNode={onRightClickNode}
- *      onClickLink={onClickLink}
- *      onRightClickLink={onRightClickLink}
- *      onMouseOverNode={onMouseOverNode}
- *      onMouseOutNode={onMouseOutNode}
- *      onMouseOverLink={onMouseOverLink}
- *      onMouseOutLink={onMouseOutLink}
- *      onZoomChange={onZoomChange}/>
- */
-export class Graph extends React.Component<IGraphProps, IGraphState> {
-  focusAnimationTimeout;
-  isDraggingNode;
-  debouncedOnZoomChange;
+  // @ts-ignore: Unused locals
+  const [ignored, forceUpdateDispatch] = useReducer(x => x + 1, 0);
 
-  /**
-   * Obtain a set of properties which will be used to perform the focus and zoom animation if
-   * required. In case there's not a focus and zoom animation in progress, it should reset the
-   * transition duration to zero and clear transformation styles.
-   * @returns {Object} - Focus and zoom animation properties.
-   */
-  _generateFocusAnimationProps = () => {
-    const { focusedNodeId } = this.state;
+  const forceUpdate = throttle(forceUpdateDispatch, 50);
 
-    // In case an older animation was still not complete, clear previous timeout to ensure the new one is not cancelled
-    if (this.state.enableFocusAnimation) {
-      if (this.focusAnimationTimeout) {
-        clearTimeout(this.focusAnimationTimeout);
-      }
+  const graphConfig: IGraphConfig = useMemo(
+    () => mergeConfig(DEFAULT_CONFIG, props.config),
+    [props.config]
+  );
 
-      this.focusAnimationTimeout = setTimeout(
-        () => this.setState({ enableFocusAnimation: false }),
-        this.state.config.focusAnimationDuration * 1000
-      );
+  useEffect(() => {
+    if (!simulationRef.current) {
+      simulationRef.current = d3.forceSimulation(nodeMap.getSimulationNodeDatums());
+      simulationRef.current
+        .force("charge", d3.forceManyBody())
+        .on('tick', forceUpdate);
+      // TODO stop simulation earlier
     }
+  });
 
-    const transitionDuration = this.state.enableFocusAnimation
-      ? this.state.config.focusAnimationDuration
-      : 0;
-
-    return {
-      style: { transitionDuration: `${transitionDuration}s` },
-      transform: focusedNodeId ? this.state.focusTransformation : null
-    };
-  };
-
-  /**
-   * This method runs {@link d3-force|https://github.com/d3/d3-force}
-   * against the current graph.
-   * @returns {undefined}
-   */
-  _graphLinkForceConfig() {
-    const forceLink = d3ForceLink(this.state.d3Links)
-      .id(l => (l as any).id)
-      .distance(this.state.config.d3.linkLength)
-      .strength(this.state.config.d3.linkStrength);
-
-    this.state.simulation.force(CONST.LINK_CLASS_NAME, forceLink);
-  }
-
-  /**
-   * This method runs {@link d3-drag|https://github.com/d3/d3-drag}
-   * against the current graph.
-   * @returns {undefined}
-   */
-  _graphNodeDragConfig() {
-    const customNodeDrag = d3Drag()
-      .on("start", this._onDragStart)
-      .on("drag", this._onDragMove)
-      .on("end", this._onDragEnd);
-
-    d3Select(`#${this.state.id}-${CONST.GRAPH_WRAPPER_ID}`)
-      .selectAll(".node")
-      .call(customNodeDrag as any);
-  }
-
-  /**
-   * Sets d3 tick function and configures other d3 stuff such as forces and drag events.
-   * Whenever called binds Graph component state with d3.
-   * @returns {undefined}
-   */
-  _graphBindD3ToReactComponent() {
-    if (!this.state.config.d3.disableLinkForce) {
-      this.state.simulation.nodes(this.state.d3Nodes).on("tick", this._tick);
-      this._graphLinkForceConfig();
-    }
-    this._graphNodeDragConfig();
-  }
-
-  /**
-   * Handles d3 drag 'end' event.
-   * @returns {undefined}
-   */
-  _onDragEnd = () => {
-    this.isDraggingNode = false;
-
-    if (this.state.draggedNode) {
-      this.onNodePositionChange(this.state.draggedNode);
-      this._tick({ draggedNode: null });
-    }
-
-    !this.state.config.staticGraph &&
-      this.state.config.automaticRearrangeAfterDropNode &&
-      this.state.simulation
-        .alphaTarget(this.state.config.d3.alphaTarget)
-        .restart();
-  };
-
-  /**
-   * Handles d3 'drag' event.
-   * {@link https://github.com/d3/d3-drag/blob/master/README.md#drag_subject|more about d3 drag}
-   * @param  {Object} ev - if not undefined it will contain event data.
-   * @param  {number} index - index of the node that is being dragged.
-   * @param  {Array.<Object>} nodeList - array of d3 nodes. This list of nodes is provided by d3, each
-   * node contains all information that was previously fed by rd3g.
-   * @returns {undefined}
-   */
-  _onDragMove = (_, index, nodeList) => {
-    const id = nodeList[index].id;
-
-    if (!this.state.config.staticGraph) {
-      // this is where d3 and react bind
-      let draggedNode = this.state.nodes[id];
-
-      draggedNode.oldX = draggedNode.x;
-      draggedNode.oldY = draggedNode.y;
-
-      draggedNode.x += d3Event.dx;
-      draggedNode.y += d3Event.dy;
-
-      // limit the node inside canvas boundaries
-      let { width, height } = this.state.config;
-      const adjustSize = draggedNode.size ? draggedNode.size / 2 : 0;
-      const left = adjustSize;
-      const right = width - adjustSize;
-      const top = adjustSize;
-      const bottom = height - adjustSize;
-
-      draggedNode.x = clamp(draggedNode.x, left, right);
-      draggedNode.y = clamp(draggedNode.y, top, bottom);
-
-      // set nodes fixing coords fx and fy
-      draggedNode["fx"] = draggedNode.x;
-      draggedNode["fy"] = draggedNode.y;
-
-      this._tick({ draggedNode });
-    }
-  };
-
-  /**
-   * Handles d3 drag 'start' event.
-   * @returns {undefined}
-   */
-  _onDragStart = () => {
-    this.isDraggingNode = true;
-    this.pauseSimulation();
-
-    if (this.state.enableFocusAnimation) {
-      this.setState({ enableFocusAnimation: false });
-    }
-  };
-
-  /**
-   * The tick function simply calls React set state in order to update component and render nodes
-   * along time as d3 calculates new node positioning.
-   * @param {Object} state - new state to pass on.
-   * @param {Function} [cb] - optional callback to fed in to {@link setState()|https://reactjs.org/docs/react-component.html#setstate}.
-   * @returns {undefined}
-   */
-  _tick = (state = {}, cb?) => this.setState(state, cb);
-
-  /**
-   * Configures zoom upon graph with default or user provided values.<br/>
-   * NOTE: in order for users to be able to double click on nodes, we
-   * are disabling the native dblclick.zoom from d3 that performs a zoom
-   * whenever a user double clicks on top of the graph.
-   * {@link https://github.com/d3/d3-zoom#zoom}
-   * @returns {undefined}
-   */
-  _zoomConfig = () => {
-    const selector = d3Select(`#${this.state.id}-${CONST.GRAPH_WRAPPER_ID}`);
-
-    const zoomObject = d3Zoom()
-      .scaleExtent([this.state.config.minZoom, this.state.config.maxZoom])
-      .on("zoom", this._zoomed);
-
-    if (this.state.config.initialZoom !== undefined) {
-      zoomObject.scaleTo(selector as any, this.state.config.initialZoom);
-    }
-
-    // avoid double click on graph to trigger zoom
-    // for more details consult: https://github.com/danielcaldas/react-d3-graph/pull/202
-    selector.call(zoomObject as any).on("dblclick.zoom", null);
-  };
-
-  /**
-   * Handler for 'zoom' event within zoom config.
-   * @returns {Object} returns the transformed elements within the svg graph area.
-   */
-  _zoomed = () => {
-    const transform = d3Event.transform;
-
-    d3SelectAll(`#${this.state.id}-${CONST.GRAPH_CONTAINER_ID}`).attr(
-      "transform",
-      transform
-    );
-
-    this.state.config.panAndZoom && this.setState({ transform: transform.k });
-
-    // only send zoom change events if the zoom has changed (_zoomed() also gets called when panning)
-    if (this.debouncedOnZoomChange && this.state.previousZoom !== transform.k) {
-      this.debouncedOnZoomChange(this.state.previousZoom, transform.k);
-      this.setState({ previousZoom: transform.k });
-    }
-  };
-
-  /**
-   * Calls the callback passed to the component.
-   * @param  {Object} e - The event of onClick handler.
-   * @returns {undefined}
-   */
-  onClickGraph = e => {
-    if (this.state.enableFocusAnimation) {
-      this.setState({ enableFocusAnimation: false });
-    }
-
-    // Only trigger the graph onClickHandler, if not clicked a node or link.
-    // toUpperCase() is added as a precaution, as the documentation says tagName should always
-    // return in UPPERCASE, but chrome returns lowercase
-    const tagName = e.target && e.target.tagName;
-    const name = e?.target?.attributes?.name?.value;
-    const svgContainerName = `svg-container-${this.state.id}`;
-
-    if (tagName.toUpperCase() === "SVG" && name === svgContainerName) {
-      this.props.onClickGraph && this.props.onClickGraph(e);
-    }
-  };
-
-  onMouseOverNode = (event, node) => {
-    if (this.isDraggingNode) {
-      return;
-    }
-
-    this.props.nodeConfig?.onMouseOverNode?.(event, node);
-  };
-
-  onMouseOutNode = (event, node) => {
-    if (this.isDraggingNode) {
-      return;
-    }
-
-    this.props.nodeConfig?.onMouseOutNode?.(event, node);
-  };
-
-  /**
-   * Handles node position change.
-   * @param {Object} node - an object holding information about the dragged node.
-   * @returns {undefined}
-   */
-  onNodePositionChange = node => {
-    this.props.onNodePositionChange?.(node.id, node.x, node.y);
-  };
-
-  /**
-   * Calls d3 simulation.stop().<br/>
-   * {@link https://github.com/d3/d3-force#simulation_stop}
-   * @returns {undefined}
-   */
-  pauseSimulation = () => this.state.simulation.stop();
-
-  /**
-   * This method resets all nodes fixed positions by deleting the properties fx (fixed x)
-   * and fy (fixed y). Following this, a simulation is triggered in order to force nodes to go back
-   * to their original positions (or at least new positions according to the d3 force parameters).
-   * @returns {undefined}
-   */
-  resetNodesPositions = () => {
-    if (!this.state.config.staticGraph) {
-      for (let nodeId in this.state.nodes) {
-        let node = this.state.nodes[nodeId];
-
-        if (node.fx && node.fy) {
-          Reflect.deleteProperty(node, "fx");
-          Reflect.deleteProperty(node, "fy");
-        }
-      }
-
-      this.state.simulation
-        .alphaTarget(this.state.config.d3.alphaTarget)
-        .restart();
-
-      this._tick();
-    }
-  };
-
-  /**
-   * Calls d3 simulation.restart().<br/>
-   * {@link https://github.com/d3/d3-force#simulation_restart}
-   * @returns {undefined}
-   */
-  restartSimulation = () =>
-    !this.state.config.staticGraph && this.state.simulation.restart();
-
-  /**
-   * @deprecated
-   * `componentWillReceiveProps` has a replacement method in react v16.3 onwards.
-   * that is getDerivedStateFromProps.
-   * But one needs to be aware that if an anti pattern of `componentWillReceiveProps` is
-   * in place for this implementation the migration might not be that easy.
-   * See {@link https://reactjs.org/blog/2018/06/07/you-probably-dont-need-derived-state.html}.
-   * @param {Object} nextProps - props.
-   * @returns {undefined}
-   */
-  // eslint-disable-next-line
-  UNSAFE_componentWillReceiveProps(nextProps) {
-    const {
-      graphElementsUpdated,
-      newGraphElements
-    } = checkForGraphElementsChanges(nextProps, this.state);
-    const state = graphElementsUpdated
-      ? initializeGraphState(nextProps, this.state)
-      : this.state;
-    const newConfig = nextProps.config || {};
-    const { configUpdated, d3ConfigUpdated } = checkForGraphConfigChanges(
-      nextProps,
-      this.state
-    );
-    const config = configUpdated
-      ? { ...DEFAULT_CONFIG, ...newConfig }
-      : this.state.config;
-
-    // in order to properly update graph data we need to pause eventual d3 ongoing animations
-    newGraphElements && this.pauseSimulation();
-
-    const transform =
-      newConfig.panAndZoom !== this.state.config.panAndZoom
-        ? 1
-        : this.state.transform;
-    const focusedNodeId = nextProps.data.focusedNodeId;
-    const d3FocusedNode = this.state.d3Nodes.find(
-      node => `${node.id}` === `${focusedNodeId}`
-    );
-    const focusTransformation = getCenterAndZoomTransformation(
-      d3FocusedNode,
-      this.state.config
-    );
-    const enableFocusAnimation =
-      this.props.focusedNodeId !== nextProps.focusedNodeId;
-
-    // if we're given a function to call when the zoom changes, we create a debounced version of it
-    // this is because this function gets called in very rapid succession when zooming
-    if (nextProps.onZoomChange) {
-      this.debouncedOnZoomChange = debounce(nextProps.onZoomChange, 100);
-    }
-
-    this.setState({
-      ...state,
-      config,
-      configUpdated,
-      d3ConfigUpdated,
-      newGraphElements,
-      transform,
-      focusedNodeId,
-      enableFocusAnimation,
-      focusTransformation
-    } as any);
-  }
-
-  componentDidUpdate() {
-    // if the property staticGraph was activated we want to stop possible ongoing simulation
-    const shouldPause =
-      this.state.config.staticGraph ||
-      this.state.config.staticGraphWithDragAndDrop;
-
-    if (shouldPause) {
-      this.pauseSimulation();
-    }
-
+  const onClickGraph = useCallback(event => {
+    // TODO pause animation?
     if (
-      !this.state.config.staticGraph &&
-      (this.state.newGraphElements || this.state.d3ConfigUpdated)
+      (event.target as SVGSVGElement)?.classList.contains(CLASS_NAME_ROOT_SVG)
     ) {
-      this._graphBindD3ToReactComponent();
+      props.onClickGraph?.(event);
+    }
+  }, []);
 
-      if (!this.state.config.staticGraphWithDragAndDrop) {
-        this.restartSimulation();
+  const rootId: string | undefined = props.nodes.length > 0 ? props.nodes[0].id : undefined;
+  const nodeMap: NodeMap = nodeMapRef.current;
+  const linkMatrix: LinkMatrix = linkMatrixRef.current;
+  const { width, height } = graphConfig;
+
+  nodeMap.updateNodeMap(props.nodes, props.nodeConfig || {});
+  linkMatrix.updateMatrix(props.links, props.linkConfig || {}, nodeMap);
+  const elements = onRenderElements(rootId, nodeMap, linkMatrix);
+
+  return (
+    <div>
+      <svg
+        width={width}
+        height={height}
+        className={CLASS_NAME_ROOT_SVG}
+        viewBox={`${-width / 2},${-height / 2},${width},${height}`}
+        onClick={onClickGraph}
+      >
+        <g>
+          {elements}
+        </g>
+      </svg>
+    </div>
+  );
+};
+
+export function onRenderElements(rootId: string | undefined, nodeMap: NodeMap, linkMatrix: LinkMatrix): JSX.Element {
+  if (!rootId) {
+    return <></>;
+  }
+
+  const elements: JSX.Element[] = [nodeMap.get(rootId).renderNode()];
+  const queue: NodeModel[] = [nodeMap.get(rootId)];
+  const rendered: Set<NodeModel | LinkModel> = new Set();
+  while (queue.length > 0) {
+    const current: NodeModel = queue.shift()!;
+    linkMatrix.forEachWithSource(current.id, (link: LinkModel) => {
+      if (!rendered.has(link)) {
+        elements.push(link.renderLink());
+        rendered.add(link);
       }
-
-      this.setState({ newGraphElements: false, d3ConfigUpdated: false });
-    } else if (this.state.configUpdated) {
-      this._graphNodeDragConfig();
-    }
-
-    if (this.state.configUpdated) {
-      this._zoomConfig();
-      this.setState({ configUpdated: false });
-    }
+      if (!rendered.has(link.targetNode)) {
+        elements.push(link.targetNode.renderNode());
+        rendered.add(link.targetNode);
+        queue.push(link.targetNode);
+      }
+    });
   }
-
-  componentDidMount() {
-    if (!this.state.config.staticGraph) {
-      this._graphBindD3ToReactComponent();
-    }
-
-    // graph zoom and drag&drop all network
-    this._zoomConfig();
-  }
-
-  componentWillUnmount() {
-    this.pauseSimulation();
-
-    if (this.focusAnimationTimeout) {
-      clearTimeout(this.focusAnimationTimeout);
-      this.focusAnimationTimeout = null;
-    }
-  }
-
-  constructor(props) {
-    super(props);
-    this.focusAnimationTimeout = null;
-    this.isDraggingNode = false;
-    this.state = initializeGraphState(this.props, this.state);
-    this.debouncedOnZoomChange = this.props.onZoomChange
-      ? debounce(this.props.onZoomChange, 100)
-      : null;
-  }
-
-  render() {
-    const elements = renderWithBFS(
-      this.state.nodes,
-      this.state.d3Links,
-      {
-        ...this.props.nodeConfig,
-        onMouseOverNode: this.onMouseOverNode,
-        onMouseOut: this.onMouseOutNode
-      },
-      this.props.linkConfig
-    );
-
-    const svgStyle = {
-      height: this.state.config.height,
-      width: this.state.config.width
-    };
-
-    const containerProps = this._generateFocusAnimationProps();
-
-    return (
-      <div id={`${this.state.id}-${CONST.GRAPH_WRAPPER_ID}`}>
-        <svg
-          name={`svg-container-${this.state.id}`}
-          style={svgStyle}
-          onClick={this.onClickGraph}
-        >
-          <g
-            id={`${this.state.id}-${CONST.GRAPH_CONTAINER_ID}`}
-            {...containerProps}
-          >
-            {elements}
-          </g>
-        </svg>
-      </div>
-    );
-  }
+  return <>{elements}</>;
 }
