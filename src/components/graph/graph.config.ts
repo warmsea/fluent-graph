@@ -205,7 +205,7 @@ export const DEFAULT_CONFIG: IGraphConfig = {
   focusZoom: 1,
   height: 300,
   maxZoom: 8,
-  minZoom: 0.1,
+  minZoom: 0.125,
   initialZoom: undefined,
   panAndZoom: false,
   staticGraph: false,

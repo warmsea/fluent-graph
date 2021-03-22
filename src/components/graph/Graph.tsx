@@ -6,7 +6,8 @@ import React, {
   useEffect,
   useMemo,
   useReducer,
-  useRef
+  useRef,
+  useState
 } from "react";
 import { IGraphConfig, IGraphProps } from "./Graph.types";
 import { NodeMap } from "./NodeMap";
@@ -19,6 +20,16 @@ import { LinkModel } from "./LinkModel";
 
 const CLASS_NAME_ROOT_SVG: string = "fg-root-svg";
 
+export function calcViewBox(
+  width: number,
+  height: number,
+  x: number,
+  y: number,
+  zoom: number
+): string {
+  return `${-x / zoom},${-y / zoom},${width / zoom},${height / zoom}`;
+}
+
 export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   const nodeMapRef: MutableRefObject<NodeMap> = useRef(new NodeMap());
   const linkMatrixRef: MutableRefObject<LinkMatrix> = useRef(new LinkMatrix());
@@ -26,16 +37,25 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
     d3.Simulation<d3.SimulationNodeDatum, undefined> | undefined
   > = useRef();
 
-  // @ts-ignore: Unused locals
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [ignored, forceUpdateDispatch] = useReducer(x => x + 1, 0);
-
-  const forceUpdate = throttle(forceUpdateDispatch, 50);
-
+  const graphId: string = props.id.replaceAll(/ /g, "_");
   const graphConfig: IGraphConfig = useMemo(
     () => mergeConfig(DEFAULT_CONFIG, props.config),
     [props.config]
   );
+  const { width, height } = graphConfig;
+
+  // @ts-ignore: Unused locals
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [ignored, forceUpdateDispatch] = useReducer(x => x + 1, 0);
+  const forceUpdate = throttle(forceUpdateDispatch, 50);
+
+  const [viewBox, setViewBox] = useState(() => {
+    return calcViewBox(graphConfig.width, graphConfig.height, 0, 0, 1);
+  });
+  const handleZoom = throttle((x, y, k) => {
+    const viewBox = calcViewBox(graphConfig.width, graphConfig.height, x, y, k);
+    setViewBox(viewBox);
+  }, 50);
 
   useEffect(() => {
     if (!simulationRef.current) {
@@ -44,10 +64,23 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
       );
       simulationRef.current
         .force("charge", d3.forceManyBody())
+        .force("center", d3.forceCenter(width / 2, height / 2))
         .on("tick", forceUpdate);
       // TODO stop simulation earlier
     }
   });
+
+  useEffect(() => {
+    const zoomSelection = d3.select(`#fg-container-${graphId}`);
+
+    const zoomBehavior = d3.zoom();
+    zoomBehavior.scaleExtent([graphConfig.minZoom, graphConfig.maxZoom]);
+    zoomBehavior.on("zoom", event => {
+      handleZoom(event.transform.x, event.transform.y, event.transform.k);
+    });
+
+    zoomSelection.call(zoomBehavior as any);
+  }, []);
 
   const onClickGraph = useCallback(
     event => {
@@ -65,19 +98,19 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
     props.nodes.length > 0 ? props.nodes[0].id : undefined;
   const nodeMap: NodeMap = nodeMapRef.current;
   const linkMatrix: LinkMatrix = linkMatrixRef.current;
-  const { width, height } = graphConfig;
 
   nodeMap.updateNodeMap(props.nodes, props.nodeConfig || {});
   linkMatrix.updateMatrix(props.links, props.linkConfig || {}, nodeMap);
   const elements = onRenderElements(rootId, nodeMap, linkMatrix);
 
   return (
-    <div>
+    <div id={`fg-container-${graphId}`}>
       <svg
+        id={`fg-svg:${graphId}`}
         width={width}
         height={height}
         className={CLASS_NAME_ROOT_SVG}
-        viewBox={`${-width / 2},${-height / 2},${width},${height}`}
+        viewBox={viewBox}
         onClick={onClickGraph}
       >
         <g>{elements}</g>
