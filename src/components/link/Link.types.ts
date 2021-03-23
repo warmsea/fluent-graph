@@ -4,9 +4,7 @@ export interface ILinkProps extends ILinkCommonConfig {
   id: string;
   start: IPoint;
   end: IPoint;
-  source: string; // TODO put into data:any?
-  target: string; // TODO put into data:any?
-  getLinkAriaLabel?: (source: string, target: string) => string; // TODO find a better way?
+  getLinkAriaLabel?: (props: ILinkProps) => string; // TODO find a better way?
   // TODO accept offset for start and end
 }
 
@@ -22,23 +20,19 @@ export interface ILinkCommonConfig extends ILinkEventHandlers {
 export interface ILinkEventHandlers {
   onClickLink?: (
     event: React.MouseEvent<SVGPathElement, MouseEvent>,
-    source: string,
-    target: string
+    props: ILinkProps
   ) => void;
   onMouseOverLink?: (
     event: React.MouseEvent<SVGPathElement, MouseEvent>,
-    source: string,
-    target: string
+    props: ILinkProps
   ) => void;
   onMouseOutLink?: (
     event: React.MouseEvent<SVGPathElement, MouseEvent>,
-    source: string,
-    target: string
+    props: ILinkProps
   ) => void;
   onKeyDownLink?: (
     event: React.KeyboardEvent<SVGPathElement>,
-    source: string,
-    target: string
+    props: ILinkProps
   ) => void;
 }
 

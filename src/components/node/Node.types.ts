@@ -11,8 +11,6 @@ export interface ILabelPlacementProps {
 
 export interface INodeProps extends INodeCommonConfig {
   id: string;
-  x?: number; // TODO should a Node know its position?
-  y?: number;
   label?: string;
 }
 

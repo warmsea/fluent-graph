@@ -29,9 +29,7 @@ const DEFAULT_REQUIRED_PROPS: ILinkProps = {
   id: "Fluent Graph Link",
   label: "Fluent Graph Link",
   start: { x: 50, y: 50 },
-  end: { x: 200, y: 100 },
-  source: "",
-  target: ""
+  end: { x: 200, y: 100 }
 }
 
 export const Basic: Story<ITemplateArgs> = Template.bind({});

@@ -61,8 +61,7 @@ export const Node: FC<INodeProps> = (props: INodeProps) => {
 
   const gProps: SVGAttributes<SVGGElement> = {
     id: props.id,
-    className: props.className,
-    transform: `translate(${props.x ?? 0}, ${props.y ?? 0})`
+    className: props.className
   };
 
   return (
