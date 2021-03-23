@@ -2,8 +2,8 @@ import React, { CSSProperties } from "react";
 
 export interface ILinkProps extends ILinkCommonConfig {
   id: string;
-  start: IPoint;
-  end: IPoint;
+  start: ILinkEnd;
+  end: ILinkEnd;
   getLinkAriaLabel?: (props: ILinkProps) => string; // TODO find a better way?
   // TODO accept offset for start and end
 }
@@ -36,7 +36,8 @@ export interface ILinkEventHandlers {
   ) => void;
 }
 
-export interface IPoint {
+export interface ILinkEnd {
   x: number;
   y: number;
+  offset?: number;
 }

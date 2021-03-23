@@ -1,7 +1,7 @@
 import { isNumber, merge } from "lodash";
 import React, { CSSProperties, FC, SVGAttributes, useCallback } from "react";
 
-import { ILinkProps } from "./Link.types";
+import { ILinkEnd, ILinkProps } from "./Link.types";
 
 export const CLICK_HELPER_THRESHOLD: number = 12;
 
@@ -11,6 +11,11 @@ export const DEFAULT_LINK_PROPS: Partial<ILinkProps> = {
     strokeWidth: 1.5
   }
 };
+
+export function calcDraw(start: ILinkEnd, end: ILinkEnd): string {
+  // TODO respect offset
+  return `M${start.x},${start.y}L${end.x},${end.y}Z`;
+}
 
 export const Link: FC<ILinkProps> = (props: ILinkProps) => {
   props = merge({}, DEFAULT_LINK_PROPS, props);
@@ -35,7 +40,7 @@ export const Link: FC<ILinkProps> = (props: ILinkProps) => {
     [props.onKeyDownLink, props]
   );
 
-  const d: string = `M${props.start.x},${props.start.y}L${props.end.x},${props.end.y}Z`;
+  const d: string = calcDraw(props.start, props.end);
 
   const lineProps: SVGAttributes<SVGPathElement> = {
     d: d,
