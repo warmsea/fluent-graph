@@ -18,6 +18,8 @@ import { mergeConfig } from "../../utils";
 import { DEFAULT_CONFIG } from "./graph.config";
 import { NodeModel } from "./NodeModel";
 import { LinkModel } from "./LinkModel";
+import { default as CONST } from "./graph.const"
+import { LinkMap, IGraphNodeDatum } from './LinkMap';
 
 const CLASS_NAME_ROOT_SVG: string = "fg-root-svg";
 
@@ -33,9 +35,10 @@ export function calcViewBox(
 
 export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   const nodeMapRef: MutableRefObject<NodeMap> = useRef(new NodeMap());
+  const linkMapRef: MutableRefObject<LinkMap> = useRef(new LinkMap());
   const linkMatrixRef: MutableRefObject<LinkMatrix> = useRef(new LinkMatrix());
   const simulationRef: MutableRefObject<
-    d3.Simulation<d3.SimulationNodeDatum, undefined> | undefined
+    d3.Simulation<IGraphNodeDatum, undefined> | undefined
   > = useRef();
   const zoomRef: MutableRefObject<
     ZoomBehavior<Element, unknown> | undefined
@@ -67,20 +70,22 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   useEffect(() => {
     if (!simulationRef.current) {
       simulationRef.current = d3.forceSimulation(
-        nodeMapRef.current?.getSimulationNodeDatums()
+        nodeMap.getSimulationNodeDatums()
       );
       simulationRef.current
-        .force("charge", d3.forceManyBody())
+        .force("charge", d3.forceManyBody().strength(-150))
         .force("center", d3.forceCenter(width / 2, height / 2))
         .on("tick", forceUpdate);
+
+      const forceLink = d3.forceLink(linkMap.getSimulationLinkDatums())
+        .id(node => (node as IGraphNodeDatum).id)
+        .distance(graphConfig.d3.linkLength)
+        .strength(graphConfig.d3.linkStrength);
+
+      simulationRef.current.force(CONST.LINK_CLASS_NAME, forceLink);
       // TODO stop simulation earlier?
     }
-
-    return () => {
-      simulationRef.current?.on("tick", null);
-      simulationRef.current?.stop();
-    };
-  }, [forceUpdate, width, height, nodeMapRef.current]);
+  });
 
   useEffect(() => {
     if (!zoomRef.current) {
@@ -96,12 +101,9 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
     }
     zoomRef.current.scaleExtent([graphConfig.minZoom, graphConfig.maxZoom]);
     zoomRef.current.on("zoom", event => {
+      console.log(event);
       handleZoom(event.transform.x, event.transform.y, event.transform.k);
     });
-
-    return () => {
-      zoomRef.current?.on("zoom", null);
-    };
   }, [graphContainerId, graphConfig.minZoom, graphConfig.maxZoom, handleZoom]);
 
   const onClickGraph = useCallback(
@@ -119,9 +121,11 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   const rootId: string | undefined =
     props.nodes.length > 0 ? props.nodes[0].id : undefined;
   const nodeMap: NodeMap = nodeMapRef.current;
+  const linkMap: LinkMap = linkMapRef.current;
   const linkMatrix: LinkMatrix = linkMatrixRef.current;
 
   nodeMap.updateNodeMap(props.nodes, props.nodeConfig || {});
+  linkMap.updateLinkMap(props.links, nodeMap, props.linkConfig);
   linkMatrix.updateMatrix(props.links, props.linkConfig || {}, nodeMap);
   const elements = onRenderElements(rootId, nodeMap, linkMatrix);
 

@@ -54,7 +54,7 @@ const LINK_PROPS_WHITELIST = ["index", "source", "target"];
  * @returns {Object} returns the simulation instance to be consumed.
  * @memberof Graph/helper
  */
-function _createForceSimulation(width, height, gravity) {
+function createForceSimulation(width, height, gravity) {
   const frx = d3ForceX(width / 2).strength(CONST.FORCE_X);
   const fry = d3ForceY(height / 2).strength(CONST.FORCE_Y);
   const forceStrength = gravity;
@@ -234,7 +234,10 @@ function checkForGraphElementsChanges(nextProps, currentState) {
   const nextNodes = nextProps.data.nodes.map(n =>
     antiPick(n, NODE_PROPERTIES_DISCARD_TO_COMPARE)
   );
-  const nextLinks = nextProps.data.links;
+  const nextLinks = nextProps.data.links.map(l => ({
+    source: getId(l.source),
+    target: getId(l.target),
+  }));
   const stateD3Nodes = currentState.d3Nodes.map(n =>
     antiPick(n, NODE_PROPERTIES_DISCARD_TO_COMPARE)
   );
@@ -257,6 +260,13 @@ function checkForGraphElementsChanges(nextProps, currentState) {
   return { graphElementsUpdated, newGraphElements };
 }
 
+function checkForGraphSizeUpdated(nextProps, currentState) {
+  const newConfig = nextProps.config || {};
+  return (
+    !isEmpty(newConfig) &&
+    (newConfig.width !== currentState.config.width || newConfig.height !== currentState.config.height)
+  );
+}
 /**
  * Logic to check for changes in graph config.
  * @param {Object} nextProps - nextProps that graph will receive.
@@ -328,6 +338,7 @@ function getId(sot) {
  * @param {Object} state - Graph component current state (same format as returned object on this function).
  * @returns {Object} a fully (re)initialized graph state object.
  * @memberof Graph/helper
+ * @deprecated deprecate this function as we use react hooks for Graph.tsx
  */
 function initializeGraphState(
   props: IGraphProps,
@@ -359,7 +370,7 @@ function initializeGraphState(
   const links = _initializeLinks(graph.links); // matrix of graph connections
   const nodes = _initializeNodes(graph.nodes);
   const { nodes: d3Nodes, links: d3Links } = graph;
-  const simulation = _createForceSimulation(
+  const simulation = createForceSimulation(
     graphConfig.width,
     graphConfig.height,
     graphConfig.d3.gravity
@@ -449,6 +460,8 @@ function getNormalizedNodeCoordinates(
 export {
   checkForGraphConfigChanges,
   checkForGraphElementsChanges,
+  checkForGraphSizeUpdated,
+  createForceSimulation,
   getCenterAndZoomTransformation,
   getId,
   initializeGraphState,
