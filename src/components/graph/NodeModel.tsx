@@ -8,11 +8,13 @@ import { IGraphPropsNode } from "./Graph.types";
 export class NodeModel {
   private props: IGraphPropsNode;
   public id: string;
+  public size: number;
   public force: SimulationNodeDatum;
 
   constructor(props: IGraphPropsNode, nodeConfig: INodeCommonConfig) {
     this.props = mergeConfig(nodeConfig, props);
     this.id = this.props.id;
+    this.size = this.props.size ?? 0;
     this.force = {};
   }
 

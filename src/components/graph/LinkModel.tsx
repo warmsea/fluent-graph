@@ -25,12 +25,24 @@ export class LinkModel {
   }
 
   public renderLink(): JSX.Element {
+    const start = {
+      x: 0,
+      y: 0,
+      offset: this.sourceNode.size,
+      ...this.sourceNode.force,
+    }
+    const end = {
+      x: 0,
+      y: 0,
+      offset: this.targetNode.size,
+      ...this.targetNode.force,
+    }
     return (
       <Link
         key={this.id}
         id={this.id}
-        start={mergeConfig({ x: 0, y: 0 }, this.sourceNode.force)}
-        end={mergeConfig({ x: 0, y: 0 }, this.targetNode.force)}
+        start={start}
+        end={end}
         {...this.props}
       />
     );
