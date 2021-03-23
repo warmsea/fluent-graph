@@ -22,22 +22,22 @@ export const Link: FC<ILinkProps> = (props: ILinkProps) => {
 
   const handleOnClickLink = useCallback(
     event => props.onClickLink?.(event, props),
-    [props.onClickLink, props]
+    [props]
   );
 
   const handleOnMouseOverLink = useCallback(
     event => props.onMouseOverLink?.(event, props),
-    [props.onMouseOverLink, props]
+    [props]
   );
 
   const handleOnMouseOutLink = useCallback(
     event => props.onMouseOutLink?.(event, props),
-    [props.onMouseOutLink, props]
+    [props]
   );
 
   const handleOnKeyDownLink = useCallback(
     event => props.onKeyDownLink?.(event, props),
-    [props.onKeyDownLink, props]
+    [props]
   );
 
   const d: string = calcDraw(props.start, props.end);

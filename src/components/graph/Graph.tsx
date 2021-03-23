@@ -67,7 +67,7 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   useEffect(() => {
     if (!simulationRef.current) {
       simulationRef.current = d3.forceSimulation(
-        nodeMap.getSimulationNodeDatums()
+        nodeMapRef.current?.getSimulationNodeDatums()
       );
       simulationRef.current
         .force("charge", d3.forceManyBody())
@@ -75,7 +75,12 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
         .on("tick", forceUpdate);
       // TODO stop simulation earlier?
     }
-  });
+
+    return () => {
+      simulationRef.current?.on("tick", null);
+      simulationRef.current?.stop();
+    };
+  }, [forceUpdate, width, height, nodeMapRef.current]);
 
   useEffect(() => {
     if (!zoomRef.current) {
@@ -91,9 +96,12 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
     }
     zoomRef.current.scaleExtent([graphConfig.minZoom, graphConfig.maxZoom]);
     zoomRef.current.on("zoom", event => {
-      console.log(event);
       handleZoom(event.transform.x, event.transform.y, event.transform.k);
     });
+
+    return () => {
+      zoomRef.current?.on("zoom", null);
+    };
   }, [graphContainerId, graphConfig.minZoom, graphConfig.maxZoom, handleZoom]);
 
   const onClickGraph = useCallback(
