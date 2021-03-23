@@ -1,4 +1,5 @@
 import * as d3 from "d3";
+import { Selection, ZoomBehavior } from "d3";
 import React, {
   FC,
   MutableRefObject,
@@ -36,8 +37,12 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   const simulationRef: MutableRefObject<
     d3.Simulation<d3.SimulationNodeDatum, undefined> | undefined
   > = useRef();
+  const zoomRef: MutableRefObject<
+    ZoomBehavior<Element, unknown> | undefined
+  > = useRef();
 
   const graphId: string = props.id.replaceAll(/ /g, "_");
+  const graphContainerId: string = `fg-container-${graphId}`;
   const graphConfig: IGraphConfig = useMemo(
     () => mergeConfig(DEFAULT_CONFIG, props.config),
     [props.config]
@@ -47,15 +52,17 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   // @ts-ignore: Unused locals
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [ignored, forceUpdateDispatch] = useReducer(x => x + 1, 0);
-  const forceUpdate = throttle(forceUpdateDispatch, 50);
+  const forceUpdate = useCallback(throttle(forceUpdateDispatch, 50), []);
 
   const [viewBox, setViewBox] = useState(() => {
     return calcViewBox(graphConfig.width, graphConfig.height, 0, 0, 1);
   });
-  const handleZoom = throttle((x, y, k) => {
-    const viewBox = calcViewBox(graphConfig.width, graphConfig.height, x, y, k);
-    setViewBox(viewBox);
-  }, 50);
+  const handleZoom = useCallback(
+    throttle((x, y, k) => {
+      setViewBox(calcViewBox(graphConfig.width, graphConfig.height, x, y, k));
+    }, 50),
+    []
+  );
 
   useEffect(() => {
     if (!simulationRef.current) {
@@ -66,21 +73,28 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
         .force("charge", d3.forceManyBody())
         .force("center", d3.forceCenter(width / 2, height / 2))
         .on("tick", forceUpdate);
-      // TODO stop simulation earlier
+      // TODO stop simulation earlier?
     }
   });
 
   useEffect(() => {
-    const zoomSelection = d3.select(`#fg-container-${graphId}`);
-
-    const zoomBehavior = d3.zoom();
-    zoomBehavior.scaleExtent([graphConfig.minZoom, graphConfig.maxZoom]);
-    zoomBehavior.on("zoom", event => {
+    if (!zoomRef.current) {
+      const zoomSelection: Selection<
+        Element,
+        unknown,
+        Element,
+        unknown
+      > = d3.select(`#${graphContainerId}`);
+      const zoomBehavior = d3.zoom();
+      zoomRef.current = zoomBehavior;
+      zoomSelection.call(zoomBehavior);
+    }
+    zoomRef.current.scaleExtent([graphConfig.minZoom, graphConfig.maxZoom]);
+    zoomRef.current.on("zoom", event => {
+      console.log(event);
       handleZoom(event.transform.x, event.transform.y, event.transform.k);
     });
-
-    zoomSelection.call(zoomBehavior as any);
-  }, []);
+  }, [graphContainerId, graphConfig.minZoom, graphConfig.maxZoom, handleZoom]);
 
   const onClickGraph = useCallback(
     event => {
@@ -104,9 +118,8 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   const elements = onRenderElements(rootId, nodeMap, linkMatrix);
 
   return (
-    <div id={`fg-container-${graphId}`}>
+    <div id={graphContainerId}>
       <svg
-        id={`fg-svg:${graphId}`}
         width={width}
         height={height}
         className={CLASS_NAME_ROOT_SVG}
