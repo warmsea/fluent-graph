@@ -13,8 +13,47 @@ export const DEFAULT_LINK_PROPS: Partial<ILinkProps> = {
 };
 
 export function calcDraw(start: ILinkEnd, end: ILinkEnd): string {
-  // TODO respect offset
-  return `M${start.x},${start.y}L${end.x},${end.y}Z`;
+  // TODO remove default offset 8
+  const [newStart, newEnd] = calc(start, end, start.offset || 8, end.offset || 8);
+
+  return `M${newStart.x},${newStart.y}L${newEnd.x},${newEnd.y}Z`;
+
+  // TODO move to utils
+  type vec2 = { x: number; y: number };
+  function calc(
+    start: vec2,
+    end: vec2,
+    offsetStart: number = 0,
+    offsetEnd: number = 0
+  ): [vec2, vec2] {
+    const v = sub(end, start);
+    const dir = normalize(v);
+    return [
+      add(start, times(dir, offsetStart)),
+      sub(end, times(dir, offsetEnd))
+    ];
+
+    function times(v: vec2, n: number): vec2 {
+      return { x: v.x * n, y: v.y * n };
+    }
+
+    function sub(v1: vec2, v2: vec2): vec2 {
+      return { x: v1.x - v2.x, y: v1.y - v2.y };
+    }
+
+    function add(v1: vec2, v2: vec2): vec2 {
+      return { x: v1.x + v2.x, y: v1.y + v2.y };
+    }
+
+    function normalize(v: vec2): vec2 {
+      const len = length(v);
+      return { x: v.x / len, y: v.y / len };
+    }
+
+    function length(v: vec2): number {
+      return Math.sqrt(v.x * v.x + v.y * v.y);
+    }
+  }
 }
 
 export const Link: FC<ILinkProps> = (props: ILinkProps) => {
