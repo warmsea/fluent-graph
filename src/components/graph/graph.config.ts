@@ -216,6 +216,8 @@ export const DEFAULT_CONFIG: IGraphConfig = {
     gravity: -100,
     linkLength: 100,
     linkStrength: 1,
-    disableLinkForce: false
+    disableLinkForce: false,
+    paddingRadius: 30,
+    collideRadius: 50
   }
 };

@@ -65,7 +65,19 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   // @ts-ignore: Unused locals
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
-  const throttledForceUpdate = useCallback(throttle(forceUpdate, DISPLAY_THROTTLE_MS), []);
+
+  const tick = useCallback(
+    throttle(() => {
+      const radius: number = graphConfig.d3.paddingRadius || DEFAULT_NODE_PROPS.size! / 2;
+      // constrain nodes from exceed the border of the graph.
+      nodeMap.getSimulationNodeDatums().forEach(node => {
+        node.x = Math.max(radius, Math.min(width - radius, node.x || radius));
+        node.y = Math.max(radius, Math.min(height - radius, node.y || radius));
+      });
+      forceUpdate();
+    }, DISPLAY_THROTTLE_MS),
+    []
+  );
 
   // Force simulation behavior
   useEffect(() => {
@@ -73,10 +85,12 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
       simulationRef.current = d3.forceSimulation(
         nodeMap.getSimulationNodeDatums()
       );
+
       simulationRef.current
-        .force("charge", d3.forceManyBody().strength(-150))
+        .force("charge", d3.forceManyBody().strength(graphConfig.d3.gravity))
         .force("center", d3.forceCenter(width / 2, height / 2))
-        .on("tick", throttledForceUpdate);
+        .force("collide", d3.forceCollide().radius(graphConfig.d3.collideRadius))
+        .on("tick", tick);
 
       const forceLink = d3.forceLink(linkMap.getSimulationLinkDatums())
         .id(node => (node as IGraphNodeDatum).id)
