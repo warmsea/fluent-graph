@@ -1,7 +1,7 @@
 import React from "react";
 import { mergeConfig } from "../../utils";
 import { Link } from "../link/Link";
-import { ILinkCommonConfig } from "../link/Link.types";
+import { ILinkCommonConfig, ILinkEnd } from "../link/Link.types";
 import { IGraphPropsLink } from "./Graph.types";
 import { NodeMap } from "./NodeMap";
 import { NodeModel } from "./NodeModel";
@@ -32,12 +32,22 @@ export class LinkModel {
   }
 
   public renderLink(): JSX.Element {
+    const start: ILinkEnd = {
+      x: this.sourceNode.force.x ?? 0,
+      y: this.sourceNode.force.y ?? 0,
+      offset: this.sourceNode.size / 2,
+    };
+    const end: ILinkEnd = {
+      x: this.targetNode.force.x ?? 0,
+      y: this.targetNode.force.y ?? 0,
+      offset: this.targetNode.size / 2,
+    }
     return (
       <Link
         key={this.id}
         id={this.id}
-        start={mergeConfig({ x: 0, y: 0 }, this.sourceNode.force)}
-        end={mergeConfig({ x: 0, y: 0 }, this.targetNode.force)}
+        start={start}
+        end={end}
         {...this.props}
       />
     );

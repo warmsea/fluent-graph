@@ -3,10 +3,10 @@ import { merge } from "lodash";
 import React, { FC, SVGAttributes, useCallback } from "react";
 
 import { getLabelPlacementProps } from "./node.helper";
-import { INodeProps } from "./Node.types";
+import { INodeCommonConfig, INodeProps } from "./Node.types";
 
-const DEFAULT_NODE_PROPS: Partial<INodeProps> = {
-  size: 200,
+export const DEFAULT_NODE_PROPS: INodeCommonConfig = {
+  size: 20,
   nodeStyle: {
     fill: "#d3d3d3"
   },
@@ -35,12 +35,13 @@ export const Node: FC<INodeProps> = (props: INodeProps) => {
     if (props.onRenderNode) {
       return props.onRenderNode(props);
     } else {
+      const diameter: number = props.size ?? DEFAULT_NODE_PROPS.size!;
       const nodeProps: SVGAttributes<SVGElement> = {
         d:
           d3
             .symbol()
             .type(d3.symbolCircle)
-            .size(props.size ?? DEFAULT_NODE_PROPS.size!)() ?? undefined,
+            .size(Math.pow(Math.PI * diameter / 4, 2))() ?? undefined,
         style: props.nodeStyle
       };
       return <path tabIndex={0} {...nodeProps} />;

@@ -18,6 +18,10 @@ export interface INodeProps extends INodeCommonConfig {
  * Node configuration that can potential apply to all nodes.
  */
 export interface INodeCommonConfig extends INodeEventHandlers {
+
+  /**
+   * The size of the node. By default, it will draw a circle with `size` as the diameter.
+   */
   size?: number;
   className?: string;
   nodeStyle?: React.CSSProperties;

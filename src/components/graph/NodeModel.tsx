@@ -8,13 +8,15 @@ import { IGraphNodeDatum } from './LinkMap';
 export class NodeModel {
   private props: IGraphPropsNode;
   public id: string;
+  public size: number;
   public force: IGraphNodeDatum;
 
   constructor(props: IGraphPropsNode, nodeConfig: INodeCommonConfig) {
     this.props = mergeConfig(nodeConfig, props);
     this.id = this.props.id;
+    this.size = this.props.size ?? 0;
     this.force = {
-      id: this.props.id
+      id: this.id
     };
   }
 

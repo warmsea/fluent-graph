@@ -14,7 +14,7 @@ export const DEFAULT_LINK_PROPS: Partial<ILinkProps> = {
 
 export function calcDraw(start: ILinkEnd, end: ILinkEnd): string {
   // TODO remove default offset 8
-  const [newStart, newEnd] = calc(start, end, start.offset || 8, end.offset || 8);
+  const [newStart, newEnd] = calc(start, end, start.offset, end.offset);
 
   return `M${newStart.x},${newStart.y}L${newEnd.x},${newEnd.y}Z`;
 

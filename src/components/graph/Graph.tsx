@@ -20,6 +20,8 @@ import { NodeModel } from "./NodeModel";
 import { LinkModel } from "./LinkModel";
 import { default as CONST } from "./graph.const"
 import { LinkMap, IGraphNodeDatum } from './LinkMap';
+import { INodeCommonConfig } from '../node/Node.types';
+import { DEFAULT_NODE_PROPS } from '../node/Node';
 
 const CLASS_NAME_ROOT_SVG: string = "fg-root-svg";
 const DISPLAY_THROTTLE_MS: number = 100;
@@ -52,6 +54,9 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
     () => mergeConfig(DEFAULT_CONFIG, props.config),
     [props.config]
   );
+  const nodeConfig: INodeCommonConfig = useMemo(() => {
+    return mergeConfig(DEFAULT_NODE_PROPS, props.nodeConfig);
+  }, [props.nodeConfig]);
   const { width, height } = graphConfig;
 
   const [zoomState, setZoomState] = useState({ x: 0, y: 0, k: 1 });
@@ -149,7 +154,7 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   const linkMap: LinkMap = linkMapRef.current;
   const linkMatrix: LinkMatrix = linkMatrixRef.current;
 
-  nodeMap.updateNodeMap(props.nodes, props.nodeConfig || {});
+  nodeMap.updateNodeMap(props.nodes, nodeConfig);
   linkMap.updateLinkMap(props.links, nodeMap, props.linkConfig);
   linkMatrix.updateMatrix(props.links, props.linkConfig || {}, nodeMap);
   const elements = onRenderElements(rootId, nodeMap, linkMatrix);
@@ -160,7 +165,7 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
         width={width}
         height={height}
         className={CLASS_NAME_ROOT_SVG}
-        viewBox={calcViewBox(graphConfig.width, graphConfig.height, zoomState.x, zoomState.y, zoomState.k)}
+        viewBox={calcViewBox(width, height, zoomState.x, zoomState.y, zoomState.k)}
         onClick={onClickGraph}
       >
         <g>{elements}</g>
