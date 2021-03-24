@@ -35,7 +35,7 @@ export class LinkMatrix {
         // The later one wins on duplicate
         this._matrix
           .get(source)!
-          .set(target, new LinkModel(link, linkConfig, nodeMap));
+          .set(target, new LinkModel(link, nodeMap, linkConfig));
 
         if (!this._matrix.get(target)!.has(source)) {
           this._matrix

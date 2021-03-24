@@ -129,5 +129,12 @@ Complex.args = {
       { source: "United", target: "Elements" },
       { source: "Delta", target: "Juno" },
     ],
+    config: {
+      d3: {
+        gravity: -100,
+        linkLength: 100,
+        linkStrength: 1
+      }
+    }
   }
 };

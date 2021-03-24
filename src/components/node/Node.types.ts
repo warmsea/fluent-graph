@@ -18,6 +18,10 @@ export interface INodeProps extends INodeCommonConfig {
  * Node configuration that can potential apply to all nodes.
  */
 export interface INodeCommonConfig extends INodeEventHandlers {
+
+  /**
+   * The size of the node. By default, it will draw a circle with `size` as the diameter.
+   */
   size?: number;
   className?: string;
   nodeStyle?: React.CSSProperties;
@@ -33,14 +37,14 @@ export interface INodeCommonConfig extends INodeEventHandlers {
 export interface INodeEventHandlers {
   onClickNode?: (
     event: React.MouseEvent<SVGPathElement, MouseEvent>,
-    nodeId: string
+    props: INodeProps
   ) => void;
   onMouseOverNode?: (
     event: React.MouseEvent<SVGPathElement, MouseEvent>,
-    nodeId: string
+    props: INodeProps
   ) => void;
   onMouseOutNode?: (
     event: React.MouseEvent<SVGPathElement, MouseEvent>,
-    nodeId: string
+    props: INodeProps
   ) => void;
 }

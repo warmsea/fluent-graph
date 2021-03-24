@@ -3,10 +3,10 @@ import { merge } from "lodash";
 import React, { FC, SVGAttributes, useCallback } from "react";
 
 import { getLabelPlacementProps } from "./node.helper";
-import { INodeProps } from "./Node.types";
+import { INodeCommonConfig, INodeProps } from "./Node.types";
 
-const DEFAULT_NODE_PROPS: Partial<INodeProps> = {
-  size: 200,
+export const DEFAULT_NODE_PROPS: INodeCommonConfig = {
+  size: 20,
   nodeStyle: {
     fill: "#d3d3d3"
   },
@@ -17,30 +17,31 @@ export const Node: FC<INodeProps> = (props: INodeProps) => {
   props = merge({}, DEFAULT_NODE_PROPS, props);
 
   const handleOnClickNode = useCallback(
-    event => props.onClickNode?.(event, props.id),
-    [props.onClickNode, props.id]
+    event => props.onClickNode?.(event, props),
+    [props.onClickNode, props]
   );
 
   const handleOnMouseOverNode = useCallback(
-    event => props.onMouseOverNode?.(event, props.id),
-    [props.onMouseOverNode, props.id]
+    event => props.onMouseOverNode?.(event, props),
+    [props.onMouseOverNode, props]
   );
 
   const handleOnMouseOutNode = useCallback(
-    event => props.onMouseOutNode?.(event, props.id),
-    [props.onMouseOutNode, props.id]
+    event => props.onMouseOutNode?.(event, props),
+    [props.onMouseOutNode, props]
   );
 
   const onRenderNode = useCallback((props: INodeProps) => {
     if (props.onRenderNode) {
       return props.onRenderNode(props);
     } else {
+      const diameter: number = props.size ?? DEFAULT_NODE_PROPS.size!;
       const nodeProps: SVGAttributes<SVGElement> = {
         d:
           d3
             .symbol()
             .type(d3.symbolCircle)
-            .size(props.size ?? DEFAULT_NODE_PROPS.size!)() ?? undefined,
+            .size(Math.pow(Math.PI * diameter / 4, 2))() ?? undefined,
         style: props.nodeStyle
       };
       return <path tabIndex={0} {...nodeProps} />;
@@ -67,9 +68,11 @@ export const Node: FC<INodeProps> = (props: INodeProps) => {
   return (
     <g {...gProps}>
       <g
+        className="fg-node"
         onClick={handleOnClickNode}
         onMouseOver={handleOnMouseOverNode}
         onMouseOut={handleOnMouseOutNode}
+        data-nodeid={props.id}
       >
         {onRenderNode(props)}
       </g>

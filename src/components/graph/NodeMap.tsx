@@ -1,7 +1,7 @@
-import { SimulationNodeDatum } from "d3";
 import { INodeCommonConfig } from "../node/Node.types";
 import { IGraphPropsNode } from "./Graph.types";
 import { NodeModel } from "./NodeModel";
+import { IGraphNodeDatum } from './LinkMap';
 
 export class NodeMap {
   public rootNode: NodeModel | undefined;
@@ -40,8 +40,8 @@ export class NodeMap {
     }
   }
 
-  public getSimulationNodeDatums(): SimulationNodeDatum[] {
-    const datums: SimulationNodeDatum[] = [];
+  public getSimulationNodeDatums(): IGraphNodeDatum[] {
+    const datums: IGraphNodeDatum[] = [];
     this._map.forEach(node => datums.push(node.force));
     return datums;
   }
