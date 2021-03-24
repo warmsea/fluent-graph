@@ -3,7 +3,7 @@ import { mergeConfig } from "../../utils";
 import { Node } from "../node/Node";
 import { INodeCommonConfig } from "../node/Node.types";
 import { IGraphPropsNode } from "./Graph.types";
-import { IGraphNodeDatum } from './LinkMap';
+import { IGraphNodeDatum } from "./LinkMap";
 
 export class NodeModel {
   private props: IGraphPropsNode;

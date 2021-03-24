@@ -41,7 +41,7 @@ export const Node: FC<INodeProps> = (props: INodeProps) => {
           d3
             .symbol()
             .type(d3.symbolCircle)
-            .size(Math.pow(Math.PI * diameter / 4, 2))() ?? undefined,
+            .size(Math.pow((Math.PI * diameter) / 4, 2))() ?? undefined,
         style: props.nodeStyle
       };
       return <path tabIndex={0} {...nodeProps} />;

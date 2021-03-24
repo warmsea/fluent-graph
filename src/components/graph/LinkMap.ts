@@ -1,8 +1,8 @@
 import { SimulationNodeDatum, SimulationLinkDatum } from "d3";
 import { IGraphPropsLink } from "./Graph.types";
-import { LinkModel } from './LinkModel';
-import { ILinkCommonConfig } from '../link/Link.types';
-import { NodeMap } from './NodeMap';
+import { LinkModel } from "./LinkModel";
+import { ILinkCommonConfig } from "../link/Link.types";
+import { NodeMap } from "./NodeMap";
 
 export interface IGraphNodeDatum extends SimulationNodeDatum {
   id: string;
@@ -24,7 +24,10 @@ export class LinkMap {
       if (this._map.has(`${link.source},${link.target}`)) {
         // TODO handle existing nodes
       } else {
-        this._map.set(`${link.source},${link.target}`, new LinkModel(link, nodeMap, linkConfig));
+        this._map.set(
+          `${link.source},${link.target}`,
+          new LinkModel(link, nodeMap, linkConfig)
+        );
       }
     });
   }

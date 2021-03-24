@@ -28,20 +28,20 @@ export class LinkModel {
     this.force = {
       source: this.props.source,
       target: this.props.target
-    }
+    };
   }
 
   public renderLink(): JSX.Element {
     const start: ILinkEnd = {
       x: this.sourceNode.force.x ?? 0,
       y: this.sourceNode.force.y ?? 0,
-      offset: this.sourceNode.size / 2,
+      offset: this.sourceNode.size / 2
     };
     const end: ILinkEnd = {
       x: this.targetNode.force.x ?? 0,
       y: this.targetNode.force.y ?? 0,
-      offset: this.targetNode.size / 2,
-    }
+      offset: this.targetNode.size / 2
+    };
     return (
       <Link
         key={this.id}
