@@ -22,6 +22,7 @@ import { default as CONST } from "./graph.const"
 import { LinkMap, IGraphNodeDatum } from './LinkMap';
 
 const CLASS_NAME_ROOT_SVG: string = "fg-root-svg";
+const DISPLAY_THROTTLE_MS: number = 100;
 
 export function calcViewBox(
   width: number,
@@ -53,21 +54,15 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   );
   const { width, height } = graphConfig;
 
+  const [zoomState, setZoomState] = useState({ x: 0, y: 0, k: 1 });
+  const throttledSetZoomState = throttle(setZoomState, DISPLAY_THROTTLE_MS);
+
   // @ts-ignore: Unused locals
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
-  const throttledForceUpdate = useCallback(throttle(forceUpdate, 50), []);
+  const throttledForceUpdate = useCallback(throttle(forceUpdate, DISPLAY_THROTTLE_MS), []);
 
-  const [viewBox, setViewBox] = useState(() => {
-    return calcViewBox(graphConfig.width, graphConfig.height, 0, 0, 1);
-  });
-  const handleZoom = useCallback(
-    throttle((x, y, k) => {
-      setViewBox(calcViewBox(graphConfig.width, graphConfig.height, x, y, k));
-    }, 50),
-    []
-  );
-
+  // Force simulation behavior
   useEffect(() => {
     if (!simulationRef.current) {
       simulationRef.current = d3.forceSimulation(
@@ -88,6 +83,7 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
     }
   });
 
+  // Zoom and pan behavior
   useEffect(() => {
     if (!zoomRef.current) {
       const zoomSelection: Selection<
@@ -102,11 +98,11 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
     }
     zoomRef.current.scaleExtent([graphConfig.minZoom, graphConfig.maxZoom]);
     zoomRef.current.on("zoom", event => {
-      console.log(event);
-      handleZoom(event.transform.x, event.transform.y, event.transform.k);
+      throttledSetZoomState(event.transform);
     });
-  }, [graphContainerId, graphConfig.minZoom, graphConfig.maxZoom, handleZoom]);
+  }, [graphContainerId, graphConfig.minZoom, graphConfig.maxZoom, throttledSetZoomState]);
 
+  // Drag and drop behavior
   useEffect(() => {
     const dragBehavior: DragBehavior<SVGElement, unknown, unknown> = d3.drag();
     dragBehavior.on("start", event => {
@@ -164,7 +160,7 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
         width={width}
         height={height}
         className={CLASS_NAME_ROOT_SVG}
-        viewBox={viewBox}
+        viewBox={calcViewBox(graphConfig.width, graphConfig.height, zoomState.x, zoomState.y, zoomState.k)}
         onClick={onClickGraph}
       >
         <g>{elements}</g>
