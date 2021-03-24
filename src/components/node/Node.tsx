@@ -17,18 +17,18 @@ export const Node: FC<INodeProps> = (props: INodeProps) => {
   props = merge({}, DEFAULT_NODE_PROPS, props);
 
   const handleOnClickNode = useCallback(
-    event => props.onClickNode?.(event, props.id),
-    [props.onClickNode, props.id]
+    event => props.onClickNode?.(event, props),
+    [props.onClickNode, props]
   );
 
   const handleOnMouseOverNode = useCallback(
-    event => props.onMouseOverNode?.(event, props.id),
-    [props.onMouseOverNode, props.id]
+    event => props.onMouseOverNode?.(event, props),
+    [props.onMouseOverNode, props]
   );
 
   const handleOnMouseOutNode = useCallback(
-    event => props.onMouseOutNode?.(event, props.id),
-    [props.onMouseOutNode, props.id]
+    event => props.onMouseOutNode?.(event, props),
+    [props.onMouseOutNode, props]
   );
 
   const onRenderNode = useCallback((props: INodeProps) => {
