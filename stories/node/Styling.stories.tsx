@@ -1,13 +1,13 @@
 import React, { SVGAttributes } from 'react';
 import { Meta, Story } from '@storybook/react';
-import { Node } from '../src/components/node/Node';
-import { INodeProps } from '../src/components/node/Node.types';
+import { Node } from '../../src/components/node/Node';
+import { INodeProps } from '../../src/components/node/Node.types';
 import { Args, BaseStory } from '@storybook/addons';
 import { StoryFnReactReturnType } from '@storybook/react/dist/client/preview/types';
 import * as d3 from 'd3';
 
 const meta: Meta = {
-  title: 'Node',
+  title: 'Node: Styling',
   component: Node,
 };
 
@@ -41,34 +41,22 @@ export const Styled: Story<ITemplateArgs> = Template.bind({});
 Styled.args = {
   nodeProps: {
     id: "Fluent Graph",
-    size: 500,
-    x: 50,
-    y: 0,
+    size: 50,
     label: "Fluent Graph",
     nodeStyle: {
       fill: "none",
       stroke: "skyblue",
-      strokeWidth: 2.5,
+      strokeWidth: 5,
     },
     labelStyle: {
       fill: "gray",
       fontSize: 12,
       fontWeight: "bold",
     },
-    labelOffset: 20,
+    labelOffset: 25,
   }
 };
 
-export const Events: Story<ITemplateArgs> = Template.bind({});
-Events.args = {
-  nodeProps: {
-    id: "Fluent Graph",
-    label: "Check console!",
-    onClickNode: () => console.log('Node clicked!'),
-    onMouseOverNode: () => console.log("Node mouse over"),
-    onMouseOutNode: () => console.log("Node mouse out"),
-  }
-};
 
 export const CustomizeNode: Story<ITemplateArgs> = Template.bind({});
 CustomizeNode.args = {
