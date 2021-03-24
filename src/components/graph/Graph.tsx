@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import { Selection, ZoomBehavior } from "d3";
+import { DragBehavior, Selection, ZoomBehavior } from "d3";
 import React, {
   FC,
   MutableRefObject,
@@ -43,6 +43,7 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   const zoomRef: MutableRefObject<
     ZoomBehavior<Element, unknown> | undefined
   > = useRef();
+  const draggingNodeRef: MutableRefObject<NodeModel | undefined> = useRef();
 
   const graphId: string = props.id.replaceAll(/ /g, "_");
   const graphContainerId: string = `fg-container-${graphId}`;
@@ -54,8 +55,8 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
 
   // @ts-ignore: Unused locals
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [ignored, forceUpdateDispatch] = useReducer(x => x + 1, 0);
-  const forceUpdate = useCallback(throttle(forceUpdateDispatch, 50), []);
+  const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
+  const throttledForceUpdate = useCallback(throttle(forceUpdate, 50), []);
 
   const [viewBox, setViewBox] = useState(() => {
     return calcViewBox(graphConfig.width, graphConfig.height, 0, 0, 1);
@@ -75,7 +76,7 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
       simulationRef.current
         .force("charge", d3.forceManyBody().strength(-150))
         .force("center", d3.forceCenter(width / 2, height / 2))
-        .on("tick", forceUpdate);
+        .on("tick", throttledForceUpdate);
 
       const forceLink = d3.forceLink(linkMap.getSimulationLinkDatums())
         .id(node => (node as IGraphNodeDatum).id)
@@ -105,6 +106,34 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
       handleZoom(event.transform.x, event.transform.y, event.transform.k);
     });
   }, [graphContainerId, graphConfig.minZoom, graphConfig.maxZoom, handleZoom]);
+
+  useEffect(() => {
+    const dragBehavior: DragBehavior<SVGElement, unknown, unknown> = d3.drag();
+    dragBehavior.on("start", event => {
+      simulationRef.current?.stop();
+      for (const element of event.sourceEvent.path) {
+        if (element.matches?.(".fg-node")) {
+          draggingNodeRef.current = nodeMapRef.current.get(element.dataset.nodeid);
+          return;
+        }
+      }
+      draggingNodeRef.current = undefined;
+    });
+    dragBehavior.on("drag", event => {
+      // TODO logic here works but not reasonable
+      if (draggingNodeRef.current?.force) {
+        draggingNodeRef.current.force.x += event.x;
+        draggingNodeRef.current.force.y += event.y;
+        forceUpdate();
+      }
+    });
+    dragBehavior.on("end", () => {
+      draggingNodeRef.current = undefined;
+      simulationRef.current?.alpha(1);
+      simulationRef.current?.restart();
+    });
+    (d3.selectAll(".fg-node") as any).call(dragBehavior);
+  }, []);
 
   const onClickGraph = useCallback(
     event => {

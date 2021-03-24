@@ -67,9 +67,12 @@ export const Node: FC<INodeProps> = (props: INodeProps) => {
   return (
     <g {...gProps}>
       <g
+        // TODO respect className in props
+        className="fg-node"
         onClick={handleOnClickNode}
         onMouseOver={handleOnMouseOverNode}
         onMouseOut={handleOnMouseOutNode}
+        data-nodeid={props.id}
       >
         {onRenderNode(props)}
       </g>
