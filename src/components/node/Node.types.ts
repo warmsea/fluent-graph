@@ -41,7 +41,7 @@ export interface INodeEventHandlers {
   onContextMenu?: (
     props: INodeProps,
     event: React.MouseEvent<SVGElement, MouseEvent>
-  ) => void
+  ) => void;
   onMouseOverNode?: (
     props: INodeProps,
     event: React.MouseEvent<SVGElement, MouseEvent>

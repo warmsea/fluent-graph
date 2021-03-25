@@ -18,10 +18,15 @@ import { mergeConfig } from "../../utils";
 import { DEFAULT_CONFIG } from "./graph.config";
 import { NodeModel } from "./NodeModel";
 import { LinkModel } from "./LinkModel";
-import { default as CONST } from "./graph.const"
-import { LinkMap, IGraphNodeDatum } from './LinkMap';
-import { INodeCommonConfig } from '../node/Node.types';
-import { DEFAULT_NODE_PROPS } from '../node/Node';
+import { default as CONST } from "./graph.const";
+import { LinkMap, IGraphNodeDatum } from "./LinkMap";
+import { INodeCommonConfig } from "../node/Node.types";
+import { DEFAULT_NODE_PROPS } from "../node/Node";
+
+// Type alias to make the code easier to read
+type Ref<T> = MutableRefObject<T>;
+type Simulation = d3.Simulation<IGraphNodeDatum, undefined>;
+type Zoom = ZoomBehavior<Element, unknown>;
 
 const CLASS_NAME_ROOT_SVG: string = "fg-root-svg";
 const DISPLAY_THROTTLE_MS: number = 100;
@@ -37,16 +42,12 @@ export function calcViewBox(
 }
 
 export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
-  const nodeMapRef: MutableRefObject<NodeMap> = useRef(new NodeMap());
-  const linkMapRef: MutableRefObject<LinkMap> = useRef(new LinkMap());
-  const linkMatrixRef: MutableRefObject<LinkMatrix> = useRef(new LinkMatrix());
-  const simulationRef: MutableRefObject<
-    d3.Simulation<IGraphNodeDatum, undefined> | undefined
-  > = useRef();
-  const zoomRef: MutableRefObject<
-    ZoomBehavior<Element, unknown> | undefined
-  > = useRef();
-  const draggingNodeRef: MutableRefObject<NodeModel | undefined> = useRef();
+  const nodeMapRef: Ref<NodeMap> = useRef(new NodeMap());
+  const linkMapRef: Ref<LinkMap> = useRef(new LinkMap());
+  const linkMatrixRef: Ref<LinkMatrix> = useRef(new LinkMatrix());
+  const simulationRef: Ref<Simulation | undefined> = useRef();
+  const zoomRef: Ref<Zoom | undefined> = useRef();
+  const draggingNodeRef: Ref<NodeModel | undefined> = useRef();
 
   const graphId: string = props.id.replaceAll(/ /g, "_");
   const graphContainerId: string = `fg-container-${graphId}`;
@@ -68,7 +69,8 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
 
   const tick = useCallback(
     throttle(() => {
-      const radius: number = graphConfig.d3.paddingRadius || DEFAULT_NODE_PROPS.size! / 2;
+      const radius: number =
+        graphConfig.d3.paddingRadius || DEFAULT_NODE_PROPS.size! / 2;
       // constrain nodes from exceed the border of the graph.
       nodeMap.getSimulationNodeDatums().forEach(node => {
         node.x = Math.max(radius, Math.min(width - radius, node.x || radius));
@@ -89,10 +91,14 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
       simulationRef.current
         .force("charge", d3.forceManyBody().strength(graphConfig.d3.gravity))
         .force("center", d3.forceCenter(width / 2, height / 2))
-        .force("collide", d3.forceCollide().radius(graphConfig.d3.collideRadius))
+        .force(
+          "collide",
+          d3.forceCollide().radius(graphConfig.d3.collideRadius)
+        )
         .on("tick", tick);
 
-      const forceLink = d3.forceLink(linkMap.getSimulationLinkDatums())
+      const forceLink = d3
+        .forceLink(linkMap.getSimulationLinkDatums())
         .id(node => (node as IGraphNodeDatum).id)
         .distance(graphConfig.d3.linkLength)
         .strength(graphConfig.d3.linkStrength);
@@ -119,7 +125,12 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
     zoomRef.current.on("zoom", event => {
       throttledSetZoomState(event.transform);
     });
-  }, [graphContainerId, graphConfig.minZoom, graphConfig.maxZoom, throttledSetZoomState]);
+  }, [
+    graphContainerId,
+    graphConfig.minZoom,
+    graphConfig.maxZoom,
+    throttledSetZoomState
+  ]);
 
   // Drag and drop behavior
   useEffect(() => {
@@ -128,7 +139,9 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
       simulationRef.current?.stop();
       for (const element of event.sourceEvent.path) {
         if (element.matches?.(".fg-node")) {
-          draggingNodeRef.current = nodeMapRef.current.get(element.dataset.nodeid);
+          draggingNodeRef.current = nodeMapRef.current.get(
+            element.dataset.nodeid
+          );
           return;
         }
       }
@@ -179,7 +192,13 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
         width={width}
         height={height}
         className={CLASS_NAME_ROOT_SVG}
-        viewBox={calcViewBox(width, height, zoomState.x, zoomState.y, zoomState.k)}
+        viewBox={calcViewBox(
+          width,
+          height,
+          zoomState.x,
+          zoomState.y,
+          zoomState.k
+        )}
         onClick={onClickGraph}
       >
         <g>{elements}</g>
