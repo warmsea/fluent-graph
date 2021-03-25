@@ -16,21 +16,6 @@ export const DEFAULT_NODE_PROPS: INodeCommonConfig = {
 export const Node: FC<INodeProps> = (props: INodeProps) => {
   props = merge({}, DEFAULT_NODE_PROPS, props);
 
-  const handleOnClickNode = useCallback(
-    event => props.onClickNode?.(event, props),
-    [props.onClickNode, props]
-  );
-
-  const handleOnMouseOverNode = useCallback(
-    event => props.onMouseOverNode?.(event, props),
-    [props.onMouseOverNode, props]
-  );
-
-  const handleOnMouseOutNode = useCallback(
-    event => props.onMouseOutNode?.(event, props),
-    [props.onMouseOutNode, props]
-  );
-
   const onRenderNode = useCallback((props: INodeProps) => {
     if (props.onRenderNode) {
       return props.onRenderNode(props);
@@ -69,9 +54,10 @@ export const Node: FC<INodeProps> = (props: INodeProps) => {
     <g {...gProps}>
       <g
         className="fg-node"
-        onClick={handleOnClickNode}
-        onMouseOver={handleOnMouseOverNode}
-        onMouseOut={handleOnMouseOutNode}
+        onClick={event => props.onClickNode?.(props, event)}
+        onContextMenu={event => props.onContextMenu?.(props, event)}
+        onMouseOver={event => props.onMouseOverNode?.(props, event)}
+        onMouseOut={event => props.onMouseOutNode?.(props, event)}
         data-nodeid={props.id}
       >
         {onRenderNode(props)}

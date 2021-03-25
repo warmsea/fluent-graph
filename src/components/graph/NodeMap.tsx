@@ -16,13 +16,25 @@ export class NodeMap {
     nodes: IGraphPropsNode[],
     nodeConfig: INodeCommonConfig
   ): void {
+    // Delete nodes that are no longer there
+    const toBeDeleted: Set<string> = new Set(this._map.keys());
+    nodes.forEach((node: IGraphPropsNode) => {
+      toBeDeleted.delete(node.id);
+    });
+    toBeDeleted.forEach((nodeId: string) => {
+      this._map.delete(nodeId);
+    });
+
+    // Create new nodes or update existing nodes
     nodes.forEach((node: IGraphPropsNode) => {
       if (this._map.has(node.id)) {
-        // TODO handle existing nodes
+        this._map.get(node.id)?.update(node, nodeConfig);
       } else {
         this._map.set(node.id, new NodeModel(node, nodeConfig));
       }
     });
+
+    // By design use the first node as the root node
     this.rootNode = nodes.length > 0 ? this._map.get(nodes[0].id) : undefined;
   }
 

@@ -35,15 +35,19 @@ export interface INodeCommonConfig extends INodeEventHandlers {
 
 export interface INodeEventHandlers {
   onClickNode?: (
-    event: React.MouseEvent<SVGPathElement, MouseEvent>,
-    props: INodeProps
+    props: INodeProps,
+    event: React.MouseEvent<SVGElement, MouseEvent>
   ) => void;
+  onContextMenu?: (
+    props: INodeProps,
+    event: React.MouseEvent<SVGElement, MouseEvent>
+  ) => void
   onMouseOverNode?: (
-    event: React.MouseEvent<SVGPathElement, MouseEvent>,
-    props: INodeProps
+    props: INodeProps,
+    event: React.MouseEvent<SVGElement, MouseEvent>
   ) => void;
   onMouseOutNode?: (
-    event: React.MouseEvent<SVGPathElement, MouseEvent>,
-    props: INodeProps
+    props: INodeProps,
+    event: React.MouseEvent<SVGElement, MouseEvent>
   ) => void;
 }
