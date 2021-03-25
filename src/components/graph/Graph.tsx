@@ -66,19 +66,20 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   }, [props.linkConfig]);
   const { width, height } = graphConfig;
 
+  const [topology, increaseTopologyVersion] = useReducer(v => v + 1, 0);
   const [zoomState, setZoomState] = useState({ x: 0, y: 0, k: 1 });
   const throttledSetZoomState = throttle(setZoomState, DISPLAY_THROTTLE_MS);
 
   // @ts-ignore: Unused locals
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [ignored, forceUpdate] = useReducer(x => x + 1, 0);
+  const [ignored, forceUpdate] = useReducer(v => v + 1, 0);
 
   const tick = useCallback(
     throttle(() => {
       const radius: number =
         graphConfig.d3.paddingRadius || DEFAULT_NODE_PROPS.size! / 2;
       // constrain nodes from exceed the border of the graph.
-      nodeMap.getSimulationNodeDatums().forEach(node => {
+      nodeMapRef.current.getSimulationNodeDatums().forEach(node => {
         node.x = Math.max(radius, Math.min(width - radius, node.x || radius));
         node.y = Math.max(radius, Math.min(height - radius, node.y || radius));
       });
@@ -87,59 +88,38 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
     []
   );
 
-  const restartForceSimulation: () => void = () => {
+  function restartForceSimulation(): void {
     // Stop current simulation if exist
-    simulationRef.current?.stop();
+    stopForceSimulation();
 
     simulationRef.current = d3.forceSimulation(
-      nodeMap.getSimulationNodeDatums()
+      nodeMapRef.current.getSimulationNodeDatums()
     );
 
     simulationRef.current
       .force("charge", d3.forceManyBody().strength(graphConfig.d3.gravity))
-      .force("center", d3.forceCenter(width / 2, height / 2))
+      .force("center", d3.forceCenter(width / 2, height / 2).strength(0.1))
       .force("collide", d3.forceCollide().radius(graphConfig.d3.collideRadius))
       .on("tick", tick);
 
     const forceLink = d3
-      .forceLink(linkMap.getSimulationLinkDatums())
+      .forceLink(linkMapRef.current.getSimulationLinkDatums())
       .id(node => (node as IGraphNodeDatum).id)
       .distance(graphConfig.d3.linkLength)
       .strength(graphConfig.d3.linkStrength);
 
     simulationRef.current.force(CONST.LINK_CLASS_NAME, forceLink);
-    // TODO stop simulation earlier?
-  };
+  }
 
-  // Force simulation behavior
-  useEffect(() => {
-    restartForceSimulation();
-  });
+  function stopForceSimulation(): void {
+    simulationRef.current?.stop();
+  }
 
-  // Zoom and pan behavior
-  useEffect(() => {
-    if (!zoomRef.current) {
-      const zoomBehavior = d3.zoom();
-      zoomRef.current = zoomBehavior;
-      const zoomSelection: Selection = d3.select(`#${graphContainerId}`);
-      zoomSelection.call(zoomBehavior);
-    }
-    zoomRef.current.scaleExtent([graphConfig.minZoom, graphConfig.maxZoom]);
-    zoomRef.current.on("zoom", event => {
-      throttledSetZoomState(event.transform);
-    });
-  }, [
-    graphContainerId,
-    graphConfig.minZoom,
-    graphConfig.maxZoom,
-    throttledSetZoomState
-  ]);
-
-  // Drag and drop behavior
-  useEffect(() => {
+  function setupDrag(): void {
     const dragBehavior: Drag = d3.drag();
     dragBehavior.on("start", event => {
-      simulationRef.current?.stop();
+      // TODO don't stop the drag but fix this node only
+      stopForceSimulation();
       for (const element of event.sourceEvent.path) {
         if (element.matches?.(".fg-node")) {
           draggingNodeRef.current = nodeMapRef.current.get(
@@ -165,7 +145,40 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
     });
     const dragSelection: Selection = d3.selectAll(".fg-node");
     dragSelection.call(dragBehavior);
-  }, []);
+  }
+
+  useEffect(
+    () => {
+      restartForceSimulation();
+      setupDrag();
+
+      return () => {
+        stopForceSimulation();
+        // No need to clean up drag
+      };
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [topology]
+  );
+
+  // Zoom and pan behavior
+  useEffect(() => {
+    if (!zoomRef.current) {
+      const zoomBehavior = d3.zoom();
+      zoomRef.current = zoomBehavior;
+      const zoomSelection: Selection = d3.select(`#${graphContainerId}`);
+      zoomSelection.call(zoomBehavior);
+    }
+    zoomRef.current.scaleExtent([graphConfig.minZoom, graphConfig.maxZoom]);
+    zoomRef.current.on("zoom", event => {
+      throttledSetZoomState(event.transform);
+    });
+  }, [
+    graphContainerId,
+    graphConfig.minZoom,
+    graphConfig.maxZoom,
+    throttledSetZoomState
+  ]);
 
   const onClickGraph = useCallback(
     event => {
@@ -181,25 +194,23 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
 
   const rootId: string | undefined =
     props.nodes.length > 0 ? props.nodes[0].id : undefined;
-  const nodeMap: NodeMap = nodeMapRef.current;
-  const linkMap: LinkMap = linkMapRef.current;
 
-  const addedOrRemovedNodes: boolean = nodeMap.updateNodeMap(
+  const addedOrRemovedNodes: boolean = nodeMapRef.current.updateNodeMap(
     props.nodes,
     nodeConfig
   );
-  const addedOrRemovedLinks: boolean = linkMap.updateLinkMap(
+  const addedOrRemovedLinks: boolean = linkMapRef.current.updateLinkMap(
     props.links,
     linkConfig,
-    nodeMap
+    nodeMapRef.current
   );
   if (addedOrRemovedNodes || addedOrRemovedLinks) {
-    restartForceSimulation();
+    increaseTopologyVersion();
   }
   const elements = onRenderElements(
     rootId,
-    nodeMap,
-    new LinkMatrix(props.links, linkMap, nodeMap)
+    nodeMapRef.current,
+    new LinkMatrix(props.links, linkMapRef.current, nodeMapRef.current)
   );
 
   return (
