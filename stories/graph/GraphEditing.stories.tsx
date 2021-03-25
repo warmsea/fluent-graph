@@ -9,7 +9,7 @@ const meta: Meta = {
 
 export default meta;
 
-export const AddingNode: FC = () => {
+export const AddingAndDeleting: FC = () => {
   const [nodes, setNodes] = useState([{ id: "Root", label: "Root" }]);
   const [links, setLinks] = useState([]);
 
@@ -33,6 +33,7 @@ export const AddingNode: FC = () => {
     <div>
       <div>
         <p>Click a node to add a new node linked to it.</p>
+        <p>Right click a node to delete it, except for the Root node.</p>
       </div>
       <div>
       </div>
