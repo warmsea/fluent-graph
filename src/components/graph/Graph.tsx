@@ -182,7 +182,7 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   const linkMatrix: LinkMatrix = linkMatrixRef.current;
 
   nodeMap.updateNodeMap(props.nodes, nodeConfig);
-  linkMap.updateLinkMap(props.links, nodeMap, props.linkConfig);
+  linkMap.updateLinkMap(props.links, props.linkConfig || {}, nodeMap);
   linkMatrix.updateMatrix(props.links, props.linkConfig || {}, nodeMap);
   const elements = onRenderElements(rootId, nodeMap, linkMatrix);
 

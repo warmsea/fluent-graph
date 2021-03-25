@@ -18,17 +18,26 @@ export class LinkModel {
 
   constructor(
     props: IGraphPropsLink,
-    nodeMap: NodeMap,
-    linkConfig?: ILinkCommonConfig
+    linkConfig: ILinkCommonConfig,
+    nodeMap: NodeMap
   ) {
+    this.id = getLinkId(props);
+
+    this.sourceNode = nodeMap.get(props.source);
+    this.targetNode = nodeMap.get(props.target);
     this.props = mergeConfig(linkConfig, props);
-    this.id = `${this.props.source},${this.props.target}`; // TODO do we need it?
-    this.sourceNode = nodeMap.get(this.props.source);
-    this.targetNode = nodeMap.get(this.props.target);
     this.force = {
       source: this.props.source,
       target: this.props.target
     };
+  }
+
+  public update(props: IGraphPropsLink, linkConfig?: ILinkCommonConfig): void {
+    if (getLinkId(props) !== this.id) {
+      // TODO should not reach here
+      return;
+    }
+    this.props = mergeConfig(linkConfig, props);
   }
 
   public renderLink(): JSX.Element {
@@ -52,4 +61,8 @@ export class LinkModel {
       />
     );
   }
+}
+
+export function getLinkId(link: { source: string; target: string }): string {
+  return `${link.source},${link.target}`;
 }
