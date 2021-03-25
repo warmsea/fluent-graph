@@ -19,13 +19,16 @@ export class LinkMap {
     links: IGraphPropsLink[],
     linkConfig: ILinkCommonConfig,
     nodeMap: NodeMap
-  ): void {
+  ): boolean {
+    let addedOrRemovedLinks: boolean = false;
+
     // Delete links that are no longer there
     const toBeDeleted: Set<string> = new Set(this._map.keys());
     links.forEach((link: IGraphPropsLink) => {
       toBeDeleted.delete(getLinkId(link));
     });
     toBeDeleted.forEach((linkId: string) => {
+      addedOrRemovedLinks = true;
       this._map.delete(linkId);
     });
 
@@ -35,9 +38,12 @@ export class LinkMap {
       if (this._map.has(linkId)) {
         this._map.get(linkId)?.update(link, linkConfig);
       } else {
+        addedOrRemovedLinks = true;
         this._map.set(linkId, new LinkModel(link, linkConfig, nodeMap));
       }
     });
+
+    return addedOrRemovedLinks;
   }
 
   public has(linkId: string): boolean {

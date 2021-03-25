@@ -22,6 +22,8 @@ import { default as CONST } from "./graph.const";
 import { LinkMap, IGraphNodeDatum } from "./LinkMap";
 import { INodeCommonConfig } from "../node/Node.types";
 import { DEFAULT_NODE_PROPS } from "../node/Node";
+import { ILinkCommonConfig } from "../link/Link.types";
+import { DEFAULT_LINK_PROPS } from "../link/Link";
 
 // Type alias to make the code easier to read
 type Drag = DragBehavior<Element, unknown, unknown>;
@@ -59,6 +61,9 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   const nodeConfig: INodeCommonConfig = useMemo(() => {
     return mergeConfig(DEFAULT_NODE_PROPS, props.nodeConfig);
   }, [props.nodeConfig]);
+  const linkConfig: ILinkCommonConfig = useMemo(() => {
+    return mergeConfig(DEFAULT_LINK_PROPS, props.linkConfig);
+  }, [props.linkConfig]);
   const { width, height } = graphConfig;
 
   const [zoomState, setZoomState] = useState({ x: 0, y: 0, k: 1 });
@@ -82,31 +87,33 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
     []
   );
 
+  const restartForceSimulation: () => void = () => {
+    // Stop current simulation if exist
+    simulationRef.current?.stop();
+
+    simulationRef.current = d3.forceSimulation(
+      nodeMap.getSimulationNodeDatums()
+    );
+
+    simulationRef.current
+      .force("charge", d3.forceManyBody().strength(graphConfig.d3.gravity))
+      .force("center", d3.forceCenter(width / 2, height / 2))
+      .force("collide", d3.forceCollide().radius(graphConfig.d3.collideRadius))
+      .on("tick", tick);
+
+    const forceLink = d3
+      .forceLink(linkMap.getSimulationLinkDatums())
+      .id(node => (node as IGraphNodeDatum).id)
+      .distance(graphConfig.d3.linkLength)
+      .strength(graphConfig.d3.linkStrength);
+
+    simulationRef.current.force(CONST.LINK_CLASS_NAME, forceLink);
+    // TODO stop simulation earlier?
+  };
+
   // Force simulation behavior
   useEffect(() => {
-    if (!simulationRef.current) {
-      simulationRef.current = d3.forceSimulation(
-        nodeMap.getSimulationNodeDatums()
-      );
-
-      simulationRef.current
-        .force("charge", d3.forceManyBody().strength(graphConfig.d3.gravity))
-        .force("center", d3.forceCenter(width / 2, height / 2))
-        .force(
-          "collide",
-          d3.forceCollide().radius(graphConfig.d3.collideRadius)
-        )
-        .on("tick", tick);
-
-      const forceLink = d3
-        .forceLink(linkMap.getSimulationLinkDatums())
-        .id(node => (node as IGraphNodeDatum).id)
-        .distance(graphConfig.d3.linkLength)
-        .strength(graphConfig.d3.linkStrength);
-
-      simulationRef.current.force(CONST.LINK_CLASS_NAME, forceLink);
-      // TODO stop simulation earlier?
-    }
+    restartForceSimulation();
   });
 
   // Zoom and pan behavior
@@ -177,8 +184,18 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   const nodeMap: NodeMap = nodeMapRef.current;
   const linkMap: LinkMap = linkMapRef.current;
 
-  nodeMap.updateNodeMap(props.nodes, nodeConfig);
-  linkMap.updateLinkMap(props.links, props.linkConfig || {}, nodeMap);
+  const addedOrRemovedNodes: boolean = nodeMap.updateNodeMap(
+    props.nodes,
+    nodeConfig
+  );
+  const addedOrRemovedLinks: boolean = linkMap.updateLinkMap(
+    props.links,
+    linkConfig,
+    nodeMap
+  );
+  if (addedOrRemovedNodes || addedOrRemovedLinks) {
+    restartForceSimulation();
+  }
   const elements = onRenderElements(
     rootId,
     nodeMap,

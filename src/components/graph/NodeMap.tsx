@@ -15,13 +15,16 @@ export class NodeMap {
   public updateNodeMap(
     nodes: IGraphPropsNode[],
     nodeConfig: INodeCommonConfig
-  ): void {
+  ): boolean {
+    let addedOrRemovedNodes: boolean = false;
+
     // Delete nodes that are no longer there
     const toBeDeleted: Set<string> = new Set(this._map.keys());
     nodes.forEach((node: IGraphPropsNode) => {
       toBeDeleted.delete(node.id);
     });
     toBeDeleted.forEach((nodeId: string) => {
+      addedOrRemovedNodes = true;
       this._map.delete(nodeId);
     });
 
@@ -30,12 +33,15 @@ export class NodeMap {
       if (this._map.has(node.id)) {
         this._map.get(node.id)?.update(node, nodeConfig);
       } else {
+        addedOrRemovedNodes = true;
         this._map.set(node.id, new NodeModel(node, nodeConfig));
       }
     });
 
     // By design use the first node as the root node
     this.rootNode = nodes.length > 0 ? this._map.get(nodes[0].id) : undefined;
+
+    return addedOrRemovedNodes;
   }
 
   public has(nodeId: string): boolean {
