@@ -6,16 +6,8 @@ import { NodeMap } from "./NodeMap";
 export class LinkMatrix {
   private _matrix: Map<string, Map<string, LinkModel>>;
 
-  constructor() {
+  constructor(links: IGraphPropsLink[], linkMap: LinkMap, nodeMap: NodeMap) {
     this._matrix = new Map();
-  }
-
-  public updateMatrix(
-    links: IGraphPropsLink[],
-    linkMap: LinkMap,
-    nodeMap: NodeMap
-  ): void {
-    this._matrix.clear();
 
     // Rely on the order input by the consumer
     links.forEach((link: IGraphPropsLink) => {

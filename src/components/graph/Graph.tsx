@@ -1,5 +1,5 @@
 import * as d3 from "d3";
-import { DragBehavior, Selection, ZoomBehavior } from "d3";
+import { DragBehavior, ZoomBehavior } from "d3";
 import React, {
   FC,
   MutableRefObject,
@@ -24,7 +24,9 @@ import { INodeCommonConfig } from "../node/Node.types";
 import { DEFAULT_NODE_PROPS } from "../node/Node";
 
 // Type alias to make the code easier to read
+type Drag = DragBehavior<Element, unknown, unknown>;
 type Ref<T> = MutableRefObject<T>;
+type Selection = d3.Selection<Element, unknown, Element, unknown>;
 type Simulation = d3.Simulation<IGraphNodeDatum, undefined>;
 type Zoom = ZoomBehavior<Element, unknown>;
 
@@ -44,7 +46,6 @@ export function calcViewBox(
 export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   const nodeMapRef: Ref<NodeMap> = useRef(new NodeMap());
   const linkMapRef: Ref<LinkMap> = useRef(new LinkMap());
-  const linkMatrixRef: Ref<LinkMatrix> = useRef(new LinkMatrix());
   const simulationRef: Ref<Simulation | undefined> = useRef();
   const zoomRef: Ref<Zoom | undefined> = useRef();
   const draggingNodeRef: Ref<NodeModel | undefined> = useRef();
@@ -111,14 +112,9 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   // Zoom and pan behavior
   useEffect(() => {
     if (!zoomRef.current) {
-      const zoomSelection: Selection<
-        Element,
-        unknown,
-        Element,
-        unknown
-      > = d3.select(`#${graphContainerId}`);
       const zoomBehavior = d3.zoom();
       zoomRef.current = zoomBehavior;
+      const zoomSelection: Selection = d3.select(`#${graphContainerId}`);
       zoomSelection.call(zoomBehavior);
     }
     zoomRef.current.scaleExtent([graphConfig.minZoom, graphConfig.maxZoom]);
@@ -134,7 +130,7 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
 
   // Drag and drop behavior
   useEffect(() => {
-    const dragBehavior: DragBehavior<SVGElement, unknown, unknown> = d3.drag();
+    const dragBehavior: Drag = d3.drag();
     dragBehavior.on("start", event => {
       simulationRef.current?.stop();
       for (const element of event.sourceEvent.path) {
@@ -160,7 +156,8 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
       simulationRef.current?.alpha(1);
       simulationRef.current?.restart();
     });
-    (d3.selectAll(".fg-node") as any).call(dragBehavior);
+    const dragSelection: Selection = d3.selectAll(".fg-node");
+    dragSelection.call(dragBehavior);
   }, []);
 
   const onClickGraph = useCallback(
@@ -179,12 +176,14 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
     props.nodes.length > 0 ? props.nodes[0].id : undefined;
   const nodeMap: NodeMap = nodeMapRef.current;
   const linkMap: LinkMap = linkMapRef.current;
-  const linkMatrix: LinkMatrix = linkMatrixRef.current;
 
   nodeMap.updateNodeMap(props.nodes, nodeConfig);
   linkMap.updateLinkMap(props.links, props.linkConfig || {}, nodeMap);
-  linkMatrix.updateMatrix(props.links, linkMap, nodeMap);
-  const elements = onRenderElements(rootId, nodeMap, linkMatrix);
+  const elements = onRenderElements(
+    rootId,
+    nodeMap,
+    new LinkMatrix(props.links, linkMap, nodeMap)
+  );
 
   return (
     <div id={graphContainerId}>
