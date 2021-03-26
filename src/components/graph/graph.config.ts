@@ -5,7 +5,7 @@ export const DEFAULT_CONFIG: IGraphConfig = {
   freezeAllDragEvents: false,
   focusAnimationDuration: 0.75,
   focusZoom: 1,
-  height: 600,
+  height: 700,
   maxZoom: 8,
   minZoom: 0.125,
   initialZoom: undefined,
@@ -19,7 +19,6 @@ export const DEFAULT_CONFIG: IGraphConfig = {
     linkLength: 100,
     linkStrength: 1,
     disableLinkForce: false,
-    paddingRadius: 30,
-    collideRadius: 50
+    paddingRadius: 30
   }
 };

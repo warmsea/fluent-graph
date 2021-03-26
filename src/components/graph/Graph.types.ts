@@ -31,7 +31,6 @@ export interface IGraphConfigD3 {
   linkLength: number;
   linkStrength: number;
   disableLinkForce: boolean;
-  collideRadius: number;
   paddingRadius: number;
 }
 
