@@ -1,8 +1,8 @@
 import { SimulationNodeDatum, SimulationLinkDatum } from "d3";
 import { IGraphPropsLink } from "./Graph.types";
-import { LinkModel } from './LinkModel';
-import { ILinkCommonConfig } from '../link/Link.types';
-import { NodeMap } from './NodeMap';
+import { getLinkId, LinkModel } from "./LinkModel";
+import { ILinkCommonConfig } from "../link/Link.types";
+import { NodeMap } from "./NodeMap";
 
 export interface IGraphNodeDatum extends SimulationNodeDatum {
   id: string;
@@ -17,16 +17,33 @@ export class LinkMap {
 
   public updateLinkMap(
     links: IGraphPropsLink[],
-    nodeMap: NodeMap,
-    linkConfig?: ILinkCommonConfig
-  ): void {
+    linkConfig: ILinkCommonConfig,
+    nodeMap: NodeMap
+  ): boolean {
+    let addedOrRemovedLinks: boolean = false;
+
+    // Delete links that are no longer there
+    const toBeDeleted: Set<string> = new Set(this._map.keys());
     links.forEach((link: IGraphPropsLink) => {
-      if (this._map.has(`${link.source},${link.target}`)) {
-        // TODO handle existing nodes
+      toBeDeleted.delete(getLinkId(link));
+    });
+    toBeDeleted.forEach((linkId: string) => {
+      addedOrRemovedLinks = true;
+      this._map.delete(linkId);
+    });
+
+    // Create new links or update existing links
+    links.forEach((link: IGraphPropsLink) => {
+      const linkId = getLinkId(link);
+      if (this._map.has(linkId)) {
+        this._map.get(linkId)?.update(link, linkConfig);
       } else {
-        this._map.set(`${link.source},${link.target}`, new LinkModel(link, nodeMap, linkConfig));
+        addedOrRemovedLinks = true;
+        this._map.set(linkId, new LinkModel(link, linkConfig, nodeMap));
       }
     });
+
+    return addedOrRemovedLinks;
   }
 
   public has(linkId: string): boolean {

@@ -1,9 +1,9 @@
 import React from 'react';
 import { Meta, Story } from '@storybook/react';
-import { Graph } from '../src';
+import { Graph } from '../../src';
 import { Args, BaseStory } from '@storybook/addons';
 import { StoryFnReactReturnType } from '@storybook/react/dist/client/preview/types';
-import { IGraphProps } from '../src/components/graph/Graph.types';
+import { IGraphProps } from '../../src/components/graph/Graph.types';
 
 const meta: Meta = {
   title: 'Graph',
@@ -80,36 +80,33 @@ Complex.args = {
     id: "graph",
     nodes: [
       { id: "Mark 8", label: "Mark 8" },
-
       { id: "Aerial", label: "Aerial" },
-      { id: "GIS Mapping" },
-      { id: "Survey Intelligence" },
-      { id: "Flight Operations" },
-
+      { id: "GIS Mapping", label: "GIS Mapping" },
+      { id: "Survey Intelligence", label: "Survey Intelligence" },
+      { id: "Flight Operations", label: "Flight Operations" },
       { id: "Structual Integrity", label: "Structual Integrity" },
-      { id: "Spaces", label: "Spaces" },
-      { id: "Digital Surfaces" },
-      { id: "3D Modeling" },
-      { id: "Partners" },
-      { id: "Geothermal" },
-      { id: "United" },
-      { id: "Delta" },
-
-      { id: "Swiftly" },
+      { id: "Spaces", label: "Spaces"},
+      { id: "Digital Surfaces", label: "Digital Surfaces" },
+      { id: "3D Modeling", label: "3D Modeling" },
+      { id: "Partners", label: "Partners" },
+      { id: "Geothermal", label: "Geothermal" },
+      { id: "United", label: "United" },
+      { id: "Delta" , label: "Delta"},
+      { id: "Swiftly", label: "Swiftly" },
       { id: "Data Visualization", label: "Data Visualization" },
-      { id: "Fjord" },
-      { id: "Altas" },
-      { id: "Construction Operations Reliability" },
-      { id: "Athena" },
-      { id: "Elements" },
-      { id: "Juno" },
+      { id: "Fjord", label: "Fjord" },
+      { id: "Altas", label: "Altas" },
+      { id: "Construction Operations Reliability" , label: "Construction Operations Reliability"},
+      { id: "Athena" , label: "Athena"},
+      { id: "Elements", label: "Elements" },
+      { id: "Juno", label: "Juno" },
+      { id: "Milk", label: "Milk" },
     ],
     links: [
       { source: "Mark 8", target: "Aerial" },
       { source: "Mark 8", target: "GIS Mapping" },
       { source: "Mark 8", target: "Survey Intelligence" },
       { source: "Mark 8", target: "Flight Operations" },
-
       { source: "Aerial", target: "Structual Integrity" },
       { source: "Aerial", target: "Spaces" },
       { source: "GIS Mapping", target: "Digital Surfaces" },
@@ -118,7 +115,6 @@ Complex.args = {
       { source: "Survey Intelligence", target: "Geothermal" },
       { source: "Flight Operations", target: "United" },
       { source: "Flight Operations", target: "Delta" },
-
       { source: "Structual Integrity", target: "Swiftly" },
       { source: "Structual Integrity", target: "Data Visualization" },
       { source: "Spaces", target: "Data Visualization" },
@@ -128,12 +124,15 @@ Complex.args = {
       { source: "Partners", target: "Athena" },
       { source: "United", target: "Elements" },
       { source: "Delta", target: "Juno" },
+      { source: "Juno", target: "Milk" },
     ],
     config: {
       d3: {
         gravity: -100,
         linkLength: 100,
-        linkStrength: 1
+        linkStrength: 1,
+        collideRadius: 55,
+        paddingRadius: 30
       }
     }
   }

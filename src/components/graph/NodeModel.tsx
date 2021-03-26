@@ -3,7 +3,7 @@ import { mergeConfig } from "../../utils";
 import { Node } from "../node/Node";
 import { INodeCommonConfig } from "../node/Node.types";
 import { IGraphPropsNode } from "./Graph.types";
-import { IGraphNodeDatum } from './LinkMap';
+import { IGraphNodeDatum } from "./LinkMap";
 
 export class NodeModel {
   private props: IGraphPropsNode;
@@ -12,12 +12,23 @@ export class NodeModel {
   public force: IGraphNodeDatum;
 
   constructor(props: IGraphPropsNode, nodeConfig: INodeCommonConfig) {
-    this.props = mergeConfig(nodeConfig, props);
-    this.id = this.props.id;
-    this.size = this.props.size ?? 0;
+    this.id = props.id;
     this.force = {
-      id: this.id
+      id: props.id
     };
+
+    this.props = mergeConfig(nodeConfig, props);
+    this.size = this.props.size ?? 0;
+  }
+
+  public update(props: IGraphPropsNode, nodeConfig: INodeCommonConfig) {
+    if (props.id !== this.props.id) {
+      // TODO should not reach here
+      return;
+    }
+
+    this.props = mergeConfig(nodeConfig, props);
+    this.size = this.props.size ?? 0;
   }
 
   public renderNode(): JSX.Element {

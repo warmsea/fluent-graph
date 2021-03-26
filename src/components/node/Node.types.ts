@@ -18,7 +18,6 @@ export interface INodeProps extends INodeCommonConfig {
  * Node configuration that can potential apply to all nodes.
  */
 export interface INodeCommonConfig extends INodeEventHandlers {
-
   /**
    * The size of the node. By default, it will draw a circle with `size` as the diameter.
    */
@@ -36,15 +35,19 @@ export interface INodeCommonConfig extends INodeEventHandlers {
 
 export interface INodeEventHandlers {
   onClickNode?: (
-    event: React.MouseEvent<SVGPathElement, MouseEvent>,
-    props: INodeProps
+    props: INodeProps,
+    event: React.MouseEvent<SVGElement, MouseEvent>
+  ) => void;
+  onContextMenu?: (
+    props: INodeProps,
+    event: React.MouseEvent<SVGElement, MouseEvent>
   ) => void;
   onMouseOverNode?: (
-    event: React.MouseEvent<SVGPathElement, MouseEvent>,
-    props: INodeProps
+    props: INodeProps,
+    event: React.MouseEvent<SVGElement, MouseEvent>
   ) => void;
   onMouseOutNode?: (
-    event: React.MouseEvent<SVGPathElement, MouseEvent>,
-    props: INodeProps
+    props: INodeProps,
+    event: React.MouseEvent<SVGElement, MouseEvent>
   ) => void;
 }

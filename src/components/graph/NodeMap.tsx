@@ -1,7 +1,7 @@
 import { INodeCommonConfig } from "../node/Node.types";
 import { IGraphPropsNode } from "./Graph.types";
 import { NodeModel } from "./NodeModel";
-import { IGraphNodeDatum } from './LinkMap';
+import { IGraphNodeDatum } from "./LinkMap";
 
 export class NodeMap {
   public rootNode: NodeModel | undefined;
@@ -15,15 +15,33 @@ export class NodeMap {
   public updateNodeMap(
     nodes: IGraphPropsNode[],
     nodeConfig: INodeCommonConfig
-  ): void {
+  ): boolean {
+    let addedOrRemovedNodes: boolean = false;
+
+    // Delete nodes that are no longer there
+    const toBeDeleted: Set<string> = new Set(this._map.keys());
+    nodes.forEach((node: IGraphPropsNode) => {
+      toBeDeleted.delete(node.id);
+    });
+    toBeDeleted.forEach((nodeId: string) => {
+      addedOrRemovedNodes = true;
+      this._map.delete(nodeId);
+    });
+
+    // Create new nodes or update existing nodes
     nodes.forEach((node: IGraphPropsNode) => {
       if (this._map.has(node.id)) {
-        // TODO handle existing nodes
+        this._map.get(node.id)?.update(node, nodeConfig);
       } else {
+        addedOrRemovedNodes = true;
         this._map.set(node.id, new NodeModel(node, nodeConfig));
       }
     });
+
+    // By design use the first node as the root node
     this.rootNode = nodes.length > 0 ? this._map.get(nodes[0].id) : undefined;
+
+    return addedOrRemovedNodes;
   }
 
   public has(nodeId: string): boolean {

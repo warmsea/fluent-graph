@@ -1,13 +1,13 @@
 import React, { SVGAttributes } from 'react';
 import { Meta, Story } from '@storybook/react';
-import { Link } from '../src/components/link/Link';
+import { Link } from '../../src/components/link/Link';
 import { Args, BaseStory } from '@storybook/addons';
 import { StoryFnReactReturnType } from '@storybook/react/dist/client/preview/types';
 import * as d3 from 'd3';
-import { ILinkProps } from '../src/components/link/Link.types';
+import { ILinkProps } from '../../src/components/link/Link.types';
 
 const meta: Meta = {
-  title: 'Link',
+  title: 'Link: Styling',
   component: Link,
 };
 
