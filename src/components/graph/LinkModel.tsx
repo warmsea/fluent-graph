@@ -7,7 +7,6 @@ import { NodeMap } from "./NodeMap";
 import { NodeModel } from "./NodeModel";
 import { SimulationLinkDatum, SimulationNodeDatum } from "d3";
 import { default as CONST } from "./graph.const";
-import { Node } from "../node/Node";
 
 export class LinkModel {
   public sourceNode: NodeModel;
@@ -46,16 +45,26 @@ export class LinkModel {
   }
 
   public renderLink(): JSX.Element {
+    if (
+      typeof this.sourceNode.force.x !== "number" ||
+      typeof this.sourceNode.force.y !== "number" ||
+      typeof this.targetNode.force.x !== "number" ||
+      typeof this.targetNode.force.y !== "number"
+    ) {
+      return <React.Fragment key={this.id}></React.Fragment>;
+    }
+
     const start: ILinkEnd = {
-      x: this.sourceNode.force.x ?? 0,
-      y: this.sourceNode.force.y ?? 0,
-      offset: this.sourceNode.size / 2
+      x: this.sourceNode.force.x,
+      y: this.sourceNode.force.y,
+      offset: this.sourceNode.size
     };
     const end: ILinkEnd = {
-      x: this.targetNode.force.x ?? 0,
-      y: this.targetNode.force.y ?? 0,
-      offset: this.targetNode.size / 2
+      x: this.targetNode.force.x,
+      y: this.targetNode.force.y,
+      offset: this.targetNode.size
     };
+
     return (
       <Link
         key={this.id}
@@ -68,17 +77,7 @@ export class LinkModel {
   }
 
   public renderLinkNode(): JSX.Element {
-    return (
-      <g
-        key={this.linkNodeId}
-        transform={`translate(${this.linkNode.force.x ?? 0}, ${this.linkNode.force.y ?? 0})`}
-      >
-        <Node
-          size={0} // TODO: polish the implement to hide the node.
-          id={this.linkNodeId}
-        />
-      </g >
-    );
+    return <React.Fragment key={this.id + ".linknode"}></React.Fragment>;
   }
 }
 
@@ -86,6 +85,9 @@ export function getLinkId(link: { source: string; target: string }): string {
   return `${link.source},${link.target}`;
 }
 
-export function getLinkNodeId(link: { source: string; target: string }): string {
+export function getLinkNodeId(link: {
+  source: string;
+  target: string;
+}): string {
   return `${CONST.LINK_NODE_PREFIX}${link.source}-${link.target}`;
 }
