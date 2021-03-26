@@ -1,5 +1,5 @@
 import { INodeCommonConfig } from "../node/Node.types";
-import { IGraphPropsNode } from "./Graph.types";
+import { IGraphPropsLink, IGraphPropsNode } from "./Graph.types";
 import { NodeModel } from "./NodeModel";
 import { IGraphNodeDatum } from "./LinkMap";
 
@@ -14,7 +14,8 @@ export class NodeMap {
 
   public updateNodeMap(
     nodes: IGraphPropsNode[],
-    nodeConfig: INodeCommonConfig
+    nodeConfig: INodeCommonConfig,
+    links: IGraphPropsLink[]
   ): boolean {
     let addedOrRemovedNodes: boolean = false;
 
@@ -35,6 +36,19 @@ export class NodeMap {
       } else {
         addedOrRemovedNodes = true;
         this._map.set(node.id, new NodeModel(node, nodeConfig));
+      }
+    });
+
+    links.forEach(link => {
+      if (this._map.has(`linkNode-${link.source}-${link.target}`)) {
+        this._map
+          .get(`linkNode-${link.source}-${link.target}`)
+          ?.update({ id: `linkNode-${link.source}-${link.target}` }, {});
+      } else {
+        this._map.set(
+          `linkNode-${link.source}-${link.target}`,
+          new NodeModel({ id: `linkNode-${link.source}-${link.target}` }, {})
+        );
       }
     });
 

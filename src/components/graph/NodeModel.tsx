@@ -1,6 +1,7 @@
 import React from "react";
 import { mergeConfig } from "../../utils";
 import { Node } from "../node/Node";
+import NodeLabel from "../node/NodeLabel";
 import { INodeCommonConfig } from "../node/Node.types";
 import { IGraphPropsNode } from "./Graph.types";
 import { IGraphNodeDatum } from "./LinkMap";
@@ -13,6 +14,7 @@ export class NodeModel {
 
   constructor(props: IGraphPropsNode, nodeConfig: INodeCommonConfig) {
     this.id = props.id;
+    this.size = props.size ?? 0;
     this.force = {
       id: props.id
     };
@@ -32,13 +34,52 @@ export class NodeModel {
   }
 
   public renderNode(): JSX.Element {
+    const {
+      label,
+      onRenderNodeLabel,
+      size = 8,
+      nodeStyle,
+      labelStyle,
+      labelOffset
+    } = this.props;
+
     return (
-      <g
-        key={this.id}
-        transform={`translate(${this.force.x ?? 0}, ${this.force.y ?? 0})`}
-      >
-        <Node {...this.props} />
-      </g>
+      <div className="fg-node" id={this.id} key={this.id}>
+        <Node
+          style={{
+            width: size * 2,
+            height: size * 2,
+            borderRadius: size,
+            position: "absolute",
+            left: this.force.x,
+            top: this.force.y,
+            outlineColor: "black",
+            outlineOffset: 2,
+            transform: "translate(-50%, -50%)",
+            background: "crimson",
+            zIndex: 3,
+            ...nodeStyle
+          }}
+          {...this.props}
+        />
+        {(label || onRenderNodeLabel) && (
+          <NodeLabel
+            style={{
+              position: "absolute",
+              display: "inline-block",
+              top: this.force.y,
+              left: this.force.x,
+              transform: `translate(-50%, ${labelOffset || 10}px)`,
+              whiteSpace: "nowrap",
+              zIndex: 3,
+              ...labelStyle
+            }}
+            label={label}
+            onRenderNodeLabel={onRenderNodeLabel}
+            {...this.props}
+          />
+        )}
+      </div>
     );
   }
 }

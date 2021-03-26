@@ -1,4 +1,3 @@
-import { CSSProperties } from "react";
 import { ILinkCommonConfig } from "../link/Link.types";
 import { INodeCommonConfig, INodeProps } from "../node/Node.types";
 
@@ -31,14 +30,7 @@ export interface IGraphConfigD3 {
   linkLength: number;
   linkStrength: number;
   disableLinkForce: boolean;
-  collideRadius: number;
   paddingRadius: number;
-}
-
-export interface IGraphConfigLink {
-  focusable: boolean;
-  lineStyle: CSSProperties;
-  labelStyle: CSSProperties;
 }
 
 export interface IGraphProps {
