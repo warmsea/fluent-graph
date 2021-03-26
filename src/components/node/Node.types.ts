@@ -10,6 +10,7 @@ export interface ILabelPlacementProps {
 }
 
 export interface INodeProps extends INodeCommonConfig {
+  style?: React.CSSProperties;
   id: string;
   label?: string;
 }
@@ -25,29 +26,30 @@ export interface INodeCommonConfig extends INodeEventHandlers {
   className?: string;
   nodeStyle?: React.CSSProperties;
 
+  focusable?: boolean;
   labelPosition?: LabelPosition;
   labelOffset?: number;
   labelStyle?: React.CSSProperties;
 
-  onRenderNode?: (props: INodeProps) => JSX.Element;
-  onRenderLabel?: (props: INodeProps) => JSX.Element;
+  onRenderNode?: (props: INodeProps) => React.ReactNode;
+  onRenderNodeLabel?: (props: INodeProps) => React.ReactNode;
 }
 
 export interface INodeEventHandlers {
   onClickNode?: (
     props: INodeProps,
-    event: React.MouseEvent<SVGElement, MouseEvent>
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => void;
   onContextMenu?: (
     props: INodeProps,
-    event: React.MouseEvent<SVGElement, MouseEvent>
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => void;
   onMouseOverNode?: (
     props: INodeProps,
-    event: React.MouseEvent<SVGElement, MouseEvent>
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => void;
   onMouseOutNode?: (
     props: INodeProps,
-    event: React.MouseEvent<SVGElement, MouseEvent>
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>
   ) => void;
 }

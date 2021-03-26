@@ -178,6 +178,12 @@ Complex.args = {
       { source: "Delta", target: "Juno" },
       { source: "Juno", target: "Milk" },
     ],
+    nodeConfig: {
+      focusable: true,
+    },
+    linkConfig: {
+      focusable: true,
+    },
     config: {
       d3: {
         gravity: -150,

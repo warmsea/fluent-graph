@@ -33,16 +33,10 @@ type Simulation = d3.Simulation<IGraphNodeDatum, undefined>;
 type Zoom = ZoomBehavior<Element, unknown>;
 
 const CLASS_NAME_ROOT_SVG: string = "fg-root-svg";
-const DISPLAY_THROTTLE_MS: number = 100;
+const DISPLAY_THROTTLE_MS: number = 50;
 
-export function calcViewBox(
-  width: number,
-  height: number,
-  x: number,
-  y: number,
-  zoom: number
-): string {
-  return `${-x / zoom},${-y / zoom},${width / zoom},${height / zoom}`;
+export function calcZoomLevel(x: number, y: number, zoom: number): string {
+  return `scale(${zoom}) translate(${x}px,${y}px)`;
 }
 
 export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
@@ -82,11 +76,18 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
       const nodeMap: NodeMap = nodeMapRef.current;
       nodeMap.getSimulationNodeDatums().forEach(node => {
         if (node.id.indexOf(CONST.LINK_NODE_PREFIX) !== -1) {
-          node.x = (nodeMap.get(node.id.split('-')[1]).force.x ?? 0) * 0.5 + (nodeMap.get(node.id.split('-')[2]).force.x ?? 0) * 0.5;
-          node.y = (nodeMap.get(node.id.split('-')[1]).force.y ?? 0) * 0.5 + (nodeMap.get(node.id.split('-')[2]).force.y ?? 0) * 0.5;
+          node.x =
+            (nodeMap.get(node.id.split("-")[1]).force.x ?? 0) * 0.5 +
+            (nodeMap.get(node.id.split("-")[2]).force.x ?? 0) * 0.5;
+          node.y =
+            (nodeMap.get(node.id.split("-")[1]).force.y ?? 0) * 0.5 +
+            (nodeMap.get(node.id.split("-")[2]).force.y ?? 0) * 0.5;
         } else {
           node.x = Math.max(radius, Math.min(width - radius, node.x || radius));
-          node.y = Math.max(radius, Math.min(height - radius, node.y || radius));
+          node.y = Math.max(
+            radius,
+            Math.min(height - radius, node.y || radius)
+          );
         }
       });
       forceUpdate();
@@ -105,13 +106,18 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
     simulationRef.current
       .force("charge", d3.forceManyBody().strength(graphConfig.d3.gravity))
       .force("center", d3.forceCenter(width / 2, height / 2).strength(0.1))
-      .force("collide", d3.forceCollide(node => {
-        if ((node as IGraphNodeDatum).id.indexOf(CONST.LINK_NODE_PREFIX) !== -1) {
-          return 10;
-        } else {
-          return 50;
-        }
-      }))
+      .force(
+        "collide",
+        d3.forceCollide(node => {
+          if (
+            (node as IGraphNodeDatum).id.indexOf(CONST.LINK_NODE_PREFIX) !== -1
+          ) {
+            return 10;
+          } else {
+            return 50;
+          }
+        })
+      )
       .on("tick", tick);
 
     const forceLink = d3
@@ -134,9 +140,7 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
       stopForceSimulation();
       for (const element of event.sourceEvent.path) {
         if (element.matches?.(".fg-node")) {
-          draggingNodeRef.current = nodeMapRef.current.get(
-            element.dataset.nodeid
-          );
+          draggingNodeRef.current = nodeMapRef.current.get(element.id);
           return;
         }
       }
@@ -145,8 +149,8 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
     dragBehavior.on("drag", event => {
       // TODO logic here works but not reasonable
       if (draggingNodeRef.current?.force) {
-        draggingNodeRef.current.force.x += event.x;
-        draggingNodeRef.current.force.y += event.y;
+        draggingNodeRef.current.force.x = event.x;
+        draggingNodeRef.current.force.y = event.y;
         forceUpdate();
       }
     });
@@ -207,7 +211,11 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   const rootId: string | undefined =
     props.nodes.length > 0 ? props.nodes[0].id : undefined;
 
-  const nodes: IGraphPropsNode[] = props.nodes.concat(props.links.map(link => { return { id: getLinkNodeId(link) }; }));
+  const nodes: IGraphPropsNode[] = props.nodes.concat(
+    props.links.map(link => {
+      return { id: getLinkNodeId(link) };
+    })
+  );
   const addedOrRemovedNodes: boolean = nodeMapRef.current.updateNodeMap(
     nodes,
     nodeConfig,
@@ -229,21 +237,18 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
 
   return (
     <div id={graphContainerId}>
-      <svg
-        width={width}
-        height={height}
-        className={CLASS_NAME_ROOT_SVG}
-        viewBox={calcViewBox(
+      <div
+        style={{
+          position: "relative",
           width,
           height,
-          zoomState.x,
-          zoomState.y,
-          zoomState.k
-        )}
+          transform: calcZoomLevel(zoomState.x, zoomState.y, zoomState.k)
+        }}
+        className={CLASS_NAME_ROOT_SVG}
         onClick={onClickGraph}
       >
-        <g>{elements}</g>
-      </svg>
+        {elements}
+      </div>
     </div>
   );
 };
@@ -252,12 +257,12 @@ export function onRenderElements(
   rootId: string | undefined,
   nodeMap: NodeMap,
   linkMatrix: LinkMatrix
-): JSX.Element {
+) {
   if (!rootId) {
     return <></>;
   }
 
-  const elements: JSX.Element[] = [nodeMap.get(rootId).renderNode()];
+  const elements: React.ReactNode[] = [nodeMap.get(rootId).renderNode()];
   const queue: NodeModel[] = [nodeMap.get(rootId)];
   const rendered: Set<NodeModel | LinkModel> = new Set();
   while (queue.length > 0) {
@@ -275,5 +280,5 @@ export function onRenderElements(
       }
     });
   }
-  return <>{elements}</>;
+  return elements;
 }
