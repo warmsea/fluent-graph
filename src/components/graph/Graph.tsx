@@ -10,14 +10,14 @@ import React, {
   useRef,
   useState
 } from "react";
-import { IGraphConfig, IGraphProps } from "./Graph.types";
+import { IGraphConfig, IGraphProps, IGraphPropsNode } from "./Graph.types";
 import { NodeMap } from "./NodeMap";
 import { LinkMatrix } from "./LinkMatrix";
 import { throttle } from "lodash";
 import { mergeConfig } from "../../utils";
 import { DEFAULT_CONFIG } from "./graph.config";
 import { NodeModel } from "./NodeModel";
-import { LinkModel } from "./LinkModel";
+import { LinkModel, getLinkNodeId } from "./LinkModel";
 import { default as CONST } from "./graph.const";
 import { LinkMap, IGraphNodeDatum } from "./LinkMap";
 import { INodeCommonConfig } from "../node/Node.types";
@@ -79,9 +79,15 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
       const radius: number =
         graphConfig.d3.paddingRadius || DEFAULT_NODE_PROPS.size! / 2;
       // constrain nodes from exceed the border of the graph.
-      nodeMapRef.current.getSimulationNodeDatums().forEach(node => {
-        node.x = Math.max(radius, Math.min(width - radius, node.x || radius));
-        node.y = Math.max(radius, Math.min(height - radius, node.y || radius));
+      const nodeMap: NodeMap = nodeMapRef.current;
+      nodeMap.getSimulationNodeDatums().forEach(node => {
+        if (node.id.indexOf(CONST.LINK_NODE_PREFIX) !== -1) {
+          node.x = (nodeMap.get(node.id.split('-')[1]).force.x ?? 0) * 0.5 + (nodeMap.get(node.id.split('-')[2]).force.x ?? 0) * 0.5;
+          node.y = (nodeMap.get(node.id.split('-')[1]).force.y ?? 0) * 0.5 + (nodeMap.get(node.id.split('-')[2]).force.y ?? 0) * 0.5;
+        } else {
+          node.x = Math.max(radius, Math.min(width - radius, node.x || radius));
+          node.y = Math.max(radius, Math.min(height - radius, node.y || radius));
+        }
       });
       forceUpdate();
     }, DISPLAY_THROTTLE_MS),
@@ -99,7 +105,13 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
     simulationRef.current
       .force("charge", d3.forceManyBody().strength(graphConfig.d3.gravity))
       .force("center", d3.forceCenter(width / 2, height / 2).strength(0.1))
-      .force("collide", d3.forceCollide().radius(graphConfig.d3.collideRadius))
+      .force("collide", d3.forceCollide(node => {
+        if ((node as IGraphNodeDatum).id.indexOf(CONST.LINK_NODE_PREFIX) !== -1) {
+          return 10;
+        } else {
+          return 50;
+        }
+      }))
       .on("tick", tick);
 
     const forceLink = d3
@@ -195,9 +207,11 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   const rootId: string | undefined =
     props.nodes.length > 0 ? props.nodes[0].id : undefined;
 
+  const nodes: IGraphPropsNode[] = props.nodes.concat(props.links.map(link => { return { id: getLinkNodeId(link) }; }));
   const addedOrRemovedNodes: boolean = nodeMapRef.current.updateNodeMap(
-    props.nodes,
-    nodeConfig
+    nodes,
+    nodeConfig,
+    props.links
   );
   const addedOrRemovedLinks: boolean = linkMapRef.current.updateLinkMap(
     props.links,
@@ -252,6 +266,7 @@ export function onRenderElements(
       if (!rendered.has(link)) {
         elements.push(link.renderLink());
         rendered.add(link);
+        elements.push(link.renderLinkNode());
       }
       if (!rendered.has(link.targetNode)) {
         elements.push(link.targetNode.renderNode());
