@@ -35,10 +35,6 @@ type Zoom = ZoomBehavior<Element, unknown>;
 const CLASS_NAME_ROOT_SVG: string = "fg-root-svg";
 const DISPLAY_THROTTLE_MS: number = 50;
 
-export function calcZoomLevel(x: number, y: number, zoom: number): string {
-  return `scale(${zoom}) translate(${x}px,${y}px)`;
-}
-
 export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   const nodeMapRef: Ref<NodeMap> = useRef(new NodeMap());
   const linkMapRef: Ref<LinkMap> = useRef(new LinkMap());
@@ -239,7 +235,8 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
           position: "relative",
           width,
           height,
-          transform: calcZoomLevel(zoomState.x, zoomState.y, zoomState.k)
+          transformOrigin: "0 0",
+          transform: `translate(${zoomState.x}px,${zoomState.y}px) scale(${zoomState.k})`
         }}
         className={CLASS_NAME_ROOT_SVG}
         onClick={onClickGraph}
