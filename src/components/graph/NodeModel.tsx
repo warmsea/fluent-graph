@@ -17,8 +17,8 @@ export class NodeModel {
     this.size = props.size ?? 0;
     this.force = {
       id: props.id,
-      x: props.x,
-      y: props.y
+      x: props.initialX,
+      y: props.initialY
     };
 
     this.props = mergeConfig(nodeConfig, props);
@@ -63,8 +63,6 @@ export class NodeModel {
             ...nodeStyle
           }}
           {...this.props}
-          x={this.force.x}
-          y={this.force.y}
         />
         {(label || onRenderNodeLabel) && (
           <NodeLabel
