@@ -1,15 +1,30 @@
-import { merge, pick } from "lodash";
+import { isFunction, merge } from "lodash";
+import {
+  Dispatch,
+  MutableRefObject,
+  SetStateAction,
+  useCallback,
+  useRef,
+  useState
+} from "react";
 
-/**
- * Picks all props except the ones passed in the props array.
- * @param {Object} o - the object to pick props from.
- * @param {Array.<string>} props - list of props that we DON'T want to pick from o.
- * @returns {Object} the object resultant from the anti picking operation.
- * @memberof utils
- */
-export function antiPick(o: object, props: string[] = []): Pick<any, string> {
-  const wanted = Object.keys(o).filter(k => !props.includes(k));
-  return pick(o, wanted);
+export function useStateRef<S = undefined>(
+  initialState: S | (() => S)
+): [S, Dispatch<SetStateAction<S>>, MutableRefObject<S>] {
+  var [state, setState] = useState(initialState);
+  var ref = useRef(state);
+
+  var dispatch = useCallback((value: SetStateAction<S>) => {
+    if (isFunction(value)) {
+      ref.current = value(ref.current);
+    } else {
+      ref.current = value;
+    }
+
+    setState(ref.current);
+  }, []);
+
+  return [state, dispatch, ref];
 }
 
 export function mergeConfig<D = any, E = any>(
