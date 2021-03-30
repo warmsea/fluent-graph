@@ -14,7 +14,7 @@ import { IGraphConfig, IGraphProps, IGraphPropsNode } from "./Graph.types";
 import { NodeMap } from "./NodeMap";
 import { LinkMatrix } from "./LinkMatrix";
 import { clamp, throttle } from "lodash";
-import { mergeConfig } from "../../utils";
+import { mergeConfig, useStateRef } from "../../utils";
 import { DEFAULT_CONFIG } from "./graph.config";
 import { NodeModel } from "./NodeModel";
 import { LinkModel, getLinkNodeId } from "./LinkModel";
@@ -57,7 +57,7 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   const { width, height } = graphConfig;
 
   const [topology, increaseTopologyVersion] = useReducer(v => v + 1, 0);
-  const [zoomState, setZoomState] = useState({ x: 0, y: 0, k: 1 });
+  const [zoomState, setZoomState, zoomStateRef] = useStateRef({ x: 0, y: 0, k: 1 });
   const throttledSetZoomState = throttle(setZoomState, DISPLAY_THROTTLE_MS);
 
   // @ts-ignore: Unused locals
@@ -140,10 +140,9 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
       draggingNodeRef.current = undefined;
     });
     dragBehavior.on("drag", event => {
-      // TODO logic here works but not reasonable
       if (draggingNodeRef.current?.force) {
-        draggingNodeRef.current.force.x = event.x;
-        draggingNodeRef.current.force.y = event.y;
+        draggingNodeRef.current.force.x = event.x / zoomStateRef.current.k;
+        draggingNodeRef.current.force.y = event.y / zoomStateRef.current.k;
         forceUpdate();
       }
     });
