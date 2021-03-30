@@ -75,10 +75,6 @@ export class LinkModel {
       />
     );
   }
-
-  public renderLinkNode(): JSX.Element {
-    return <React.Fragment key={this.id + ".linknode"}></React.Fragment>;
-  }
 }
 
 export function getLinkId(link: { source: string; target: string }): string {

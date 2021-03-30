@@ -13,7 +13,7 @@ import React, {
 import { IGraphConfig, IGraphProps, IGraphPropsNode } from "./Graph.types";
 import { NodeMap } from "./NodeMap";
 import { LinkMatrix } from "./LinkMatrix";
-import { throttle } from "lodash";
+import { clamp, throttle } from "lodash";
 import { mergeConfig } from "../../utils";
 import { DEFAULT_CONFIG } from "./graph.config";
 import { NodeModel } from "./NodeModel";
@@ -34,10 +34,6 @@ type Zoom = ZoomBehavior<Element, unknown>;
 
 const CLASS_NAME_ROOT_SVG: string = "fg-root-svg";
 const DISPLAY_THROTTLE_MS: number = 50;
-
-export function calcZoomLevel(x: number, y: number, zoom: number): string {
-  return `scale(${zoom}) translate(${x}px,${y}px)`;
-}
 
 export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   const nodeMapRef: Ref<NodeMap> = useRef(new NodeMap());
@@ -83,11 +79,8 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
             (nodeMap.get(node.id.split("-")[1]).force.y ?? 0) * 0.5 +
             (nodeMap.get(node.id.split("-")[2]).force.y ?? 0) * 0.5;
         } else {
-          node.x = Math.max(radius, Math.min(width - radius, node.x || radius));
-          node.y = Math.max(
-            radius,
-            Math.min(height - radius, node.y || radius)
-          );
+          node.x = clamp(node.x ?? 0, Math.min(radius, width - radius), Math.max(radius, width - radius));
+          node.y = clamp(node.y ?? 0, Math.min(radius, height - radius), Math.max(radius, height - radius));
         }
       });
       forceUpdate();
@@ -242,7 +235,8 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
           position: "relative",
           width,
           height,
-          transform: calcZoomLevel(zoomState.x, zoomState.y, zoomState.k)
+          transformOrigin: "0 0",
+          transform: `translate(${zoomState.x}px,${zoomState.y}px) scale(${zoomState.k})`
         }}
         className={CLASS_NAME_ROOT_SVG}
         onClick={onClickGraph}
@@ -271,7 +265,6 @@ export function onRenderElements(
       if (!rendered.has(link)) {
         elements.push(link.renderLink());
         rendered.add(link);
-        elements.push(link.renderLinkNode());
       }
       if (!rendered.has(link.targetNode)) {
         elements.push(link.targetNode.renderNode());
