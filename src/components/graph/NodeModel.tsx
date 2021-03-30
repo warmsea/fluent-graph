@@ -16,7 +16,9 @@ export class NodeModel {
     this.id = props.id;
     this.size = props.size ?? 0;
     this.force = {
-      id: props.id
+      id: props.id,
+      x: props.initialX,
+      y: props.initialY
     };
 
     this.props = mergeConfig(nodeConfig, props);

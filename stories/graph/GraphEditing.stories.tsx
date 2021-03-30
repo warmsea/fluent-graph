@@ -13,8 +13,13 @@ export const AddingAndDeleting: FC = () => {
   const [nodes, setNodes] = useState([{ id: "Root", label: "Root" }]);
   const [links, setLinks] = useState([]);
 
-  const onClickNode = (props: INodeProps) => {
-    const newNode = { id: `${Math.random()}`, label: "" };
+  const onClickNode = (props: INodeProps, event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    const parentX = event.clientX ?? 0;
+    const parentY = event.clientY ?? 0;
+    const angle: number = Math.random() * Math.PI * 2;
+    const newX: number = Math.cos(angle) * 100 + parentX;
+    const newY: number = Math.sin(angle) * 100 + parentY;
+    const newNode = { id: `${Math.random()}`, label: "", initialX: newX, initialY: newY };
     setNodes([...nodes, newNode]);
     setLinks([...links, { source: props.id, target: newNode.id }]);
   };
