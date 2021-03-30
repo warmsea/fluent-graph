@@ -14,7 +14,12 @@ export const AddingAndDeleting: FC = () => {
   const [links, setLinks] = useState([]);
 
   const onClickNode = (props: INodeProps) => {
-    const newNode = { id: `${Math.random()}`, label: "" };
+    const parentX = props.x ?? 0;
+    const parentY = props.y ?? 0;
+    const angle: number = Math.random() * Math.PI * 2;
+    const newX: number = Math.cos(angle) * 100 + parentX;
+    const newY: number = Math.sin(angle) * 100 + parentY;
+    const newNode = { id: `${Math.random()}`, label: "", x: newX, y: newY };
     setNodes([...nodes, newNode]);
     setLinks([...links, { source: props.id, target: newNode.id }]);
   };
