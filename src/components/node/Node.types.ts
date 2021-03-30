@@ -13,8 +13,6 @@ export interface INodeProps extends INodeCommonConfig {
   style?: React.CSSProperties;
   id: string;
   label?: string;
-  initialX?: number;
-  initialY?: number;
 }
 
 /**
