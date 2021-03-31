@@ -19,11 +19,11 @@ interface ITemplateArgs extends BaseStory<Args, StoryFnReactReturnType> {
 
 const Template: Story<ITemplateArgs> = (args: ITemplateArgs) => (
   <div>
-    <svg>
-      <g transform="translate(100, 50)">
-        <Node {...args.nodeProps} />
-      </g>
-    </svg>
+    <Node style={{
+      position: "absolute",
+      left: 100,
+      top: 100,
+    }} {...args.nodeProps} />
   </div>
 );
 
@@ -44,9 +44,8 @@ Styled.args = {
     size: 50,
     label: "Fluent Graph",
     nodeStyle: {
-      fill: "none",
-      stroke: "skyblue",
-      strokeWidth: 5,
+      backgroundColor: "none",
+      border: "solid skyblue 5px",
     },
     labelStyle: {
       fill: "gray",
@@ -94,16 +93,5 @@ export const CustomizeLabel: Story<ITemplateArgs> = Template.bind({});
 CustomizeLabel.args = {
   nodeProps: {
     id: "Fluent Graph",
-    onRenderLabel: (props) => {
-      return (
-        <path
-          transform={`translate(0, 30)`}
-          d={d3.symbol().type(d3.symbolStar).size(props.size)()}
-          style={{
-            fill: "skyblue"
-          }}
-        />
-      );
-    }
   }
 }

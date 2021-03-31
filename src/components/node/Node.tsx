@@ -1,34 +1,51 @@
-import React from "react";
-import { merge } from "lodash";
-
+import React, { HTMLAttributes, ReactNode } from "react";
+import { css, mergeConfig } from "../../utils";
 import { INodeCommonConfig, INodeProps } from "./Node.types";
 
+export const NODE_CLASS_ROOT: string = "fg-node-root";
+export const NODE_CLASS_NODE: string = "fg-node-node";
+export const NODE_CLASS_LABEL: string = "fg-node-label";
 export const DEFAULT_NODE_PROPS: INodeCommonConfig = {
-  size: 10,
+  size: 20,
   nodeStyle: {
-    background: "#d3d3d3"
+    boxSizing: "border-box",
+    backgroundColor: "#d3d3d3",
+    transform: "translate(-50%, -50%)",
+    zIndex: 3
   }
 };
 
-export const Node = (props: INodeProps) => {
-  props = merge({}, DEFAULT_NODE_PROPS, props);
+function defaultOnRenderNode(props: INodeProps): ReactNode {
+  const nodeProps: HTMLAttributes<HTMLDivElement> = {
+    className: NODE_CLASS_NODE,
+    style: {
+      width: props.size,
+      height: props.size,
+      borderRadius: props.size! / 2,
+      ...props.nodeStyle
+    },
 
-  const nodeProps: React.DetailedHTMLProps<
-    React.HTMLAttributes<HTMLDivElement>,
-    HTMLDivElement
-  > = {
-    id: props.id,
     tabIndex: props.focusable ? 0 : undefined,
-    style: props.style,
-    className: "fg-node",
+
     onClick: event => props.onClickNode?.(props, event),
     onContextMenu: event => props.onContextMenu?.(props, event),
     onMouseOver: event => props.onMouseOverNode?.(props, event),
     onMouseOut: event => props.onMouseOutNode?.(props, event)
   };
 
-  if (props.onRenderNode) {
-    return <>{props.onRenderNode(props)}</>;
-  }
-  return <div {...nodeProps}></div>;
+  return <div className={NODE_CLASS_NODE} {...nodeProps} />;
+}
+
+export const Node = (props: INodeProps) => {
+  props = mergeConfig(DEFAULT_NODE_PROPS, props);
+
+  return (
+    <div
+      id={props.id}
+      className={css(NODE_CLASS_ROOT, props.className)}
+      style={props.style}
+    >
+      {(props.onRenderNode ?? defaultOnRenderNode)(props)}
+    </div>
+  );
 };

@@ -10,7 +10,6 @@ export interface ILabelPlacementProps {
 }
 
 export interface INodeProps extends INodeCommonConfig {
-  style?: React.CSSProperties;
   id: string;
   label?: string;
 }
@@ -24,12 +23,13 @@ export interface INodeCommonConfig extends INodeEventHandlers {
    */
   size?: number;
   className?: string;
-  nodeStyle?: React.CSSProperties;
+  style?: React.CSSProperties;
 
+  nodeStyle?: React.CSSProperties;
   focusable?: boolean;
-  labelPosition?: LabelPosition;
-  labelOffset?: number;
+
   labelStyle?: React.CSSProperties;
+  labelOffset?: number;
 
   onRenderNode?: (props: INodeProps) => React.ReactNode;
   onRenderNodeLabel?: (props: INodeProps) => React.ReactNode;

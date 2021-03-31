@@ -1,4 +1,4 @@
-import { isFunction, merge } from "lodash";
+import { identity, isFunction, merge } from "lodash";
 import {
   Dispatch,
   MutableRefObject,
@@ -7,6 +7,10 @@ import {
   useRef,
   useState
 } from "react";
+
+export function css(...classNames: (string | undefined)[]): string {
+  return classNames.filter(identity).join(" ");
+}
 
 export function useStateRef<S = undefined>(
   initialState: S | (() => S)
