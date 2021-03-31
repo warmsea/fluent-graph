@@ -1,5 +1,5 @@
 import { isNumber, merge } from "lodash";
-import React, { CSSProperties, FC, useCallback } from "react";
+import React, { CSSProperties, FC, HTMLAttributes } from "react";
 import { calcDraw, len, deg, center } from "./LinkHelper";
 import { ILinkProps } from "./Link.types";
 
@@ -15,25 +15,12 @@ export const DEFAULT_LINK_PROPS: Partial<ILinkProps> = {
 export const Link: FC<ILinkProps> = (props: ILinkProps) => {
   props = merge({}, DEFAULT_LINK_PROPS, props);
 
-  const handleOnClickLink = useCallback(
-    event => props.onClickLink?.(event, props),
-    [props.onClickLink, props]
-  );
-
-  const handleOnMouseOverLink = useCallback(
-    event => props.onMouseOverLink?.(event, props),
-    [props.onMouseOverLink, props]
-  );
-
-  const handleOnMouseOutLink = useCallback(
-    event => props.onMouseOutLink?.(event, props),
-    [props.onMouseOutLink, props]
-  );
-
-  const handleOnKeyDownLink = useCallback(
-    event => props.onKeyDownLink?.(event, props),
-    [props.onKeyDownLink, props]
-  );
+  const eventHandlers: HTMLAttributes<HTMLElement> = {
+    onClick: event => props.onClickLink?.(event, props),
+    onMouseOver: event => props.onMouseOverLink?.(event, props),
+    onMouseOut: event => props.onMouseOutLink?.(event, props),
+    onKeyDown: event => props.onKeyDownLink?.(event, props)
+  };
 
   const [start, end] = calcDraw(props.start, props.end);
 
@@ -49,25 +36,20 @@ export const Link: FC<ILinkProps> = (props: ILinkProps) => {
     transform: `translate(-50%, -50%) rotate(${deg(start, end)}deg)`
   };
 
-  const { lineStyle } = props;
-
   const lineProps: React.DetailedHTMLProps<
     React.HTMLAttributes<HTMLDivElement>,
     HTMLDivElement
   > = {
+    ...eventHandlers,
     style: {
       outlineColor: "black",
       outlineOffset: 2,
       position: "absolute",
       zIndex: 1,
-      ...lineStyle,
+      ...props.lineStyle,
       ...linkPosition
     },
     className: props.className || "fg-link",
-    onClick: handleOnClickLink,
-    onMouseOut: handleOnMouseOutLink,
-    onMouseOver: handleOnMouseOverLink,
-    onKeyDown: handleOnKeyDownLink,
     tabIndex: props.focusable ? 0 : undefined,
     "aria-label": props.getLinkAriaLabel?.(props)
   };
@@ -87,11 +69,8 @@ export const Link: FC<ILinkProps> = (props: ILinkProps) => {
     React.HTMLAttributes<HTMLDivElement>,
     HTMLDivElement
   > = {
+    ...eventHandlers,
     className: props.className || "fg-link",
-    onClick: handleOnClickLink,
-    onMouseOut: handleOnMouseOutLink,
-    onMouseOver: handleOnMouseOverLink,
-    onKeyDown: handleOnKeyDownLink,
     style: clickHelperLineStyle
   };
 

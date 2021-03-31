@@ -14,7 +14,7 @@ export function useStateRef<S = undefined>(
   var [state, setState] = useState(initialState);
   var ref = useRef(state);
 
-  var dispatch = useCallback((value: SetStateAction<S>) => {
+  var dispatch = useCallback(value => {
     if (isFunction(value)) {
       ref.current = value(ref.current);
     } else {
