@@ -1,7 +1,5 @@
 import React from "react";
 
-export type LabelPosition = "left" | "right" | "top" | "bottom" | "center";
-
 export interface ILabelPlacementProps {
   dx: string;
   dy: string;
@@ -32,7 +30,7 @@ export interface INodeCommonConfig extends INodeEventHandlers {
   labelOffset?: number;
 
   onRenderNode?: (props: INodeProps) => React.ReactNode;
-  onRenderNodeLabel?: (props: INodeProps) => React.ReactNode;
+  onRenderLabel?: (props: INodeProps) => React.ReactNode;
 }
 
 export interface INodeEventHandlers {

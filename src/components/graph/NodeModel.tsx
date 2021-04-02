@@ -1,7 +1,6 @@
 import React from "react";
 import { mergeConfig } from "../../utils";
 import { Node } from "../node/Node";
-import NodeLabel from "../node/NodeLabel";
 import { INodeCommonConfig } from "../node/Node.types";
 import { IGraphPropsNode } from "./Graph.types";
 import { IGraphNodeDatum } from "./LinkMap";
@@ -36,44 +35,17 @@ export class NodeModel {
   }
 
   public renderNode(): JSX.Element {
-    const {
-      label,
-      onRenderNodeLabel,
-      size = 8,
-      nodeStyle,
-      labelStyle,
-      labelOffset
-    } = this.props;
-
     return (
       <div className="fg-node" id={this.id} key={this.id}>
         <Node
-          size={size}
+          {...this.props}
           style={{
             position: "absolute",
             left: this.force.x,
-            top: this.force.y
+            top: this.force.y,
+            ...this.props.style
           }}
-          nodeStyle={nodeStyle}
-          {...this.props}
         />
-        {(label || onRenderNodeLabel) && (
-          <NodeLabel
-            style={{
-              position: "absolute",
-              display: "inline-block",
-              top: this.force.y,
-              left: this.force.x,
-              transform: `translate(-50%, ${labelOffset || 10}px)`,
-              whiteSpace: "nowrap",
-              zIndex: 3,
-              ...labelStyle
-            }}
-            label={label}
-            onRenderNodeLabel={onRenderNodeLabel}
-            {...this.props}
-          />
-        )}
       </div>
     );
   }
