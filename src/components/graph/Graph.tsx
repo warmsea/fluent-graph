@@ -40,6 +40,7 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   const simulationRef: Ref<Simulation | undefined> = useRef();
   const zoomRef: Ref<Zoom | undefined> = useRef();
   const draggingNodeRef: Ref<NodeModel | undefined> = useRef();
+  const draggingStateRef: Ref<'Clicked' | 'Dragging' | 'Dragged' | undefined> = useRef();
 
   const graphId: string = props.id.replaceAll(/ /g, "_");
   const graphContainerId: string = `fg-container-${graphId}`;
@@ -140,6 +141,7 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   function setupDrag(): void {
     const dragBehavior: Drag = d3.drag();
     dragBehavior.on("start", event => {
+      draggingStateRef.current = 'Clicked';
       // TODO don't stop the drag but fix this node only
       stopForceSimulation();
       for (const element of event.sourceEvent.path) {
@@ -151,6 +153,7 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
       draggingNodeRef.current = undefined;
     });
     dragBehavior.on("drag", event => {
+      draggingStateRef.current = 'Dragging';
       if (draggingNodeRef.current?.force) {
         draggingNodeRef.current.force.x = event.x / zoomStateRef.current.k;
         draggingNodeRef.current.force.y = event.y / zoomStateRef.current.k;
@@ -158,9 +161,15 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
       }
     });
     dragBehavior.on("end", () => {
-      draggingNodeRef.current = undefined;
-      simulationRef.current?.alpha(1);
-      simulationRef.current?.restart();
+      if (draggingStateRef.current === 'Dragging') {
+        draggingStateRef.current = 'Dragged';
+      }
+
+      if (draggingStateRef.current === 'Dragged') {
+        draggingNodeRef.current = undefined;
+        simulationRef.current?.alpha(1);
+        simulationRef.current?.restart();
+      }
     });
     const dragSelection: Selection = d3.selectAll(".fg-node");
     dragSelection.call(dragBehavior);
