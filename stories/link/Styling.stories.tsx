@@ -19,9 +19,7 @@ interface ITemplateArgs extends BaseStory<Args, StoryFnReactReturnType> {
 
 const Template: Story<ITemplateArgs> = (args: ITemplateArgs) => (
   <div>
-    <svg width={400} height={300}>
-      <Link {...args.linkProps} />
-    </svg>
+    <Link {...args.linkProps} />
   </div>
 );
 
@@ -44,8 +42,8 @@ Styled.args = {
   linkProps: {
     ...DEFAULT_REQUIRED_PROPS,
     lineStyle: {
-      stroke: "skyblue",
-      strokeWidth: 3,
+      background: "skyblue",
+      height: 8,
     },
     labelStyle: {
       fill: "gray"

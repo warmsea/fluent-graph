@@ -57,12 +57,12 @@ export class LinkModel {
     const start: ILinkEnd = {
       x: this.sourceNode.force.x,
       y: this.sourceNode.force.y,
-      offset: this.sourceNode.size
+      offset: this.sourceNode.size / 2
     };
     const end: ILinkEnd = {
       x: this.targetNode.force.x,
       y: this.targetNode.force.y,
-      offset: this.targetNode.size
+      offset: this.targetNode.size / 2
     };
 
     return (

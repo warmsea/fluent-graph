@@ -47,7 +47,13 @@ export interface IGraphProps {
   onZoomChange?;
 }
 
-export interface IGraphPropsNode extends INodeProps {}
+export interface IGraphPropsNode extends INodeProps {
+  /**
+   * initial position for the graph node, real node positions will changes after the force simulation.
+   */
+  initialX?: number;
+  initialY?: number;
+}
 
 export interface IGraphPropsLink extends ILinkCommonConfig {
   source: string;

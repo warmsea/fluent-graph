@@ -7,14 +7,13 @@ import React, {
   useEffect,
   useMemo,
   useReducer,
-  useRef,
-  useState
+  useRef
 } from "react";
 import { IGraphConfig, IGraphProps, IGraphPropsNode } from "./Graph.types";
 import { NodeMap } from "./NodeMap";
 import { LinkMatrix } from "./LinkMatrix";
 import { clamp, throttle } from "lodash";
-import { mergeConfig } from "../../utils";
+import { mergeConfig, useStateRef } from "../../utils";
 import { DEFAULT_CONFIG } from "./graph.config";
 import { NodeModel } from "./NodeModel";
 import { LinkModel, getLinkNodeId } from "./LinkModel";
@@ -32,7 +31,7 @@ type Selection = d3.Selection<Element, unknown, Element, unknown>;
 type Simulation = d3.Simulation<IGraphNodeDatum, undefined>;
 type Zoom = ZoomBehavior<Element, unknown>;
 
-const CLASS_NAME_ROOT_SVG: string = "fg-root-svg";
+const GRAPH_CLASS_MAIN: string = "fg-main";
 const DISPLAY_THROTTLE_MS: number = 50;
 
 export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
@@ -57,7 +56,11 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   const { width, height } = graphConfig;
 
   const [topology, increaseTopologyVersion] = useReducer(v => v + 1, 0);
-  const [zoomState, setZoomState] = useState({ x: 0, y: 0, k: 1 });
+  const [zoomState, setZoomState, zoomStateRef] = useStateRef({
+    x: 0,
+    y: 0,
+    k: 1
+  });
   const throttledSetZoomState = throttle(setZoomState, DISPLAY_THROTTLE_MS);
 
   // @ts-ignore: Unused locals
@@ -79,8 +82,16 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
             (nodeMap.get(node.id.split("-")[1]).force.y ?? 0) * 0.5 +
             (nodeMap.get(node.id.split("-")[2]).force.y ?? 0) * 0.5;
         } else {
-          node.x = clamp(node.x ?? 0, Math.min(radius, width - radius), Math.max(radius, width - radius));
-          node.y = clamp(node.y ?? 0, Math.min(radius, height - radius), Math.max(radius, height - radius));
+          node.x = clamp(
+            node.x ?? 0,
+            Math.min(radius, width - radius),
+            Math.max(radius, width - radius)
+          );
+          node.y = clamp(
+            node.y ?? 0,
+            Math.min(radius, height - radius),
+            Math.max(radius, height - radius)
+          );
         }
       });
       forceUpdate();
@@ -140,10 +151,9 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
       draggingNodeRef.current = undefined;
     });
     dragBehavior.on("drag", event => {
-      // TODO logic here works but not reasonable
       if (draggingNodeRef.current?.force) {
-        draggingNodeRef.current.force.x = event.x;
-        draggingNodeRef.current.force.y = event.y;
+        draggingNodeRef.current.force.x = event.x / zoomStateRef.current.k;
+        draggingNodeRef.current.force.y = event.y / zoomStateRef.current.k;
         forceUpdate();
       }
     });
@@ -191,13 +201,11 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
 
   const onClickGraph = useCallback(
     event => {
-      // TODO pause animation?
-      if (
-        (event.target as SVGSVGElement)?.classList.contains(CLASS_NAME_ROOT_SVG)
-      ) {
+      if ((event.target as HTMLElement)?.classList.contains(GRAPH_CLASS_MAIN)) {
         props.onClickGraph?.(event);
       }
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [props.onClickGraph]
   );
 
@@ -238,7 +246,7 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
           transformOrigin: "0 0",
           transform: `translate(${zoomState.x}px,${zoomState.y}px) scale(${zoomState.k})`
         }}
-        className={CLASS_NAME_ROOT_SVG}
+        className={GRAPH_CLASS_MAIN}
         onClick={onClickGraph}
       >
         {elements}

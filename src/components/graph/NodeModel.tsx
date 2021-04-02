@@ -16,7 +16,9 @@ export class NodeModel {
     this.id = props.id;
     this.size = props.size ?? 0;
     this.force = {
-      id: props.id
+      id: props.id,
+      x: props.initialX,
+      y: props.initialY
     };
 
     this.props = mergeConfig(nodeConfig, props);
@@ -46,20 +48,13 @@ export class NodeModel {
     return (
       <div className="fg-node" id={this.id} key={this.id}>
         <Node
+          size={size}
           style={{
-            width: size * 2,
-            height: size * 2,
-            borderRadius: size,
             position: "absolute",
             left: this.force.x,
-            top: this.force.y,
-            outlineColor: "black",
-            outlineOffset: 2,
-            transform: "translate(-50%, -50%)",
-            background: "crimson",
-            zIndex: 3,
-            ...nodeStyle
+            top: this.force.y
           }}
+          nodeStyle={nodeStyle}
           {...this.props}
         />
         {(label || onRenderNodeLabel) && (

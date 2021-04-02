@@ -19,19 +19,19 @@ export interface ILinkCommonConfig extends ILinkEventHandlers {
 
 export interface ILinkEventHandlers {
   onClickLink?: (
-    event: React.MouseEvent<SVGPathElement, MouseEvent>,
+    event: React.MouseEvent<HTMLElement, MouseEvent>,
     props: ILinkProps
   ) => void;
   onMouseOverLink?: (
-    event: React.MouseEvent<SVGPathElement, MouseEvent>,
+    event: React.MouseEvent<HTMLElement, MouseEvent>,
     props: ILinkProps
   ) => void;
   onMouseOutLink?: (
-    event: React.MouseEvent<SVGPathElement, MouseEvent>,
+    event: React.MouseEvent<HTMLElement, MouseEvent>,
     props: ILinkProps
   ) => void;
   onKeyDownLink?: (
-    event: React.KeyboardEvent<SVGPathElement>,
+    event: React.KeyboardEvent<HTMLElement>,
     props: ILinkProps
   ) => void;
 }
