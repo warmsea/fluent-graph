@@ -21,8 +21,6 @@ import { default as CONST } from "./graph.const";
 import { LinkMap, IGraphNodeDatum } from "./LinkMap";
 import { INodeCommonConfig } from "../node/Node.types";
 import { DEFAULT_NODE_PROPS } from "../node/Node";
-import { ILinkCommonConfig } from "../link/Link.types";
-import { DEFAULT_LINK_PROPS } from "../link/Link";
 
 // Type alias to make the code easier to read
 type Drag = DragBehavior<Element, unknown, unknown>;
@@ -50,9 +48,6 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   const nodeConfig: INodeCommonConfig = useMemo(() => {
     return mergeConfig(DEFAULT_NODE_PROPS, props.nodeConfig);
   }, [props.nodeConfig]);
-  const linkConfig: ILinkCommonConfig = useMemo(() => {
-    return mergeConfig(DEFAULT_LINK_PROPS, props.linkConfig);
-  }, [props.linkConfig]);
   const { width, height } = graphConfig;
 
   const [topology, increaseTopologyVersion] = useReducer(v => v + 1, 0);
@@ -224,7 +219,7 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   );
   const addedOrRemovedLinks: boolean = linkMapRef.current.updateLinkMap(
     props.links,
-    linkConfig,
+    props.linkConfig ?? {},
     nodeMapRef.current
   );
   if (addedOrRemovedNodes || addedOrRemovedLinks) {

@@ -11,10 +11,12 @@ export interface ILinkProps extends ILinkCommonConfig {
 export interface ILinkCommonConfig extends ILinkEventHandlers {
   className?: string;
   lineStyle?: CSSProperties;
-
   focusable?: boolean;
   label?: string;
   labelStyle?: CSSProperties;
+  isDashed?: boolean;
+  lineWeight?: number;
+  lineColor?: string;
 }
 
 export interface ILinkEventHandlers {

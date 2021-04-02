@@ -5,15 +5,29 @@ import { ILinkProps } from "./Link.types";
 
 export const CLICK_HELPER_THRESHOLD: number = 4;
 
-export const DEFAULT_LINK_PROPS: Partial<ILinkProps> = {
-  lineStyle: {
-    background: "gray",
-    height: 1.5 // link size
-  }
-};
-
 export const Link: FC<ILinkProps> = (props: ILinkProps) => {
-  props = merge({}, DEFAULT_LINK_PROPS, props);
+  const lineWeight: number = props.lineWeight ?? 1.5;
+  const lineColor: string = props.lineColor ?? "gray";
+
+  const defaultLinkProps: Partial<ILinkProps> = {
+    lineStyle: {
+      background: lineColor,
+      height: lineWeight
+    }
+  };
+
+  const defaultDashedLinkProps: Partial<ILinkProps> = {
+    lineStyle: {
+      borderTop: `${lineWeight}px dashed`,
+      borderColor: lineColor
+    }
+  };
+
+  if (props.isDashed) {
+    props = merge({}, defaultDashedLinkProps, props);
+  } else {
+    props = merge({}, defaultLinkProps, props);
+  }
 
   const eventHandlers: HTMLAttributes<HTMLElement> = {
     onClick: event => props.onClickLink?.(event, props),
