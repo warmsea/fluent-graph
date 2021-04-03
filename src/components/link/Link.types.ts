@@ -9,12 +9,11 @@ export interface ILinkProps extends ILinkCommonConfig {
 }
 
 export interface ILinkCommonConfig extends ILinkEventHandlers {
+  size?: number;
+  style?: CSSProperties;
   className?: string;
   lineStyle?: CSSProperties;
-
   focusable?: boolean;
-  label?: string;
-  labelStyle?: CSSProperties;
 }
 
 export interface ILinkEventHandlers {
