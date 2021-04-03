@@ -20,7 +20,11 @@ import { LinkModel, getLinkNodeId } from "./LinkModel";
 import { default as CONST } from "./graph.const";
 import { LinkMap, IGraphNodeDatum } from "./LinkMap";
 import { INodeCommonConfig } from "../node/Node.types";
-import { DEFAULT_NODE_PROPS } from "../node/Node";
+import {
+  DEFAULT_NODE_PROPS,
+  NODE_CLASS_NODE,
+  NODE_CLASS_ROOT
+} from "../node/Node";
 import { ILinkCommonConfig } from "../link/Link.types";
 import { DEFAULT_LINK_PROPS } from "../link/Link";
 
@@ -143,7 +147,7 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
       // TODO don't stop the drag but fix this node only
       stopForceSimulation();
       for (const element of event.sourceEvent.path) {
-        if (element.matches?.(".fg-node")) {
+        if (element.matches?.(`.${NODE_CLASS_ROOT}`)) {
           draggingNodeRef.current = nodeMapRef.current.get(element.id);
           return;
         }
@@ -152,8 +156,11 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
     });
     dragBehavior.on("drag", event => {
       if (draggingNodeRef.current?.force) {
-        draggingNodeRef.current.force.x = event.x / zoomStateRef.current.k;
-        draggingNodeRef.current.force.y = event.y / zoomStateRef.current.k;
+        const force = draggingNodeRef.current?.force;
+        if (force.x && force.y) {
+          force.x += event.x / zoomStateRef.current.k;
+          force.y += event.y / zoomStateRef.current.k;
+        }
         forceUpdate();
       }
     });
@@ -162,7 +169,7 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
       simulationRef.current?.alpha(1);
       simulationRef.current?.restart();
     });
-    const dragSelection: Selection = d3.selectAll(".fg-node");
+    const dragSelection: Selection = d3.selectAll(`.${NODE_CLASS_NODE}`);
     dragSelection.call(dragBehavior);
   }
 
