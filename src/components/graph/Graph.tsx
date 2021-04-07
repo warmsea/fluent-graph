@@ -144,22 +144,21 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   function setupDrag(): void {
     const dragBehavior: Drag = d3.drag();
     dragBehavior.on("start", event => {
-      simulationRef.current?.alphaTarget(0.3).restart();
-      for (const element of event.sourceEvent.path) {
-        if (element.matches?.(`.${NODE_CLASS_ROOT}`)) {
-          draggingNodeRef.current = nodeMapRef.current.get(element.id);
-          return;
+      const eventTarget: Element = event.sourceEvent.target;
+      // Clicking node should start dragging. Clicking node label should not.
+      if (eventTarget.closest(`.${NODE_CLASS_NODE}`)) {
+        const nodeRoot = eventTarget.closest(`.${NODE_CLASS_ROOT}`);
+        if (nodeRoot) {
+          draggingNodeRef.current = nodeMapRef.current.get(nodeRoot.id);
+          simulationRef.current?.alphaTarget(0.3).restart();
         }
       }
-      draggingNodeRef.current = undefined;
     });
     dragBehavior.on("drag", event => {
       const force = draggingNodeRef.current?.force;
-      if (force && force.x && force.y) {
-        force.x += event.x / zoomStateRef.current.k;
-        force.y += event.y / zoomStateRef.current.k;
-        force.fx = force.x;
-        force.fy = force.y;
+      if (force) {
+        force.fx = event.x / zoomStateRef.current.k;
+        force.fy = event.y / zoomStateRef.current.k;
         forceUpdate();
       }
     });
@@ -169,10 +168,9 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
         force.fx = force.fy = undefined;
       }
       draggingNodeRef.current = undefined;
-      simulationRef.current?.alphaTarget(0);
-      simulationRef.current?.restart();
+      simulationRef.current?.alphaTarget(0).restart();
     });
-    const dragSelection: Selection = d3.selectAll(`.${NODE_CLASS_NODE}`);
+    const dragSelection: Selection = d3.selectAll(`.${NODE_CLASS_ROOT}`);
     dragSelection.call(dragBehavior);
   }
 

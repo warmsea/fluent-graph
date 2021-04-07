@@ -36,17 +36,16 @@ export class NodeModel {
 
   public renderNode(): JSX.Element {
     return (
-      <div className="fg-node" id={this.id} key={this.id}>
-        <Node
-          {...this.props}
-          style={{
-            position: "absolute",
-            left: this.force.x,
-            top: this.force.y,
-            ...this.props.style
-          }}
-        />
-      </div>
+      <Node
+        key={this.props.id}
+        {...this.props}
+        style={{
+          position: "absolute",
+          left: this.force.x,
+          top: this.force.y,
+          ...this.props.style
+        }}
+      />
     );
   }
 }
