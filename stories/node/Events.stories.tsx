@@ -16,21 +16,20 @@ const CountingComponent: FC = () => {
   return (
     <div>
       <p>You clicked {count} times.</p>
-      <div>
-        <svg>
-          <g transform="translate(100, 50)">
-            <Node
-              id="Click the node!"
-              label="Click the node!"
-              onClickNode={() => {
-                setCount(count + 1);
-              }}
-            />
-          </g>
-        </svg>
-      </div>
+      <Node
+        style={{
+          position: "absolute",
+          left: 100,
+          top: 100,
+        }}
+        id="Click the node!"
+        label="Click the node!"
+        onClickNode={() => {
+          setCount(count + 1);
+        }}
+      />
     </div>
-  )
+  );
 }
 
-export const Click: Story = () => <CountingComponent />;
+export const ClickNode: Story = () => <CountingComponent />;

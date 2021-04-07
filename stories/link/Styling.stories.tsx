@@ -3,7 +3,6 @@ import { Meta, Story } from '@storybook/react';
 import { Link } from '../../src/components/link/Link';
 import { Args, BaseStory } from '@storybook/addons';
 import { StoryFnReactReturnType } from '@storybook/react/dist/client/preview/types';
-import * as d3 from 'd3';
 import { ILinkProps } from '../../src/components/link/Link.types';
 
 const meta: Meta = {
@@ -25,7 +24,6 @@ const Template: Story<ITemplateArgs> = (args: ITemplateArgs) => (
 
 const DEFAULT_REQUIRED_PROPS: ILinkProps = {
   id: "Fluent Graph Link",
-  label: "Fluent Graph Link",
   start: { x: 50, y: 50 },
   end: { x: 200, y: 100 }
 }
@@ -42,11 +40,9 @@ Styled.args = {
   linkProps: {
     ...DEFAULT_REQUIRED_PROPS,
     lineStyle: {
-      background: "skyblue",
-      height: 8,
-    },
-    labelStyle: {
-      fill: "gray"
+      borderBottomColor: "skyblue",
+      borderBottomStyle: "dashed",
+      borderBottomWidth: 8,
     }
   }
 };
