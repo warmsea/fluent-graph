@@ -144,8 +144,7 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   function setupDrag(): void {
     const dragBehavior: Drag = d3.drag();
     dragBehavior.on("start", event => {
-      // TODO don't stop the drag but fix this node only
-      stopForceSimulation();
+      simulationRef.current?.alphaTarget(0.3).restart();
       for (const element of event.sourceEvent.path) {
         if (element.matches?.(`.${NODE_CLASS_ROOT}`)) {
           draggingNodeRef.current = nodeMapRef.current.get(element.id);
@@ -155,18 +154,22 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
       draggingNodeRef.current = undefined;
     });
     dragBehavior.on("drag", event => {
-      if (draggingNodeRef.current?.force) {
-        const force = draggingNodeRef.current?.force;
-        if (force.x && force.y) {
-          force.x += event.x / zoomStateRef.current.k;
-          force.y += event.y / zoomStateRef.current.k;
-        }
+      const force = draggingNodeRef.current?.force;
+      if (force && force.x && force.y) {
+        force.x += event.x / zoomStateRef.current.k;
+        force.y += event.y / zoomStateRef.current.k;
+        force.fx = force.x;
+        force.fy = force.y;
         forceUpdate();
       }
     });
     dragBehavior.on("end", () => {
+      const force = draggingNodeRef.current?.force;
+      if (force) {
+        force.fx = force.fy = undefined;
+      }
       draggingNodeRef.current = undefined;
-      simulationRef.current?.alpha(1);
+      simulationRef.current?.alphaTarget(0);
       simulationRef.current?.restart();
     });
     const dragSelection: Selection = d3.selectAll(`.${NODE_CLASS_NODE}`);
