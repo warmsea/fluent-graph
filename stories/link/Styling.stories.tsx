@@ -1,13 +1,12 @@
-import React, { SVGAttributes } from 'react';
+import React, { FC } from 'react';
 import { Meta, Story } from '@storybook/react';
-import { Link } from '../../src/components/link/Link';
 import { Args, BaseStory } from '@storybook/addons';
 import { StoryFnReactReturnType } from '@storybook/react/dist/client/preview/types';
+import { Link, Node } from '../../src';
 import { ILinkProps } from '../../src/components/link/Link.types';
 
 const meta: Meta = {
-  title: 'Link: Styling',
-  component: Link,
+  title: 'Link: Styling'
 };
 
 export default meta;
@@ -46,3 +45,33 @@ Styled.args = {
     }
   }
 };
+
+export const Offset: FC = () => (
+  <div style={{ position: "absolute" }}>
+    <Node
+      id="start"
+      label="offset: -10"
+      style={{
+        position: "absolute",
+        left: 50,
+        top: 50,
+      }}
+    />
+    <Node
+      id="end"
+      label="offset: 20"
+      style={{
+        position: "absolute",
+        left: 200,
+        top: 100,
+      }}
+    />
+    <Link
+      id="Link with offset"
+      style={{ zIndex: 10 }}
+      lineStyle={{ borderBottomColor: "red" }}
+      start={{ x: 50, y: 50, offset: -10 }}
+      end={{ x: 200, y: 100, offset: 20 }}
+    />
+  </div>
+);

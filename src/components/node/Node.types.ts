@@ -1,11 +1,4 @@
-import React from "react";
-
-export interface ILabelPlacementProps {
-  dx: string;
-  dy: string;
-  dominantBaseline?: string;
-  textAnchor?: string;
-}
+import React, { CSSProperties, ReactNode } from "react";
 
 export interface INodeProps extends INodeCommonConfig {
   id: string;
@@ -20,34 +13,36 @@ export interface INodeCommonConfig extends INodeEventHandlers {
    * The size of the node. By default, it will draw a circle with `size` as the diameter.
    */
   size?: number;
+
   className?: string;
-  style?: React.CSSProperties;
+  style?: CSSProperties;
 
-  nodeStyle?: React.CSSProperties;
-  focusable?: boolean;
+  nodeStyle?: CSSProperties;
+  nodeFocusable?: boolean;
+  nodeAriaLabel?: string;
 
-  labelStyle?: React.CSSProperties;
+  labelStyle?: CSSProperties;
   labelOffset?: number;
 
-  onRenderNode?: (props: INodeProps) => React.ReactNode;
-  onRenderLabel?: (props: INodeProps) => React.ReactNode;
+  onRenderNode?: (props: INodeProps) => ReactNode;
+  onRenderLabel?: (props: INodeProps) => ReactNode;
 }
 
 export interface INodeEventHandlers {
   onClickNode?: (
     props: INodeProps,
-    event: React.MouseEvent<HTMLDivElement, MouseEvent>
+    event: React.MouseEvent<HTMLElement, MouseEvent>
   ) => void;
   onContextMenu?: (
     props: INodeProps,
-    event: React.MouseEvent<HTMLDivElement, MouseEvent>
+    event: React.MouseEvent<HTMLElement, MouseEvent>
   ) => void;
   onMouseOverNode?: (
     props: INodeProps,
-    event: React.MouseEvent<HTMLDivElement, MouseEvent>
+    event: React.MouseEvent<HTMLElement, MouseEvent>
   ) => void;
   onMouseOutNode?: (
     props: INodeProps,
-    event: React.MouseEvent<HTMLDivElement, MouseEvent>
+    event: React.MouseEvent<HTMLElement, MouseEvent>
   ) => void;
 }

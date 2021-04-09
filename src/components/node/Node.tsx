@@ -12,22 +12,24 @@ export const DEFAULT_NODE_PROPS: INodeCommonConfig = {
   },
   nodeStyle: {
     boxSizing: "border-box",
-    backgroundColor: "#d3d3d3",
+    backgroundColor: "lightgray",
     transform: "translate(-50%, -50%)"
   }
 };
 
 function defaultOnRenderNode(props: INodeProps): ReactNode {
+  const size: number = props.size ?? DEFAULT_NODE_PROPS.size!;
   const nodeProps: HTMLAttributes<HTMLDivElement> = {
     className: NODE_CLASS_NODE,
     style: {
-      width: props.size,
-      height: props.size,
-      borderRadius: props.size! / 2,
+      width: size,
+      height: size,
+      borderRadius: size / 2,
       ...props.nodeStyle
     },
 
-    tabIndex: props.focusable ? 0 : undefined,
+    tabIndex: props.nodeFocusable ? 0 : undefined,
+    "aria-label": props.nodeAriaLabel,
 
     onClick: event => props.onClickNode?.(props, event),
     onContextMenu: event => props.onContextMenu?.(props, event),

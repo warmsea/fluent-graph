@@ -4,8 +4,7 @@ import { Node } from '../../src';
 
 
 const meta: Meta = {
-  title: 'Node: Events',
-  component: Node,
+  title: 'Node: Events'
 };
 
 export default meta;
@@ -14,7 +13,7 @@ const CountingComponent: FC = () => {
   const [count, setCount] = useState(0);
 
   return (
-    <div>
+    <div style={{ position: "absolute" }}>
       <p>You clicked {count} times.</p>
       <Node
         style={{

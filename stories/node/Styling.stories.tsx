@@ -1,14 +1,12 @@
-import React, { HTMLAttributes, SVGAttributes } from 'react';
+import React from 'react';
 import { Meta, Story } from '@storybook/react';
-import { DEFAULT_NODE_PROPS, Node, NODE_CLASS_NODE } from '../../src/components/node/Node';
+import { Node, NODE_CLASS_NODE } from '../../src/components/node/Node';
 import { INodeProps } from '../../src/components/node/Node.types';
 import { Args, BaseStory } from '@storybook/addons';
 import { StoryFnReactReturnType } from '@storybook/react/dist/client/preview/types';
-import * as d3 from 'd3';
 
 const meta: Meta = {
-  title: 'Node: Styling',
-  component: Node,
+  title: 'Node: Styling'
 };
 
 export default meta;
@@ -18,7 +16,7 @@ interface ITemplateArgs extends BaseStory<Args, StoryFnReactReturnType> {
 }
 
 const Template: Story<ITemplateArgs> = (args: ITemplateArgs) => (
-  <div>
+  <div style={{ position: "absolute" }}>
     <Node style={{
       position: "absolute",
       left: 100,

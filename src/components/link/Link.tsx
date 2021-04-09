@@ -50,7 +50,7 @@ export const Link: FC<ILinkProps> = (props: ILinkProps) => {
       ...props.lineStyle
     },
     tabIndex: props.focusable ? 0 : undefined,
-    "aria-label": props.getLinkAriaLabel?.(props)
+    "aria-label": props.lineAriaLabel
   };
 
   const needClickHelper: boolean =
