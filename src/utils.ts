@@ -12,6 +12,13 @@ export function css(...classNames: (string | undefined)[]): string {
   return classNames.filter(identity).join(" ");
 }
 
+export function mergeConfig<D = any, E = any>(
+  defaults: D,
+  explicits: E
+): D & E {
+  return merge({}, defaults, explicits);
+}
+
 export function useStateRef<S = undefined>(
   initialState: S | (() => S)
 ): [S, Dispatch<SetStateAction<S>>, MutableRefObject<S>] {
@@ -29,11 +36,4 @@ export function useStateRef<S = undefined>(
   }, []);
 
   return [state, dispatch, ref];
-}
-
-export function mergeConfig<D = any, E = any>(
-  defaults: D,
-  explicits: E
-): D & E {
-  return merge({}, defaults, explicits);
 }
