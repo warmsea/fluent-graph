@@ -179,7 +179,7 @@ Complex.args = {
       { source: "Juno", target: "Milk" },
     ],
     nodeConfig: {
-      focusable: true,
+      nodeFocusable: true,
     },
     linkConfig: {
       focusable: true,

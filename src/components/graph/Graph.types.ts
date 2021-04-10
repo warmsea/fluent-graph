@@ -1,3 +1,4 @@
+import { SimulationNodeDatum } from "d3";
 import { ILinkCommonConfig } from "../link/Link.types";
 import { INodeCommonConfig, INodeProps } from "../node/Node.types";
 
@@ -49,10 +50,10 @@ export interface IGraphProps {
 
 export interface IGraphPropsNode extends INodeProps {
   /**
-   * initial position for the graph node, real node positions will changes after the force simulation.
+   * The darum of a simulation node. For example, you can use `x` and `y` to
+   * set the initial position. Or use `fx` and `fy` to set a fixed position.
    */
-  initialX?: number;
-  initialY?: number;
+  force?: SimulationNodeDatum;
 }
 
 export interface IGraphPropsLink extends ILinkCommonConfig {

@@ -134,7 +134,7 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
       .distance(graphConfig.d3.linkLength)
       .strength(graphConfig.d3.linkStrength);
 
-    simulationRef.current.force(CONST.LINK_CLASS_NAME, forceLink);
+    simulationRef.current.force("link", forceLink);
   }
 
   function stopForceSimulation(): void {

@@ -13,18 +13,18 @@ export const AddingAndDeleting: FC = () => {
   const [nodes, setNodes] = useState([{ id: "Root", label: "Root" }]);
   const [links, setLinks] = useState([]);
 
-  const onClickNode = (props: INodeProps, event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const onClickNode = (props: INodeProps, event: React.MouseEvent<HTMLElement, MouseEvent>) => {
     const parentX = event.clientX ?? 0;
     const parentY = event.clientY ?? 0;
     const angle: number = Math.random() * Math.PI * 2;
     const newX: number = Math.cos(angle) * 100 + parentX;
     const newY: number = Math.sin(angle) * 100 + parentY;
-    const newNode = { id: `${Math.random()}`, label: "", initialX: newX, initialY: newY };
+    const newNode = { id: `${Math.random()}`, label: "", force: {x: newX, y: newY} };
     setNodes([...nodes, newNode]);
     setLinks([...links, { source: props.id, target: newNode.id }]);
   };
 
-  const onContextMenu = (props: INodeProps, event: React.MouseEvent<SVGElement, MouseEvent>) => {
+  const onContextMenu = (props: INodeProps, event: React.MouseEvent<HTMLElement, MouseEvent>) => {
     event.preventDefault();
     if (props.id === "Root") {
       return;
