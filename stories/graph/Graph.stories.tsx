@@ -7,7 +7,6 @@ import { IGraphProps } from '../../src/components/graph/Graph.types';
 
 const meta: Meta = {
   title: 'Graph',
-  component: Graph,
 };
 
 export default meta;

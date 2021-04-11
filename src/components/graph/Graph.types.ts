@@ -1,4 +1,5 @@
 import { SimulationNodeDatum } from "d3";
+import { MutableRefObject } from "react";
 import { ILinkCommonConfig } from "../link/Link.types";
 import { INodeCommonConfig, INodeProps } from "../node/Node.types";
 
@@ -42,6 +43,8 @@ export interface IGraphProps {
   nodeConfig?: INodeCommonConfig;
   linkConfig?: ILinkCommonConfig;
   config?: IGraphPropsConfig;
+
+  behaviorRef?: MutableRefObject<IGraphBehavior>;
 
   onClickGraph?;
   onNodePositionChange?;
@@ -106,4 +109,9 @@ export interface IGraphLinkMap {
 
 export interface IGraphNodeMap {
   [nodeId: string]: any;
+}
+
+export interface IGraphBehavior {
+  zoomBy: (k: number) => void;
+  resetZoom: () => void;
 }

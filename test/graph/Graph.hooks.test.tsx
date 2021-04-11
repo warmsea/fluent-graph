@@ -1,6 +1,6 @@
 import React, { FC, useEffect } from "react";
 import { render, unmountComponentAtNode } from "react-dom";
-import { useStateRef } from "../src/utils";
+import { useStateRef } from "../../src/components/graph/Graph.hooks";
 import { act } from "react-dom/test-utils";
 
 describe("useStateRef", () => {

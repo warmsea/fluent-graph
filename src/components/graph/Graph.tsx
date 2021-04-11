@@ -1,19 +1,22 @@
 import * as d3 from "d3";
-import { DragBehavior, ZoomBehavior } from "d3";
 import React, {
   FC,
-  MutableRefObject,
   useCallback,
   useEffect,
   useMemo,
   useReducer,
   useRef
 } from "react";
-import { IGraphConfig, IGraphProps, IGraphPropsNode } from "./Graph.types";
+import {
+  IGraphBehavior,
+  IGraphConfig,
+  IGraphProps,
+  IGraphPropsNode
+} from "./Graph.types";
 import { NodeMap } from "./NodeMap";
 import { LinkMatrix } from "./LinkMatrix";
 import { clamp, throttle } from "lodash";
-import { mergeConfig, useStateRef } from "../../utils";
+import { mergeConfig } from "../../utils";
 import { DEFAULT_CONFIG } from "./graph.config";
 import { NodeModel } from "./NodeModel";
 import { LinkModel, getLinkNodeId } from "./LinkModel";
@@ -27,16 +30,55 @@ import {
 } from "../node/Node";
 import { ILinkCommonConfig } from "../link/Link.types";
 import { DEFAULT_LINK_PROPS } from "../link/Link";
-
-// Type alias to make the code easier to read
-type Drag = DragBehavior<Element, unknown, unknown>;
-type Ref<T> = MutableRefObject<T>;
-type Selection = d3.Selection<Element, unknown, Element, unknown>;
-type Simulation = d3.Simulation<IGraphNodeDatum, undefined>;
-type Zoom = ZoomBehavior<Element, unknown>;
+import { Drag, Ref, Selection, Simulation, Zoom } from "./Graph.types.internal";
+import { GraphBehavior } from "./GraphBehavior";
+import { useForceUpdate, useStateRef } from "./Graph.hooks";
 
 const GRAPH_CLASS_MAIN: string = "fg-main";
 const DISPLAY_THROTTLE_MS: number = 50;
+const INITIAL_ZOOM = { x: 0, y: 0, k: 1 };
+
+function getGraphBehavior(
+  ref: Ref<IGraphBehavior> | undefined
+): GraphBehavior | undefined {
+  if (ref) {
+    if (!ref.current) {
+      ref.current = new GraphBehavior();
+    }
+    return ref.current as GraphBehavior;
+  } else {
+    return undefined;
+  }
+}
+
+function onRenderElements(
+  rootId: string | undefined,
+  nodeMap: NodeMap,
+  linkMatrix: LinkMatrix
+) {
+  if (!rootId) {
+    return <></>;
+  }
+
+  const elements: React.ReactNode[] = [nodeMap.get(rootId).renderNode()];
+  const queue: NodeModel[] = [nodeMap.get(rootId)];
+  const rendered: Set<NodeModel | LinkModel> = new Set();
+  while (queue.length > 0) {
+    const current: NodeModel = queue.shift()!;
+    linkMatrix.forEachWithSource(current.id, (link: LinkModel) => {
+      if (!rendered.has(link)) {
+        elements.push(link.renderLink());
+        rendered.add(link);
+      }
+      if (!rendered.has(link.targetNode)) {
+        elements.push(link.targetNode.renderNode());
+        rendered.add(link.targetNode);
+        queue.push(link.targetNode);
+      }
+    });
+  }
+  return elements;
+}
 
 export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   const nodeMapRef: Ref<NodeMap> = useRef(new NodeMap());
@@ -60,16 +102,11 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   const { width, height } = graphConfig;
 
   const [topology, increaseTopologyVersion] = useReducer(v => v + 1, 0);
-  const [zoomState, setZoomState, zoomStateRef] = useStateRef({
-    x: 0,
-    y: 0,
-    k: 1
-  });
-  const throttledSetZoomState = throttle(setZoomState, DISPLAY_THROTTLE_MS);
-
-  // @ts-ignore: Unused locals
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [ignored, forceUpdate] = useReducer(v => v + 1, 0);
+  const [zoomState, setZoomState, zoomStateRef] = useStateRef(
+    INITIAL_ZOOM,
+    DISPLAY_THROTTLE_MS
+  );
+  const forceUpdate = useForceUpdate(DISPLAY_THROTTLE_MS);
 
   const tick = useCallback(
     throttle(() => {
@@ -191,21 +228,21 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   // Zoom and pan behavior
   useEffect(() => {
     if (!zoomRef.current) {
-      const zoomBehavior = d3.zoom();
-      zoomRef.current = zoomBehavior;
-      const zoomSelection: Selection = d3.select(`#${graphContainerId}`);
-      zoomSelection.call(zoomBehavior);
+      zoomRef.current = d3.zoom();
     }
-    zoomRef.current.scaleExtent([graphConfig.minZoom, graphConfig.maxZoom]);
     zoomRef.current.on("zoom", event => {
-      throttledSetZoomState(event.transform);
+      setZoomState(event.transform);
     });
-  }, [
-    graphContainerId,
-    graphConfig.minZoom,
-    graphConfig.maxZoom,
-    throttledSetZoomState
-  ]);
+    const zoomSelection: Selection = d3.select(`#${graphContainerId}`);
+    zoomSelection.call(zoomRef.current);
+    const behavior = getGraphBehavior(props.behaviorRef);
+    behavior?.setupZoomBehavior(zoomSelection, zoomRef);
+  }, [graphContainerId, props.behaviorRef, setZoomState]);
+
+  // Update zoom behavior on config change
+  useEffect(() => {
+    zoomRef.current?.scaleExtent([graphConfig.minZoom, graphConfig.maxZoom]);
+  }, [graphConfig.minZoom, graphConfig.maxZoom]);
 
   const onClickGraph = useCallback(
     event => {
@@ -245,12 +282,9 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   );
 
   return (
-    <div id={graphContainerId}>
+    <div id={graphContainerId} style={{ overflow: "hidden", width, height }}>
       <div
         style={{
-          position: "relative",
-          width,
-          height,
           transformOrigin: "0 0",
           transform: `translate(${zoomState.x}px,${zoomState.y}px) scale(${zoomState.k})`
         }}
@@ -262,32 +296,3 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
     </div>
   );
 };
-
-export function onRenderElements(
-  rootId: string | undefined,
-  nodeMap: NodeMap,
-  linkMatrix: LinkMatrix
-) {
-  if (!rootId) {
-    return <></>;
-  }
-
-  const elements: React.ReactNode[] = [nodeMap.get(rootId).renderNode()];
-  const queue: NodeModel[] = [nodeMap.get(rootId)];
-  const rendered: Set<NodeModel | LinkModel> = new Set();
-  while (queue.length > 0) {
-    const current: NodeModel = queue.shift()!;
-    linkMatrix.forEachWithSource(current.id, (link: LinkModel) => {
-      if (!rendered.has(link)) {
-        elements.push(link.renderLink());
-        rendered.add(link);
-      }
-      if (!rendered.has(link.targetNode)) {
-        elements.push(link.targetNode.renderNode());
-        rendered.add(link.targetNode);
-        queue.push(link.targetNode);
-      }
-    });
-  }
-  return elements;
-}
