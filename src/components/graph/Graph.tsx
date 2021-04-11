@@ -30,13 +30,20 @@ import {
 } from "../node/Node";
 import { ILinkCommonConfig } from "../link/Link.types";
 import { DEFAULT_LINK_PROPS } from "../link/Link";
-import { Drag, Ref, Selection, Simulation, Zoom } from "./Graph.types.internal";
+import {
+  Drag,
+  IZoomState,
+  Ref,
+  Selection,
+  Simulation,
+  Zoom
+} from "./Graph.types.internal";
 import { GraphBehavior } from "./GraphBehavior";
 import { useForceUpdate, useStateRef } from "./Graph.hooks";
 
 const GRAPH_CLASS_MAIN: string = "fg-main";
-const DISPLAY_THROTTLE_MS: number = 50;
-const INITIAL_ZOOM = { x: 0, y: 0, k: 1 };
+const DISPLAY_DEBOUNCE_MS: number = 50;
+const INITIAL_ZOOM: IZoomState = { x: 0, y: 0, k: 1 };
 
 function getGraphBehavior(
   ref: Ref<IGraphBehavior> | undefined
@@ -45,6 +52,8 @@ function getGraphBehavior(
     if (!ref.current) {
       ref.current = new GraphBehavior();
     }
+    // Users are not supposed to pass any concrete IGraphBehavior to the ref.
+    // And we know we pass GraphBehavior to it.
     return ref.current as GraphBehavior;
   } else {
     return undefined;
@@ -63,6 +72,7 @@ function onRenderElements(
   const elements: React.ReactNode[] = [nodeMap.get(rootId).renderNode()];
   const queue: NodeModel[] = [nodeMap.get(rootId)];
   const rendered: Set<NodeModel | LinkModel> = new Set();
+  // The render order decides tab/focus order as well.
   while (queue.length > 0) {
     const current: NodeModel = queue.shift()!;
     linkMatrix.forEachWithSource(current.id, (link: LinkModel) => {
@@ -84,7 +94,7 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   const nodeMapRef: Ref<NodeMap> = useRef(new NodeMap());
   const linkMapRef: Ref<LinkMap> = useRef(new LinkMap());
   const simulationRef: Ref<Simulation | undefined> = useRef();
-  const zoomRef: Ref<Zoom | undefined> = useRef();
+  const zoomRef: Ref<Zoom> = useRef(d3.zoom());
   const draggingNodeRef: Ref<NodeModel | undefined> = useRef();
 
   const graphId: string = props.id.replaceAll(/ /g, "_");
@@ -104,9 +114,9 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   const [topology, increaseTopologyVersion] = useReducer(v => v + 1, 0);
   const [zoomState, setZoomState, zoomStateRef] = useStateRef(
     INITIAL_ZOOM,
-    DISPLAY_THROTTLE_MS
+    DISPLAY_DEBOUNCE_MS
   );
-  const forceUpdate = useForceUpdate(DISPLAY_THROTTLE_MS);
+  const forceUpdate = useForceUpdate(DISPLAY_DEBOUNCE_MS);
 
   const tick = useCallback(
     throttle(() => {
@@ -136,7 +146,7 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
         }
       });
       forceUpdate();
-    }, DISPLAY_THROTTLE_MS),
+    }, DISPLAY_DEBOUNCE_MS),
     []
   );
 
@@ -225,24 +235,27 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
     [topology]
   );
 
-  // Zoom and pan behavior
+  // Zoom: update min and max zoom scale
   useEffect(() => {
-    if (!zoomRef.current) {
-      zoomRef.current = d3.zoom();
-    }
-    zoomRef.current.on("zoom", event => {
+    zoomRef.current.scaleExtent([graphConfig.minZoom, graphConfig.maxZoom]);
+  }, [graphConfig.minZoom, graphConfig.maxZoom]);
+  // Zoom: handle zoom event
+  useEffect(() => {
+    const zoomBehavior = zoomRef.current;
+    zoomBehavior.on("zoom", event => {
       setZoomState(event.transform);
     });
+    return () => {
+      zoomBehavior.on("zoom", null);
+    };
+  }, [setZoomState]);
+  // Zoom: setup zoom/pan and update behavior ref
+  useEffect(() => {
     const zoomSelection: Selection = d3.select(`#${graphContainerId}`);
     zoomSelection.call(zoomRef.current);
     const behavior = getGraphBehavior(props.behaviorRef);
     behavior?.setupZoomBehavior(zoomSelection, zoomRef);
-  }, [graphContainerId, props.behaviorRef, setZoomState]);
-
-  // Update zoom behavior on config change
-  useEffect(() => {
-    zoomRef.current?.scaleExtent([graphConfig.minZoom, graphConfig.maxZoom]);
-  }, [graphConfig.minZoom, graphConfig.maxZoom]);
+  }, [graphContainerId, props.behaviorRef]);
 
   const onClickGraph = useCallback(
     event => {

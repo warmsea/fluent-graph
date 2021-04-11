@@ -1,4 +1,4 @@
-import { isFunction, throttle } from "lodash";
+import { debounce, isFunction } from "lodash";
 import {
   Dispatch,
   MutableRefObject,
@@ -11,13 +11,13 @@ import {
 
 export function useStateRef<S = undefined>(
   initialState: S | (() => S),
-  throttleMs: number = 0
+  debounceMs: number = 0
 ): [S, Dispatch<SetStateAction<S>>, MutableRefObject<S>] {
   const [state, setState] = useState(initialState);
   const ref = useRef(state);
-  const throttledSetState = useCallback(
-    isFinite(throttleMs) && throttleMs > 0
-      ? throttle(setState, throttleMs)
+  const debounced = useCallback(
+    isFinite(debounceMs) && debounceMs > 0
+      ? debounce(setState, debounceMs, { maxWait: debounceMs })
       : setState,
     [setState]
   );
@@ -30,19 +30,19 @@ export function useStateRef<S = undefined>(
         ref.current = value;
       }
 
-      throttledSetState(ref.current);
+      debounced(ref.current);
     },
-    [throttledSetState]
+    [debounced]
   );
 
   return [state, dispatch, ref];
 }
 
-export function useForceUpdate(throttleMs: number): () => void {
+export function useForceUpdate(debounceMs: number = 0): () => void {
   // @ts-ignore: Unused locals
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [ignored, forceUpdate] = useReducer((v: number) => v + 1, 0);
-  return isFinite(throttleMs) && throttleMs > 0
-    ? throttle(forceUpdate, throttleMs)
+  return isFinite(debounceMs) && debounceMs > 0
+    ? debounce(forceUpdate, debounceMs, { maxWait: debounceMs })
     : forceUpdate;
 }
