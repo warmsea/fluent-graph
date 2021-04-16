@@ -11,28 +11,23 @@ type DeepPartial<T> = {
  * Full set of graph configuration.
  */
 export interface IGraphConfig {
-  automaticRearrangeAfterDropNode: boolean;
-  focusZoom: number;
-  freezeAllDragEvents: boolean;
-  focusAnimationDuration: number;
   height: number;
-  initialZoom: number | undefined;
-  maxZoom: number;
-  minZoom: number;
-  panAndZoom: boolean;
-  staticGraph: boolean;
-  staticGraphWithDragAndDrop: boolean;
   width: number;
-  d3: IGraphConfigD3;
+  zoom: IGraphConfigZoom;
+  sim: IGraphConfigSim;
 }
 
-export interface IGraphConfigD3 {
-  alphaTarget: number;
+export interface IGraphConfigSim {
   gravity: number;
   linkLength: number;
   linkStrength: number;
-  disableLinkForce: boolean;
   paddingRadius: number;
+}
+
+export interface IGraphConfigZoom {
+  maxZoom: number;
+  minZoom: number;
+  initialZoom: number;
 }
 
 export interface IGraphProps {
@@ -44,11 +39,10 @@ export interface IGraphProps {
   linkConfig?: ILinkCommonConfig;
   config?: IGraphPropsConfig;
 
+  /**
+   * A reference to control graph behavior like zooming from outside.
+   */
   behaviorRef?: MutableRefObject<IGraphBehavior>;
-
-  onClickGraph?;
-  onNodePositionChange?;
-  onZoomChange?;
 }
 
 export interface IGraphPropsNode extends INodeProps {
@@ -81,25 +75,6 @@ export interface IGraphPropsDataLink {
 }
 
 export type IGraphPropsConfig = DeepPartial<IGraphConfig>;
-
-export interface IGraphState {
-  id?: string;
-  config: IGraphConfig;
-  links;
-  d3Links;
-  nodes;
-  d3Nodes;
-  simulation;
-  newGraphElements;
-  configUpdated;
-  d3ConfigUpdated?;
-  transform;
-  draggedNode;
-  focusedNodeId?;
-  enableFocusAnimation?;
-  focusTransformation?;
-  previousZoom?;
-}
 
 export interface IGraphLinkMap {
   [sourceNodeId: string]: {

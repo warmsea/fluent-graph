@@ -121,7 +121,7 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   const tick = useCallback(
     throttle(() => {
       const radius: number =
-        graphConfig.d3.paddingRadius || DEFAULT_NODE_PROPS.size! / 2;
+        graphConfig.sim.paddingRadius || DEFAULT_NODE_PROPS.size! / 2;
       // constrain nodes from exceed the border of the graph.
       const nodeMap: NodeMap = nodeMapRef.current;
       nodeMap.getSimulationNodeDatums().forEach(node => {
@@ -159,7 +159,7 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
     );
 
     simulationRef.current
-      .force("charge", d3.forceManyBody().strength(graphConfig.d3.gravity))
+      .force("charge", d3.forceManyBody().strength(graphConfig.sim.gravity))
       .force("center", d3.forceCenter(width / 2, height / 2).strength(0.1))
       .force(
         "collide",
@@ -178,8 +178,8 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
     const forceLink = d3
       .forceLink(linkMapRef.current.getSimulationLinkDatums())
       .id(node => (node as IGraphNodeDatum).id)
-      .distance(graphConfig.d3.linkLength)
-      .strength(graphConfig.d3.linkStrength);
+      .distance(graphConfig.sim.linkLength)
+      .strength(graphConfig.sim.linkStrength);
 
     simulationRef.current.force("link", forceLink);
   }
@@ -237,8 +237,11 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
 
   // Zoom: update min and max zoom scale
   useEffect(() => {
-    zoomRef.current.scaleExtent([graphConfig.minZoom, graphConfig.maxZoom]);
-  }, [graphConfig.minZoom, graphConfig.maxZoom]);
+    zoomRef.current.scaleExtent([
+      graphConfig.zoom.minZoom,
+      graphConfig.zoom.maxZoom
+    ]);
+  }, [graphConfig.zoom.minZoom, graphConfig.zoom.maxZoom]);
   // Zoom: handle zoom event
   useEffect(() => {
     const zoomBehavior = zoomRef.current;
@@ -256,16 +259,6 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
     const behavior = getGraphBehavior(props.behaviorRef);
     behavior?.setupZoomBehavior(zoomSelection, zoomRef);
   }, [graphContainerId, props.behaviorRef]);
-
-  const onClickGraph = useCallback(
-    event => {
-      if ((event.target as HTMLElement)?.classList.contains(GRAPH_CLASS_MAIN)) {
-        props.onClickGraph?.(event);
-      }
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [props.onClickGraph]
-  );
 
   const rootId: string | undefined =
     props.nodes.length > 0 ? props.nodes[0].id : undefined;
@@ -302,7 +295,6 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
           transform: `translate(${zoomState.x}px,${zoomState.y}px) scale(${zoomState.k})`
         }}
         className={GRAPH_CLASS_MAIN}
-        onClick={onClickGraph}
       >
         {elements}
       </div>
