@@ -4,6 +4,7 @@ import { Graph } from '../../src';
 import { Args, BaseStory } from '@storybook/addons';
 import { StoryFnReactReturnType } from '@storybook/react/dist/client/preview/types';
 import { IGraphProps } from '../../src/components/graph/Graph.types';
+import { rgb } from 'd3-color';
 
 const meta: Meta = {
   title: 'Graph',
@@ -26,21 +27,21 @@ Basic.args = {
   graphProps: {
     id: "graph",
     nodes: [
-      { id: "Fluent Graph", label: "Fluent Graph" },
-      { id: "React", label: "React" },
-      { id: "D3", label: "D3" },
-      { id: "D4", label: "D4" },
-      { id: "D5", label: "D5" },
-      { id: "D6", label: "D6" },
-      { id: "D7", label: "D7" },
-      { id: "D8", label: "D8" },
-      { id: "D9", label: "D9" },
-      { id: "D10", label: "D10" },
-      { id: "D11", label: "D11" },
-      { id: "D12", label: "D12" },
-      { id: "D13", label: "D13" },
-      { id: "D14", label: "D14" },
-      { id: "D15", label: "D15" },
+      { id: "Fluent Graph" },
+      { id: "React" },
+      { id: "D3" },
+      { id: "D4" },
+      { id: "D5" },
+      { id: "D6" },
+      { id: "D7" },
+      { id: "D8" },
+      { id: "D9" },
+      { id: "D10" },
+      { id: "D11" },
+      { id: "D12" },
+      { id: "D13" },
+      { id: "D14" },
+      { id: "D15" },
     ],
     links: [
       { source: "Fluent Graph", target: "React" },
@@ -59,7 +60,7 @@ Basic.args = {
       { source: "D8", target: "D9" },
     ],
     config: {
-      d3: {
+      sim: {
         gravity: -150,
         linkLength: 120,
         linkStrength: 2,
@@ -109,41 +110,120 @@ Loop.args = {
   }
 };
 
+export const ManyConnections: Story<ITemplateArgs> = Template.bind({});
+ManyConnections.args = {
+  graphProps: {
+    id: "graph",
+    nodes: [
+      {
+        id: "Mark 8",
+        size: 32,
+        nodeStyle: {
+          backgroundColor: "#04787c",
+        }
+      },
+      { id: "Structural Integrity" },
+      { id: "Flight Operations" },
+      { id: "3D Modeling" },
+      { id: "GIS Mapping" },
+      { id: "Geothermal" },
+      { id: "Aerial" },
+      { id: "Atlas" },
+      { id: "Elements" },
+      { id: "SOAR", label: "Sustainable Operations Agricultural Reliability" },
+      { id: "Delta" },
+      { id: "Swiftly" },
+      { id: "Fjord" },
+      { id: "Juno" },
+      { id: "Data Visualization" },
+      { id: "Digital Surfaces" },
+      { id: "Survey Intelligence" },
+      { id: "COR", label: "Construction Operations Reliability" },
+      { id: "Spaces" },
+      { id: "Partners" },
+    ],
+    links: [
+      { source: "Mark 8", target: "Structural Integrity" },
+      { source: "Mark 8", target: "Flight Operations" },
+      { source: "Mark 8", target: "3D Modeling" },
+      { source: "Mark 8", target: "GIS Mapping" },
+      { source: "Mark 8", target: "Geothermal" },
+      { source: "Mark 8", target: "Aerial" },
+      { source: "Mark 8", target: "Atlas" },
+      { source: "Flight Operations", target: "Atlas" },
+      { source: "Mark 8", target: "Elements" },
+      { source: "Mark 8", target: "SOAR" },
+      { source: "3D Modeling", target: "SOAR" },
+      { source: "GIS Mapping", target: "SOAR" },
+      { source: "Mark 8", target: "Delta" },
+      { source: "Mark 8", target: "Swiftly" },
+      { source: "Aerial", target: "Swiftly" },
+      { source: "Mark 8", target: "Fjord" },
+      { source: "Atlas", target: "Fjord" },
+      { source: "Mark 8", target: "Data Visualization" },
+      { source: "Mark 8", target: "Juno" },
+      { source: "Delta", target: "Juno" },
+      { source: "Mark 8", target: "Digital Surfaces" },
+      { source: "Swiftly", target: "Digital Surfaces" },
+      { source: "Mark 8", target: "Survey Intelligence" },
+      { source: "Mark 8", target: "COR" },
+      { source: "Atlas", target: "COR" },
+      { source: "Survey Intelligence", target: "COR" },
+      { source: "Mark 8", target: "Spaces" },
+      { source: "Elements", target: "Spaces" },
+      { source: "Data Visualization", target: "Spaces" },
+      { source: "Mark 8", target: "Partners" },
+      { source: "Geothermal", target: "Partners" },
+      { source: "Swiftly", target: "Partners" },
+    ],
+    nodeConfig: {
+      nodeStyle: {
+        boxShadow: "0 2px 4px grey",
+      }
+    },
+    linkConfig: {
+      lineStyle: {
+        borderBottomColor: "rgb(4, 120, 124, .5)",
+      }
+    }
+  }
+};
+
 export const Complex: Story<ITemplateArgs> = Template.bind({});
 Complex.args = {
   graphProps: {
     id: "graph",
     nodes: [
-      { id: "Mark 8", label: "Mark 8" },
-      { id: "Aerial", label: "Aerial" },
-      { id: "GIS Mapping", label: "GIS Mapping" },
-      { id: "Survey Intelligence", label: "Survey Intelligence" },
-      { id: "Flight Operations", label: "Flight Operations" },
-      { id: "Structual Integrity", label: "Structual Integrity" },
-      { id: "Spaces", label: "Spaces" },
-      { id: "Digital Surfaces", label: "Digital Surfaces" },
-      { id: "3D Modeling", label: "3D Modeling" },
-      { id: "Partners", label: "Partners" },
-      { id: "Geothermal", label: "Geothermal" },
-      { id: "United", label: "United" },
-      { id: "Delta", label: "Delta" },
-      { id: "Swiftly", label: "Swiftly" },
-      { id: "Data Visualization", label: "Data Visualization" },
-      { id: "Fjord", label: "Fjord" },
-      { id: "Altas", label: "Altas" },
-      { id: "Construction Operations", label: "Construction Operations" },
-      { id: "Athena", label: "Athena" },
-      { id: "Elements", label: "Elements" },
-      { id: "Juno", label: "Juno" },
-      { id: "Milk", label: "Milk" },
-      { id: "Coffee", label: "Coffee" },
-      { id: "Tea", label: "Tea" },
-      { id: "Juice", label: "Juice" },
-      { id: "Orange Juice", label: "Orange Juice" },
-      { id: "Black Tea", label: "Black Tea" },
-      { id: "Espresso", label: "Espresso" },
-      { id: "Espresso1", label: "Espresso1" },
-      { id: "Espresso2", label: "Espresso2" }
+      { id: "Mark 8" },
+      { id: "Aerial" },
+      { id: "GIS Mapping" },
+      { id: "Survey Intelligence" },
+      { id: "Flight Operations" },
+      { id: "Structual Integrity" },
+      { id: "Spaces" },
+      { id: "Digital Surfaces" },
+      { id: "3D Modeling" },
+      { id: "Partners" },
+      { id: "Geothermal" },
+      { id: "United" },
+      { id: "Delta" },
+      { id: "Swiftly" },
+      { id: "Data Visualization" },
+      { id: "Fjord" },
+      { id: "Altas" },
+      { id: "Construction Operations" },
+      { id: "Athena" },
+      { id: "Elements" },
+      { id: "Juno" },
+      { id: "Milk" },
+      { id: "Coffee" },
+      { id: "Tea" },
+      { id: "Juice" },
+      { id: "Orange Juice" },
+      { id: "Black Tea" },
+      { id: "Espresso" },
+      { id: "Espresso1" },
+      { id: "Espresso2" }
     ],
     links: [
       { source: "Mark 8", target: "Aerial" },
@@ -184,7 +264,7 @@ Complex.args = {
       focusable: true,
     },
     config: {
-      d3: {
+      sim: {
         gravity: -150,
         linkLength: 120,
         linkStrength: 2,
