@@ -41,7 +41,8 @@ function defaultOnRenderNode(props: INodeProps): ReactNode {
 }
 
 function defaultOnRenderLabel(props: INodeProps): ReactNode {
-  if (props.label) {
+  const label = props.label ?? props.id;
+  if (label) {
     return (
       <div
         style={{
@@ -49,7 +50,7 @@ function defaultOnRenderLabel(props: INodeProps): ReactNode {
           ...props.labelStyle
         }}
       >
-        {props.label}
+        {label}
       </div>
     );
   } else {
