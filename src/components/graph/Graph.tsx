@@ -15,7 +15,7 @@ import {
 } from "./Graph.types";
 import { NodeMap } from "./NodeMap";
 import { LinkMatrix } from "./LinkMatrix";
-import { clamp, throttle } from "lodash";
+import { throttle } from "lodash";
 import { mergeConfig } from "../../utils";
 import { DEFAULT_CONFIG } from "./graph.config";
 import { NodeModel } from "./NodeModel";
@@ -44,6 +44,12 @@ import { useForceUpdate, useStateRef } from "./Graph.hooks";
 const GRAPH_CLASS_MAIN: string = "fg-main";
 const DISPLAY_DEBOUNCE_MS: number = 50;
 const INITIAL_ZOOM: IZoomState = { x: 0, y: 0, k: 1 };
+
+function getTransform(width: number, height: number, zoom: IZoomState): string {
+  const x: number = zoom.x + (width / 2) * zoom.k;
+  const y: number = zoom.y + (height / 2) * zoom.k;
+  return `translate(${x}px,${y}px) scale(${zoom.k})`;
+}
 
 function getGraphBehavior(
   ref: Ref<IGraphBehavior> | undefined
@@ -120,9 +126,6 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
 
   const tick = useCallback(
     throttle(() => {
-      const radius: number =
-        graphConfig.sim.paddingRadius || DEFAULT_NODE_PROPS.size! / 2;
-      // constrain nodes from exceed the border of the graph.
       const nodeMap: NodeMap = nodeMapRef.current;
       nodeMap.getSimulationNodeDatums().forEach(node => {
         if (node.id.indexOf(CONST.LINK_NODE_PREFIX) !== -1) {
@@ -132,17 +135,6 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
           node.y =
             (nodeMap.get(node.id.split("-")[1]).force.y ?? 0) * 0.5 +
             (nodeMap.get(node.id.split("-")[2]).force.y ?? 0) * 0.5;
-        } else {
-          node.x = clamp(
-            node.x ?? 0,
-            Math.min(radius, width - radius),
-            Math.max(radius, width - radius)
-          );
-          node.y = clamp(
-            node.y ?? 0,
-            Math.min(radius, height - radius),
-            Math.max(radius, height - radius)
-          );
         }
       });
       forceUpdate();
@@ -160,7 +152,6 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
 
     simulationRef.current
       .force("charge", d3.forceManyBody().strength(graphConfig.sim.gravity))
-      .force("center", d3.forceCenter(width / 2, height / 2).strength(0.1))
       .force(
         "collide",
         d3.forceCollide(node => {
@@ -292,7 +283,7 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
       <div
         style={{
           transformOrigin: "0 0",
-          transform: `translate(${zoomState.x}px,${zoomState.y}px) scale(${zoomState.k})`
+          transform: getTransform(width, height, zoomState)
         }}
         className={GRAPH_CLASS_MAIN}
       >
