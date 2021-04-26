@@ -38,11 +38,9 @@ export const Styled: Story<ITemplateArgs> = Template.bind({});
 Styled.args = {
   linkProps: {
     ...DEFAULT_REQUIRED_PROPS,
-    lineStyle: {
-      borderBottomColor: "skyblue",
-      borderBottomStyle: "dashed",
-      borderBottomWidth: 8
-    }
+    size: 8,
+    color: "skyblue",
+    lineType: "dashed"
   }
 };
 
@@ -69,7 +67,7 @@ export const Offset: FC = () => (
     <Link
       id="Link with offset"
       style={{ zIndex: 10 }}
-      lineStyle={{ borderBottomColor: "red" }}
+      color={"red"}
       start={{ x: 50, y: 50, offset: -10 }}
       end={{ x: 200, y: 100, offset: 20 }}
     />

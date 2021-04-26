@@ -1,5 +1,17 @@
 import React, { CSSProperties } from "react";
 
+export type ILinkType =
+  | "none"
+  | "hidden"
+  | "dotted"
+  | "dashed"
+  | "solid"
+  | "double"
+  | "groove"
+  | "ridge"
+  | "inset"
+  | "outset";
+
 export interface ILinkProps extends ILinkCommonConfig {
   id: string;
   start: ILinkEnd;
@@ -9,6 +21,8 @@ export interface ILinkProps extends ILinkCommonConfig {
 
 export interface ILinkCommonConfig extends ILinkEventHandlers {
   size?: number;
+  color?: string;
+  lineType?: ILinkType;
   style?: CSSProperties;
   className?: string;
   lineStyle?: CSSProperties;

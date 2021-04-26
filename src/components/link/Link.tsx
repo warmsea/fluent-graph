@@ -7,15 +7,15 @@ export const LINK_CLASS_ROOT: string = "fg-link-root";
 export const LINK_CLASS_LINE: string = "fg-link-line";
 export const DEFAULT_LINK_PROPS: ILinkCommonConfig = {
   size: 2,
+  color: "gray",
+  lineType: "solid",
   style: {
     position: "absolute",
     zIndex: 1
   },
   lineStyle: {
     position: "absolute",
-    background: "transparent",
-    borderBottomStyle: "solid",
-    borderBottomColor: "gray"
+    background: "transparent"
   }
 };
 export const CLICK_HELPER_THRESHOLD: number = 4;
@@ -46,6 +46,8 @@ export const Link: FC<ILinkProps> = (props: ILinkProps) => {
   const lineProps: HTMLAttributes<HTMLDivElement> = {
     ...eventHandlers,
     style: {
+      borderBottomColor: props.color,
+      borderBottomStyle: props.lineType,
       ...linePosition,
       ...props.lineStyle
     },
