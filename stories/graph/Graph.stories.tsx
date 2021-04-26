@@ -1,19 +1,18 @@
-import React from 'react';
-import { Meta, Story } from '@storybook/react';
-import { Graph } from '../../src';
-import { Args, BaseStory } from '@storybook/addons';
-import { StoryFnReactReturnType } from '@storybook/react/dist/client/preview/types';
-import { IGraphProps } from '../../src/components/graph/Graph.types';
-import { rgb } from 'd3-color';
+import React from "react";
+import { Meta, Story } from "@storybook/react";
+import { Graph } from "../../src";
+import { Args, BaseStory } from "@storybook/addons";
+import { StoryFnReactReturnType } from "@storybook/react/dist/client/preview/types";
+import { IGraphProps } from "../../src/components/graph/Graph.types";
 
 const meta: Meta = {
-  title: 'Graph',
+  title: "Graph"
 };
 
 export default meta;
 
 interface ITemplateArgs extends BaseStory<Args, StoryFnReactReturnType> {
-  graphProps: IGraphProps
+  graphProps: IGraphProps;
 }
 
 const Template: Story<ITemplateArgs> = (args: ITemplateArgs) => (
@@ -41,7 +40,7 @@ Basic.args = {
       { id: "D12" },
       { id: "D13" },
       { id: "D14" },
-      { id: "D15" },
+      { id: "D15" }
     ],
     links: [
       { source: "Fluent Graph", target: "React" },
@@ -57,7 +56,7 @@ Basic.args = {
       { source: "D5", target: "D12" },
       { source: "D6", target: "D11" },
       { source: "D7", target: "D10" },
-      { source: "D8", target: "D9" },
+      { source: "D8", target: "D9" }
     ],
     config: {
       sim: {
@@ -77,7 +76,7 @@ Styled.args = {
     nodes: [{ id: "Fluent Graph" }, { id: "React" }, { id: "D3" }],
     links: [
       { source: "Fluent Graph", target: "React" },
-      { source: "Fluent Graph", target: "D3" },
+      { source: "Fluent Graph", target: "D3" }
     ],
     nodeConfig: {
       nodeStyle: {
@@ -105,7 +104,7 @@ Loop.args = {
       { source: "A", target: "B1" },
       { source: "A", target: "B2" },
       { source: "B1", target: "C" },
-      { source: "B2", target: "C" },
+      { source: "B2", target: "C" }
     ]
   }
 };
@@ -114,33 +113,99 @@ export const ManyConnections: Story<ITemplateArgs> = Template.bind({});
 ManyConnections.args = {
   graphProps: {
     id: "graph",
+    config: {
+      width: 600,
+      height: 400
+    },
     nodes: [
       {
         id: "Mark 8",
         size: 32,
         nodeStyle: {
-          backgroundColor: "#04787c",
+          backgroundColor: "#04787c"
+        },
+        force: {
+          fx: 0,
+          fy: 0
         }
       },
-      { id: "Structural Integrity" },
-      { id: "Flight Operations" },
-      { id: "3D Modeling" },
-      { id: "GIS Mapping" },
-      { id: "Geothermal" },
-      { id: "Aerial" },
-      { id: "Atlas" },
-      { id: "Elements" },
-      { id: "SOAR", label: "Sustainable Operations Agricultural Reliability" },
-      { id: "Delta" },
-      { id: "Swiftly" },
-      { id: "Fjord" },
-      { id: "Juno" },
-      { id: "Data Visualization" },
-      { id: "Digital Surfaces" },
-      { id: "Survey Intelligence" },
-      { id: "COR", label: "Construction Operations Reliability" },
-      { id: "Spaces" },
-      { id: "Partners" },
+      {
+        id: "Structural Integrity",
+        size: 20,
+        nodeStyle: { backgroundColor: "#c239b3" }
+      },
+      {
+        id: "Flight Operations",
+        size: 14,
+        nodeStyle: { backgroundColor: "#c239b3" }
+      },
+      {
+        id: "3D Modeling",
+        size: 16,
+        nodeStyle: { backgroundColor: "white", border: "solid 2px #5c2d91" }
+      },
+      {
+        id: "GIS Mapping",
+        size: 14,
+        nodeStyle: { backgroundColor: "#5c2d91" }
+      },
+      { id: "Geothermal", size: 20, nodeStyle: { backgroundColor: "#5c2d91" } },
+      { id: "Aerial", size: 20, nodeStyle: { backgroundColor: "#5c2d91" } },
+      {
+        id: "Atlas",
+        size: 22,
+        nodeStyle: { backgroundColor: "white", border: "solid 2px #ca500f" }
+      },
+      {
+        id: "Elements",
+        size: 14,
+        nodeStyle: { backgroundColor: "white", border: "solid 2px #ca500f" }
+      },
+      {
+        id: "SOAR",
+        label: "Sustainable Operations Agricultural Reliability",
+        size: 22,
+        nodeStyle: { backgroundColor: "white", border: "solid 2px #ca500f" }
+      },
+      { id: "Delta", size: 32, nodeStyle: { backgroundColor: "#ca500f" } },
+      { id: "Swiftly", size: 32, nodeStyle: { backgroundColor: "#ca500f" } },
+      {
+        id: "Fjord",
+        size: 22,
+        nodeStyle: { backgroundColor: "white", border: "solid 2px #4f6bed" }
+      },
+      {
+        id: "Juno",
+        size: 14,
+        nodeStyle: { backgroundColor: "white", border: "solid 2px #4f6bed" }
+      },
+      {
+        id: "Data Visualization",
+        size: 22,
+        nodeStyle: { backgroundColor: "white", border: "solid 2px #4f6bed" }
+      },
+      {
+        id: "Digital Surfaces",
+        size: 20,
+        nodeStyle: { backgroundColor: "#4f6bed" }
+      },
+      {
+        id: "Survey Intelligence",
+        size: 20,
+        nodeStyle: { backgroundColor: "#4f6bed" }
+      },
+      {
+        id: "COR",
+        label: "Construction Operations Reliability",
+        size: 34,
+        nodeStyle: { backgroundColor: "white", border: "solid 2px #498204" }
+      },
+      {
+        id: "Spaces",
+        size: 34,
+        nodeStyle: { backgroundColor: "white", border: "solid 2px #498204" }
+      },
+      { id: "Partners", size: 32, nodeStyle: { backgroundColor: "#498204" } }
     ],
     links: [
       { source: "Mark 8", target: "Structural Integrity" },
@@ -174,16 +239,16 @@ ManyConnections.args = {
       { source: "Data Visualization", target: "Spaces" },
       { source: "Mark 8", target: "Partners" },
       { source: "Geothermal", target: "Partners" },
-      { source: "Swiftly", target: "Partners" },
+      { source: "Swiftly", target: "Partners" }
     ],
     nodeConfig: {
       nodeStyle: {
-        boxShadow: "0 2px 4px grey",
+        boxShadow: "0 2px 4px grey"
       }
     },
     linkConfig: {
       lineStyle: {
-        borderBottomColor: "rgb(4, 120, 124, .5)",
+        borderBottomColor: "rgb(4, 120, 124, .5)"
       }
     }
   }
@@ -255,13 +320,13 @@ Complex.args = {
       { source: "Partners", target: "Athena" },
       { source: "United", target: "Elements" },
       { source: "Delta", target: "Juno" },
-      { source: "Juno", target: "Milk" },
+      { source: "Juno", target: "Milk" }
     ],
     nodeConfig: {
-      nodeFocusable: true,
+      nodeFocusable: true
     },
     linkConfig: {
-      focusable: true,
+      focusable: true
     },
     config: {
       sim: {

@@ -1,10 +1,10 @@
-import { Meta, Story } from '@storybook/react';
-import { FC, useState } from 'react';
-import { Node } from '../../src';
-
+import React from "react";
+import { Meta, Story } from "@storybook/react";
+import { FC, useState } from "react";
+import { Node } from "../../src";
 
 const meta: Meta = {
-  title: 'Node: Events'
+  title: "Node: Events"
 };
 
 export default meta;
@@ -19,7 +19,7 @@ const CountingComponent: FC = () => {
         style={{
           position: "absolute",
           left: 100,
-          top: 100,
+          top: 100
         }}
         id="Click the node!"
         label="Click the node!"
@@ -29,6 +29,6 @@ const CountingComponent: FC = () => {
       />
     </div>
   );
-}
+};
 
 export const ClickNode: Story = () => <CountingComponent />;

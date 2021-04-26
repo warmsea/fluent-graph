@@ -1,18 +1,18 @@
-import React, { FC } from 'react';
-import { Meta, Story } from '@storybook/react';
-import { Args, BaseStory } from '@storybook/addons';
-import { StoryFnReactReturnType } from '@storybook/react/dist/client/preview/types';
-import { Link, Node } from '../../src';
-import { ILinkProps } from '../../src/components/link/Link.types';
+import React, { FC } from "react";
+import { Meta, Story } from "@storybook/react";
+import { Args, BaseStory } from "@storybook/addons";
+import { StoryFnReactReturnType } from "@storybook/react/dist/client/preview/types";
+import { Link, Node } from "../../src";
+import { ILinkProps } from "../../src/components/link/Link.types";
 
 const meta: Meta = {
-  title: 'Link: Styling'
+  title: "Link: Styling"
 };
 
 export default meta;
 
 interface ITemplateArgs extends BaseStory<Args, StoryFnReactReturnType> {
-  linkProps: ILinkProps
+  linkProps: ILinkProps;
 }
 
 const Template: Story<ITemplateArgs> = (args: ITemplateArgs) => (
@@ -25,12 +25,12 @@ const DEFAULT_REQUIRED_PROPS: ILinkProps = {
   id: "Fluent Graph Link",
   start: { x: 50, y: 50 },
   end: { x: 200, y: 100 }
-}
+};
 
 export const Basic: Story<ITemplateArgs> = Template.bind({});
 Basic.args = {
   linkProps: {
-    ...DEFAULT_REQUIRED_PROPS,
+    ...DEFAULT_REQUIRED_PROPS
   }
 };
 
@@ -41,7 +41,7 @@ Styled.args = {
     lineStyle: {
       borderBottomColor: "skyblue",
       borderBottomStyle: "dashed",
-      borderBottomWidth: 8,
+      borderBottomWidth: 8
     }
   }
 };
@@ -54,7 +54,7 @@ export const Offset: FC = () => (
       style={{
         position: "absolute",
         left: 50,
-        top: 50,
+        top: 50
       }}
     />
     <Node
@@ -63,7 +63,7 @@ export const Offset: FC = () => (
       style={{
         position: "absolute",
         left: 200,
-        top: 100,
+        top: 100
       }}
     />
     <Link
