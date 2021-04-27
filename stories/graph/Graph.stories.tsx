@@ -114,19 +114,22 @@ ManyConnections.args = {
   graphProps: {
     id: "graph",
     config: {
-      width: 600,
-      height: 400
+      width: 800,
+      height: 600
     },
     nodes: [
       {
         id: "Mark 8",
         size: 32,
-        nodeStyle: {
-          backgroundColor: "#04787c"
-        },
         force: {
           fx: 0,
           fy: 0
+        },
+        nodeStyle: {
+          backgroundColor: "#04787c"
+        },
+        labelStyle: {
+          fontWeight: "bold"
         }
       },
       {
@@ -269,7 +272,12 @@ ManyConnections.args = {
     nodeConfig: {
       nodeStyle: {
         boxShadow: "0 2px 4px grey"
-      }
+      },
+      labelStyle: {
+        fontFamily: '"Segoe UI", Roboto, "Helvetica Neue", sans-serif',
+        fontSize: 12
+      },
+      labelOffset: -4
     },
     linkConfig: {
       lineStyle: {
