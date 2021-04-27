@@ -58,33 +58,7 @@ export interface IGraphPropsLink extends ILinkCommonConfig {
   target: string;
 }
 
-export interface IGraphPropsData {
-  nodes: IGraphPropsDataNode[];
-  links: IGraphPropsDataLink[];
-  focusedNodeId?: string;
-}
-
-export interface IGraphPropsDataNode {
-  id: string;
-}
-
-export interface IGraphPropsDataLink {
-  source: string;
-  target: string;
-  value?: number;
-}
-
 export type IGraphPropsConfig = DeepPartial<IGraphConfig>;
-
-export interface IGraphLinkMap {
-  [sourceNodeId: string]: {
-    [targetNodeId: string]: number;
-  };
-}
-
-export interface IGraphNodeMap {
-  [nodeId: string]: any;
-}
 
 export interface IGraphBehavior {
   zoomBy: (k: number) => void;
