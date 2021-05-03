@@ -2,8 +2,7 @@ import React from "react";
 import { mergeConfig } from "../../utils";
 import { Node } from "../node/Node";
 import { INodeCommonConfig } from "../node/Node.types";
-import { IGraphPropsNode } from "./Graph.types";
-import { IGraphNodeDatum } from "./LinkMap";
+import { IGraphNodeDatum, IGraphPropsNode } from "./Graph.types";
 
 export class NodeModel {
   private props: IGraphPropsNode;
@@ -16,6 +15,7 @@ export class NodeModel {
     this.size = props.size ?? 0;
     this.force = {
       id: props.id,
+      size: this.size,
       ...props.force
     };
 

@@ -1,6 +1,6 @@
 import { DragBehavior, ZoomBehavior } from "d3";
 import { MutableRefObject } from "react";
-import { IGraphNodeDatum } from "./LinkMap";
+import { IGraphNodeDatum } from './Graph.types';
 
 // Type alias to make the code easier to read
 export type Drag = DragBehavior<Element, unknown, unknown>;

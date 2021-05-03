@@ -1,7 +1,6 @@
 import { INodeCommonConfig } from "../node/Node.types";
-import { IGraphPropsLink, IGraphPropsNode } from "./Graph.types";
+import { IGraphNodeDatum, IGraphPropsLink, IGraphPropsNode } from "./Graph.types";
 import { NodeModel } from "./NodeModel";
-import { IGraphNodeDatum } from "./LinkMap";
 
 export class NodeMap {
   public rootNode: NodeModel | undefined;

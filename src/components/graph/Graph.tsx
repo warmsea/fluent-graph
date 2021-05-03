@@ -10,6 +10,7 @@ import React, {
 import {
   IGraphBehavior,
   IGraphConfig,
+  IGraphNodeDatum,
   IGraphProps,
   IGraphPropsNode
 } from "./Graph.types";
@@ -21,7 +22,7 @@ import { DEFAULT_CONFIG } from "./graph.config";
 import { NodeModel } from "./NodeModel";
 import { LinkModel, getLinkNodeId } from "./LinkModel";
 import { default as CONST } from "./graph.const";
-import { LinkMap, IGraphNodeDatum } from "./LinkMap";
+import { LinkMap } from "./LinkMap";
 import { INodeCommonConfig } from "../node/Node.types";
 import {
   DEFAULT_NODE_PROPS,

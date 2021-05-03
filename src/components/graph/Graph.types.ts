@@ -1,4 +1,4 @@
-import { SimulationNodeDatum } from "d3";
+import { SimulationLinkDatum, SimulationNodeDatum } from "d3";
 import { MutableRefObject } from "react";
 import { ILinkCommonConfig } from "../link/Link.types";
 import { INodeCommonConfig, INodeProps } from "../node/Node.types";
@@ -63,4 +63,12 @@ export type IGraphPropsConfig = DeepPartial<IGraphConfig>;
 export interface IGraphBehavior {
   zoomBy: (k: number) => void;
   resetZoom: () => void;
+}
+
+export interface IGraphNodeDatum extends SimulationNodeDatum {
+  id: string;
+  size: number;
+}
+
+export interface IGraphLinkDatum extends SimulationLinkDatum<IGraphNodeDatum> {
 }
