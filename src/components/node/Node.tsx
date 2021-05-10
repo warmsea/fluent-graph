@@ -46,7 +46,8 @@ function defaultOnRenderLabel(props: INodeProps): ReactNode {
     return (
       <div
         style={{
-          transform: `translate(-50%, ${props.labelOffset ?? 0}px)`,
+          transform: `translate(-50%, ${props.labelOffset ??
+            0}px) scale(${props.labelZoom ?? 1})`,
           ...props.labelStyle
         }}
       >

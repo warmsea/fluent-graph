@@ -23,6 +23,7 @@ export interface INodeCommonConfig extends INodeEventHandlers {
 
   labelStyle?: CSSProperties;
   labelOffset?: number;
+  labelZoom?: number;
 
   onRenderNode?: (props: INodeProps) => ReactNode;
   onRenderLabel?: (props: INodeProps) => ReactNode;

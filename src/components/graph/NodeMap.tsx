@@ -1,14 +1,21 @@
 import { INodeCommonConfig } from "../node/Node.types";
-import { IGraphNodeDatum, IGraphPropsLink, IGraphPropsNode } from "./Graph.types";
+import {
+  IGraphNodeDatum,
+  IGraphPropsLink,
+  IGraphPropsNode
+} from "./Graph.types";
+import { IZoomState, Ref } from "./Graph.types.internal";
 import { NodeModel } from "./NodeModel";
 
 export class NodeMap {
   public rootNode: NodeModel | undefined;
 
   private _map: Map<string, NodeModel>;
+  private _zoomStateRef: Ref<IZoomState>;
 
-  constructor() {
+  constructor(zoomStateRef: Ref<IZoomState>) {
     this._map = new Map();
+    this._zoomStateRef = zoomStateRef;
   }
 
   public updateNodeMap(
@@ -34,7 +41,10 @@ export class NodeMap {
         this._map.get(node.id)?.update(node, nodeConfig);
       } else {
         addedOrRemovedNodes = true;
-        this._map.set(node.id, new NodeModel(node, nodeConfig));
+        this._map.set(
+          node.id,
+          new NodeModel(node, nodeConfig, this._zoomStateRef)
+        );
       }
     });
 

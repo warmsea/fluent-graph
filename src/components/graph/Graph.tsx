@@ -98,11 +98,8 @@ function onRenderElements(
 }
 
 export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
-  const nodeMapRef: Ref<NodeMap> = useRef(new NodeMap());
-  const linkMapRef: Ref<LinkMap> = useRef(new LinkMap());
   const simulationRef: Ref<Simulation | undefined> = useRef();
   const zoomRef: Ref<Zoom> = useRef(d3.zoom());
-  const draggingNodeRef: Ref<NodeModel | undefined> = useRef();
 
   const graphId: string = props.id.replaceAll(/ /g, "_");
   const graphContainerId: string = `fg-container-${graphId}`;
@@ -124,6 +121,10 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
     DISPLAY_DEBOUNCE_MS
   );
   const forceUpdate = useForceUpdate(DISPLAY_DEBOUNCE_MS);
+
+  const nodeMapRef: Ref<NodeMap> = useRef(new NodeMap(zoomStateRef));
+  const linkMapRef: Ref<LinkMap> = useRef(new LinkMap());
+  const draggingNodeRef: Ref<NodeModel | undefined> = useRef();
 
   const tick = useCallback(
     throttle(() => {
