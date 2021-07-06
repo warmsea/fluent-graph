@@ -84,7 +84,5 @@ export function getLinkNodeId(link: {
   source: string;
   target: string;
 }): string {
-  return `${CONST.LINK_NODE_PREFIX}${
-    link.source + DELIMITER_SYMBOL + link.target
-  }`;
+  return `${CONST.LINK_NODE_PREFIX}${link.source}${DELIMITER_SYMBOL}${link.target}`;
 }

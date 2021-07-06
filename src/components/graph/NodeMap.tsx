@@ -2,11 +2,11 @@ import { INodeCommonConfig } from "../node/Node.types";
 import {
   IGraphNodeDatum,
   IGraphPropsLink,
-  IGraphPropsNode
+  IGraphPropsNode,
 } from "./Graph.types";
 import { IZoomState, Ref } from "./Graph.types.internal";
 import { NodeModel } from "./NodeModel";
-export const DELIMITER_SYMBOL: string = "delimiter";
+export const DELIMITER_SYMBOL: string = "Delimiter";
 
 export class NodeMap {
   public rootNode: NodeModel | undefined;
@@ -52,35 +52,25 @@ export class NodeMap {
     links.forEach((link) => {
       if (
         this._map.has(
-          `linkNode${
-            DELIMITER_SYMBOL + link.source + DELIMITER_SYMBOL + link.target
-          }`
+          `linkNode${DELIMITER_SYMBOL}${link.source}${DELIMITER_SYMBOL}${link.target}`
         )
       ) {
         this._map
           .get(
-            `linkNode${
-              DELIMITER_SYMBOL + link.source + DELIMITER_SYMBOL + link.target
-            }`
+            `linkNode${DELIMITER_SYMBOL}${link.source}${DELIMITER_SYMBOL}${link.target}`
           )
           ?.update(
             {
-              id: `linkNode${
-                DELIMITER_SYMBOL + link.source + DELIMITER_SYMBOL + link.target
-              }`,
+              id: `linkNode${DELIMITER_SYMBOL}${link.source}${DELIMITER_SYMBOL}${link.target}`,
             },
             {}
           );
       } else {
         this._map.set(
-          `linkNode${
-            DELIMITER_SYMBOL + link.source + DELIMITER_SYMBOL + link.target
-          }`,
+          `linkNode${DELIMITER_SYMBOL}${link.source}${DELIMITER_SYMBOL}${link.target}`,
           new NodeModel(
             {
-              id: `linkNode${
-                DELIMITER_SYMBOL + link.source + DELIMITER_SYMBOL + link.target
-              }`,
+              id: `linkNode${DELIMITER_SYMBOL}${link.source}${DELIMITER_SYMBOL}${link.target}`,
             },
             {}
           )
@@ -110,7 +100,7 @@ export class NodeMap {
 
   public getSimulationNodeDatums(): IGraphNodeDatum[] {
     const datums: IGraphNodeDatum[] = [];
-    this._map.forEach(node => datums.push(node.force));
+    this._map.forEach((node) => datums.push(node.force));
     return datums;
   }
 }
