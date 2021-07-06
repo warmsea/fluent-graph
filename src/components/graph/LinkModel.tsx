@@ -3,7 +3,7 @@ import { mergeConfig } from "../../utils";
 import { Link } from "../link/Link";
 import { ILinkCommonConfig, ILinkEnd } from "../link/Link.types";
 import { IGraphLinkDatum, IGraphPropsLink } from "./Graph.types";
-import { NodeMap } from "./NodeMap";
+import { NodeMap, DELIMITER_SYMBOL } from "./NodeMap";
 import { NodeModel } from "./NodeModel";
 import { default as CONST } from "./graph.const";
 
@@ -84,5 +84,7 @@ export function getLinkNodeId(link: {
   source: string;
   target: string;
 }): string {
-  return `${CONST.LINK_NODE_PREFIX}${link.source}&${link.target}`;
+  return `${CONST.LINK_NODE_PREFIX}${
+    link.source + DELIMITER_SYMBOL + link.target
+  }`;
 }

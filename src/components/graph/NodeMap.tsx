@@ -6,6 +6,7 @@ import {
 } from "./Graph.types";
 import { IZoomState, Ref } from "./Graph.types.internal";
 import { NodeModel } from "./NodeModel";
+export const DELIMITER_SYMBOL: string = "delimiter";
 
 export class NodeMap {
   public rootNode: NodeModel | undefined;
@@ -48,15 +49,41 @@ export class NodeMap {
       }
     });
 
-    links.forEach(link => {
-      if (this._map.has(`linkNode&${link.source}&${link.target}`)) {
+    links.forEach((link) => {
+      if (
+        this._map.has(
+          `linkNode${
+            DELIMITER_SYMBOL + link.source + DELIMITER_SYMBOL + link.target
+          }`
+        )
+      ) {
         this._map
-          .get(`linkNode&${link.source}&${link.target}`)
-          ?.update({ id: `linkNode&${link.source}&${link.target}` }, {});
+          .get(
+            `linkNode${
+              DELIMITER_SYMBOL + link.source + DELIMITER_SYMBOL + link.target
+            }`
+          )
+          ?.update(
+            {
+              id: `linkNode${
+                DELIMITER_SYMBOL + link.source + DELIMITER_SYMBOL + link.target
+              }`,
+            },
+            {}
+          );
       } else {
         this._map.set(
-          `linkNode&${link.source}&${link.target}`,
-          new NodeModel({ id: `linkNode&${link.source}&${link.target}` }, {})
+          `linkNode${
+            DELIMITER_SYMBOL + link.source + DELIMITER_SYMBOL + link.target
+          }`,
+          new NodeModel(
+            {
+              id: `linkNode${
+                DELIMITER_SYMBOL + link.source + DELIMITER_SYMBOL + link.target
+              }`,
+            },
+            {}
+          )
         );
       }
     });
