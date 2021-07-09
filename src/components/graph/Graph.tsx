@@ -14,14 +14,13 @@ import {
   IGraphProps,
   IGraphPropsNode
 } from "./Graph.types";
-import { NodeMap,DELIMITER_SYMBOL } from "./NodeMap";
+import { NodeMap } from "./NodeMap";
 import { LinkMatrix } from "./LinkMatrix";
 import { throttle } from "lodash";
 import { mergeConfig } from "../../utils";
 import { DEFAULT_CONFIG } from "./graph.config";
 import { NodeModel } from "./NodeModel";
 import { LinkModel, getLinkNodeId } from "./LinkModel";
-import { default as CONST } from "./graph.const";
 import { LinkMap } from "./LinkMap";
 import { INodeCommonConfig } from "../node/Node.types";
 import {
@@ -130,13 +129,14 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
     throttle(() => {
       const nodeMap: NodeMap = nodeMapRef.current;
       nodeMap.getSimulationNodeDatums().forEach(node => {
-        if (node.id.indexOf(CONST.LINK_NODE_PREFIX) !== -1) {
+        const currentNode = nodeMap.get(node.id);
+        if (currentNode.isLinkNode) {
           node.x =
-            (nodeMap.get(node.id.split(DELIMITER_SYMBOL)[1]).force.x ?? 0) * 0.5 +
-            (nodeMap.get(node.id.split(DELIMITER_SYMBOL)[2]).force.x ?? 0) * 0.5;
+            (nodeMap.get(currentNode.relatedNodes[0]).force.x ?? 0) * 0.5 +
+            (nodeMap.get(currentNode.relatedNodes[1]).force.x ?? 0) * 0.5;
           node.y =
-            (nodeMap.get(node.id.split(DELIMITER_SYMBOL)[1]).force.y ?? 0) * 0.5 +
-            (nodeMap.get(node.id.split(DELIMITER_SYMBOL)[2]).force.y ?? 0) * 0.5;
+            (nodeMap.get(currentNode.relatedNodes[0]).force.y ?? 0) * 0.5 +
+            (nodeMap.get(currentNode.relatedNodes[1]).force.y ?? 0) * 0.5;
         }
       });
       forceUpdate();
@@ -158,7 +158,7 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
         "collide",
         d3.forceCollide(node => {
           if (
-            (node as IGraphNodeDatum).id.indexOf(CONST.LINK_NODE_PREFIX) !== -1
+            nodeMapRef.current.get((node as IGraphNodeDatum).id).isLinkNode
           ) {
             return 10;
           } else {

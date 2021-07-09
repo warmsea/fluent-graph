@@ -11,11 +11,15 @@ export class NodeModel {
   public id: string;
   public size: number;
   public force: IGraphNodeDatum;
+  public relatedNodes: string[];
+  public isLinkNode: boolean;
 
   constructor(
     props: IGraphPropsNode,
     nodeConfig: INodeCommonConfig,
-    zoomStateRef?: Ref<IZoomState>
+    zoomStateRef?: Ref<IZoomState>,
+    relatedNodes?: string[],
+    isLinkNode?: boolean
   ) {
     this.id = props.id;
     this.size = props.size ?? 0;
@@ -28,16 +32,24 @@ export class NodeModel {
 
     this.props = mergeConfig(nodeConfig, props);
     this.size = this.props.size ?? 0;
+    this.relatedNodes = relatedNodes ?? [];
+    this.isLinkNode = isLinkNode ?? false;
   }
 
-  public update(props: IGraphPropsNode, nodeConfig: INodeCommonConfig) {
+  public update(
+    props: IGraphPropsNode,
+    nodeConfig: INodeCommonConfig,
+    relatedNodes?: string[],
+    isLinkNode?: boolean
+  ) {
     if (props.id !== this.props.id) {
       // TODO should not reach here
       return;
     }
-
     this.props = mergeConfig(nodeConfig, props);
     this.size = this.props.size ?? 0;
+    this.relatedNodes = relatedNodes ?? [];
+    this.isLinkNode = isLinkNode ?? false;
   }
 
   public renderNode(): JSX.Element {
