@@ -7,7 +7,7 @@ import {
 import { IZoomState, Ref } from "./Graph.types.internal";
 import { NodeModel } from "./NodeModel";
 import { getLinkNodeId } from "./LinkModel";
-export const DELIMITER_SYMBOL: string = ",";
+export const : string = ",";
 export class NodeMap {
   public rootNode: NodeModel | undefined;
 

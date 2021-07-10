@@ -3,9 +3,10 @@ import { mergeConfig } from "../../utils";
 import { Link } from "../link/Link";
 import { ILinkCommonConfig, ILinkEnd } from "../link/Link.types";
 import { IGraphLinkDatum, IGraphPropsLink } from "./Graph.types";
-import { NodeMap, DELIMITER_SYMBOL } from "./NodeMap";
+import { NodeMap } from "./NodeMap";
 import { NodeModel } from "./NodeModel";
 import { default as CONST } from "./graph.const";
+const DELIMITER_SYMBOL: string = ",";
 
 export class LinkModel {
   public sourceNode: NodeModel;
