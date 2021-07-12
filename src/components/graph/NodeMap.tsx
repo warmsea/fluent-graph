@@ -6,8 +6,12 @@ import {
 } from "./Graph.types";
 import { IZoomState, Ref } from "./Graph.types.internal";
 import { NodeModel } from "./NodeModel";
+<<<<<<< HEAD
 export const DELIMITER_SYMBOL: string = "Delimiter";
 
+=======
+import { getLinkNodeId } from "./LinkModel";
+>>>>>>> 8c679dfeddee0b96b5235851cd869f18abb4acb7
 export class NodeMap {
   public rootNode: NodeModel | undefined;
 
@@ -49,6 +53,7 @@ export class NodeMap {
       }
     });
 
+<<<<<<< HEAD
     links.forEach((link) => {
       if (
         this._map.has(
@@ -73,6 +78,29 @@ export class NodeMap {
               id: `linkNode${DELIMITER_SYMBOL}${link.source}${DELIMITER_SYMBOL}${link.target}`,
             },
             {}
+=======
+    links.forEach(link => {
+      if (this._map.has(getLinkNodeId(link))) {
+        this._map.get(getLinkNodeId(link))?.update(
+          {
+            id: getLinkNodeId(link)
+          },
+          {},
+          [link.target,link.source],
+          true
+        );
+      } else {
+        this._map.set(
+          getLinkNodeId(link),
+          new NodeModel(
+            {
+              id: getLinkNodeId(link)
+            },
+            {},
+            undefined,
+            [link.target,link.source],
+            true
+>>>>>>> 8c679dfeddee0b96b5235851cd869f18abb4acb7
           )
         );
       }

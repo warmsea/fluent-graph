@@ -21,7 +21,6 @@ import { mergeConfig } from "../../utils";
 import { DEFAULT_CONFIG } from "./graph.config";
 import { NodeModel } from "./NodeModel";
 import { LinkModel, getLinkNodeId } from "./LinkModel";
-import { default as CONST } from "./graph.const";
 import { LinkMap } from "./LinkMap";
 import { INodeCommonConfig } from "../node/Node.types";
 import {
@@ -130,13 +129,22 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
     throttle(() => {
       const nodeMap: NodeMap = nodeMapRef.current;
       nodeMap.getSimulationNodeDatums().forEach(node => {
-        if (node.id.indexOf(CONST.LINK_NODE_PREFIX) !== -1) {
+        const currentNode = nodeMap.get(node.id);
+        if (currentNode.isLinkNode) {
           node.x =
+<<<<<<< HEAD
             (nodeMap.get(node.id.split(DELIMITER_SYMBOL)[1]).force.x ?? 0) * 0.5 +
             (nodeMap.get(node.id.split(DELIMITER_SYMBOL)[2]).force.x ?? 0) * 0.5;
           node.y =
             (nodeMap.get(node.id.split(DELIMITER_SYMBOL)[1]).force.y ?? 0) * 0.5 +
             (nodeMap.get(node.id.split(DELIMITER_SYMBOL)[2]).force.y ?? 0) * 0.5;
+=======
+            (nodeMap.get(currentNode.relatedNodesOfLinkNode[0]).force.x ?? 0) * 0.5 +
+            (nodeMap.get(currentNode.relatedNodesOfLinkNode[1]).force.x ?? 0) * 0.5;
+          node.y =
+            (nodeMap.get(currentNode.relatedNodesOfLinkNode[0]).force.y ?? 0) * 0.5 +
+            (nodeMap.get(currentNode.relatedNodesOfLinkNode[1]).force.y ?? 0) * 0.5;
+>>>>>>> 8c679dfeddee0b96b5235851cd869f18abb4acb7
         }
       });
       forceUpdate();
@@ -158,7 +166,7 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
         "collide",
         d3.forceCollide(node => {
           if (
-            (node as IGraphNodeDatum).id.indexOf(CONST.LINK_NODE_PREFIX) !== -1
+            nodeMapRef.current.get((node as IGraphNodeDatum).id).isLinkNode
           ) {
             return 10;
           } else {
