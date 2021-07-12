@@ -6,6 +6,7 @@ import { IGraphLinkDatum, IGraphPropsLink } from "./Graph.types";
 import { NodeMap } from "./NodeMap";
 import { NodeModel } from "./NodeModel";
 import { default as CONST } from "./graph.const";
+const DELIMITER_SYMBOL: string = ",";
 
 export class LinkModel {
   public sourceNode: NodeModel;
@@ -84,5 +85,5 @@ export function getLinkNodeId(link: {
   source: string;
   target: string;
 }): string {
-  return `${CONST.LINK_NODE_PREFIX}${link.source}-${link.target}`;
+  return `${CONST.LINK_NODE_PREFIX}${link.source}${DELIMITER_SYMBOL}${link.target}`;
 }
