@@ -132,11 +132,11 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
         const currentNode = nodeMap.get(node.id);
         if (currentNode.isLinkNode) {
           node.x =
-            (nodeMap.get(currentNode.relatedNodes[0]).force.x ?? 0) * 0.5 +
-            (nodeMap.get(currentNode.relatedNodes[1]).force.x ?? 0) * 0.5;
+            (nodeMap.get(currentNode.relatedNodesOfLinkNode[0]).force.x ?? 0) * 0.5 +
+            (nodeMap.get(currentNode.relatedNodesOfLinkNode[1]).force.x ?? 0) * 0.5;
           node.y =
-            (nodeMap.get(currentNode.relatedNodes[0]).force.y ?? 0) * 0.5 +
-            (nodeMap.get(currentNode.relatedNodes[1]).force.y ?? 0) * 0.5;
+            (nodeMap.get(currentNode.relatedNodesOfLinkNode[0]).force.y ?? 0) * 0.5 +
+            (nodeMap.get(currentNode.relatedNodesOfLinkNode[1]).force.y ?? 0) * 0.5;
         }
       });
       forceUpdate();
