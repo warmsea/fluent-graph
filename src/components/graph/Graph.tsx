@@ -14,7 +14,7 @@ import {
   IGraphProps,
   IGraphPropsNode
 } from "./Graph.types";
-import { NodeMap,DELIMITER_SYMBOL } from "./NodeMap";
+import { NodeMap } from "./NodeMap";
 import { LinkMatrix } from "./LinkMatrix";
 import { throttle } from "lodash";
 import { mergeConfig } from "../../utils";
@@ -132,19 +132,11 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
         const currentNode = nodeMap.get(node.id);
         if (currentNode.isLinkNode) {
           node.x =
-<<<<<<< HEAD
-            (nodeMap.get(node.id.split(DELIMITER_SYMBOL)[1]).force.x ?? 0) * 0.5 +
-            (nodeMap.get(node.id.split(DELIMITER_SYMBOL)[2]).force.x ?? 0) * 0.5;
-          node.y =
-            (nodeMap.get(node.id.split(DELIMITER_SYMBOL)[1]).force.y ?? 0) * 0.5 +
-            (nodeMap.get(node.id.split(DELIMITER_SYMBOL)[2]).force.y ?? 0) * 0.5;
-=======
             (nodeMap.get(currentNode.relatedNodesOfLinkNode[0]).force.x ?? 0) * 0.5 +
             (nodeMap.get(currentNode.relatedNodesOfLinkNode[1]).force.x ?? 0) * 0.5;
           node.y =
             (nodeMap.get(currentNode.relatedNodesOfLinkNode[0]).force.y ?? 0) * 0.5 +
             (nodeMap.get(currentNode.relatedNodesOfLinkNode[1]).force.y ?? 0) * 0.5;
->>>>>>> 8c679dfeddee0b96b5235851cd869f18abb4acb7
         }
       });
       forceUpdate();
