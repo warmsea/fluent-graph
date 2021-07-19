@@ -2,7 +2,7 @@ import { INodeCommonConfig } from "../node/Node.types";
 import {
   IGraphNodeDatum,
   IGraphPropsLink,
-  IGraphPropsNode,
+  IGraphPropsNode
 } from "./Graph.types";
 import { IZoomState, Ref } from "./Graph.types.internal";
 import { NodeModel } from "./NodeModel";
@@ -96,7 +96,7 @@ export class NodeMap {
 
   public getSimulationNodeDatums(): IGraphNodeDatum[] {
     const datums: IGraphNodeDatum[] = [];
-    this._map.forEach((node) => datums.push(node.force));
+    this._map.forEach(node => datums.push(node.force));
     return datums;
   }
 }
