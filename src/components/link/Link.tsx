@@ -71,7 +71,7 @@ export const Link: FC<ILinkProps> = (props: ILinkProps) => {
 
   return (
     <div className={LINK_CLASS_ROOT} style={props.style}>
-      <div className={LINK_CLASS_LINE} {...lineProps}></div>
+      <div className={LINK_CLASS_LINE} id={props.id} {...lineProps}></div>
       {needClickHelper && <div {...clickHelperLineProps}></div>}
     </div>
   );
