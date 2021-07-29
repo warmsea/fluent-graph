@@ -12,6 +12,7 @@ export default meta;
 export const AddingAndDeleting: FC = () => {
   const [nodes, setNodes] = useState([{ id: "Root", label: "Root" }]);
   const [links, setLinks] = useState([]);
+  const [newNodeId, setNewNodeId] = useState("Root");
 
   const onClickNode = (
     props: INodeProps,
@@ -22,13 +23,15 @@ export const AddingAndDeleting: FC = () => {
     const angle: number = Math.random() * Math.PI * 2;
     const newX: number = Math.cos(angle) * 100 + parentX;
     const newY: number = Math.sin(angle) * 100 + parentY;
+    const id: string = `${Math.random()}`;
     const newNode = {
-      id: `${Math.random()}`,
-      label: "",
+      id,
+      label: id,
       force: { x: newX, y: newY }
     };
     setNodes([...nodes, newNode]);
     setLinks([...links, { source: props.id, target: newNode.id }]);
+    setNewNodeId(props.id);
   };
 
   const onContextMenu = (
@@ -62,6 +65,7 @@ export const AddingAndDeleting: FC = () => {
             onClickNode: onClickNode,
             onContextMenu: onContextMenu
           }}
+          centerNodeId={newNodeId}
         />
       </div>
     </div>

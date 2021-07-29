@@ -123,6 +123,8 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
 
   const nodeMapRef: Ref<NodeMap> = useRef(new NodeMap(zoomStateRef));
   const linkMapRef: Ref<LinkMap> = useRef(new LinkMap());
+  const centerNodeIdRef: Ref<string | undefined> = useRef();
+  centerNodeIdRef.current = props.centerNodeId;
   const draggingNodeRef: Ref<NodeModel | undefined> = useRef();
 
   const tick = useCallback(
@@ -137,6 +139,10 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
           node.y =
             (nodeMap.get(currentNode.relatedNodesOfLinkNode[0]).force.y ?? 0) * 0.5 +
             (nodeMap.get(currentNode.relatedNodesOfLinkNode[1]).force.y ?? 0) * 0.5;
+        }
+        if (node.id === centerNodeIdRef.current) {
+          node.x = 0;
+          node.y = 0;
         }
       });
       forceUpdate();
