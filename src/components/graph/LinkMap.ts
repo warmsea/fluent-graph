@@ -1,12 +1,7 @@
-import { SimulationNodeDatum, SimulationLinkDatum } from "d3";
-import { IGraphPropsLink } from "./Graph.types";
+import { IGraphLinkDatum, IGraphPropsLink } from "./Graph.types";
 import { getLinkId, LinkModel } from "./LinkModel";
 import { ILinkCommonConfig } from "../link/Link.types";
 import { NodeMap } from "./NodeMap";
-
-export interface IGraphNodeDatum extends SimulationNodeDatum {
-  id: string;
-}
 
 export class LinkMap {
   private _map: Map<string, LinkModel>;
@@ -60,8 +55,8 @@ export class LinkMap {
     }
   }
 
-  public getSimulationLinkDatums(): SimulationLinkDatum<SimulationNodeDatum>[] {
-    const datums: SimulationLinkDatum<SimulationNodeDatum>[] = [];
+  public getSimulationLinkDatums(): IGraphLinkDatum[] {
+    const datums: IGraphLinkDatum[] = [];
     this._map.forEach(link => datums.push(link.force));
     return datums;
   }

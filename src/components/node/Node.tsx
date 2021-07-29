@@ -7,25 +7,29 @@ export const NODE_CLASS_NODE: string = "fg-node-node";
 export const NODE_CLASS_LABEL: string = "fg-node-label";
 export const DEFAULT_NODE_PROPS: INodeCommonConfig = {
   size: 20,
+  style: {
+    zIndex: 3
+  },
   nodeStyle: {
     boxSizing: "border-box",
-    backgroundColor: "#d3d3d3",
-    transform: "translate(-50%, -50%)",
-    zIndex: 3
+    backgroundColor: "lightgray",
+    transform: "translate(-50%, -50%)"
   }
 };
 
 function defaultOnRenderNode(props: INodeProps): ReactNode {
+  const size: number = props.size ?? DEFAULT_NODE_PROPS.size!;
   const nodeProps: HTMLAttributes<HTMLDivElement> = {
     className: NODE_CLASS_NODE,
     style: {
-      width: props.size,
-      height: props.size,
-      borderRadius: props.size! / 2,
+      width: size,
+      height: size,
+      borderRadius: size / 2,
       ...props.nodeStyle
     },
 
-    tabIndex: props.focusable ? 0 : undefined,
+    tabIndex: props.nodeFocusable ? 0 : undefined,
+    "aria-label": props.nodeAriaLabel,
 
     onClick: event => props.onClickNode?.(props, event),
     onContextMenu: event => props.onContextMenu?.(props, event),
@@ -34,6 +38,25 @@ function defaultOnRenderNode(props: INodeProps): ReactNode {
   };
 
   return <div className={NODE_CLASS_NODE} {...nodeProps} />;
+}
+
+function defaultOnRenderLabel(props: INodeProps): ReactNode {
+  const label = props.label ?? props.id;
+  if (label) {
+    return (
+      <div
+        style={{
+          transform: `translate(-50%, ${props.labelOffset ??
+            0}px) scale(${props.labelZoom ?? 1})`,
+          ...props.labelStyle
+        }}
+      >
+        {label}
+      </div>
+    );
+  } else {
+    return <></>;
+  }
 }
 
 export const Node = (props: INodeProps) => {
@@ -46,6 +69,7 @@ export const Node = (props: INodeProps) => {
       style={props.style}
     >
       {(props.onRenderNode ?? defaultOnRenderNode)(props)}
+      {(props.onRenderLabel ?? defaultOnRenderLabel)(props)}
     </div>
   );
 };

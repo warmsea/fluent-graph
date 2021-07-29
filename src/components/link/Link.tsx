@@ -1,19 +1,31 @@
-import { isNumber, merge } from "lodash";
 import React, { CSSProperties, FC, HTMLAttributes } from "react";
-import { calcDraw, len, deg, center } from "./LinkHelper";
-import { ILinkProps } from "./Link.types";
+import { mergeConfig } from "../../utils";
+import { calcDraw, len, deg, center } from "./Link.helper";
+import { ILinkCommonConfig, ILinkProps } from "./Link.types";
 
-export const CLICK_HELPER_THRESHOLD: number = 4;
-
-export const DEFAULT_LINK_PROPS: Partial<ILinkProps> = {
+export const LINK_CLASS_ROOT: string = "fg-link-root";
+export const LINK_CLASS_LINE: string = "fg-link-line";
+export const DEFAULT_LINK_PROPS: ILinkCommonConfig = {
+  size: 2,
+  color: "gray",
+  lineType: "solid",
+  style: {
+    position: "absolute",
+    zIndex: 1
+  },
   lineStyle: {
-    background: "gray",
-    height: 1.5 // link size
+    position: "absolute",
+    background: "transparent"
   }
 };
+export const CLICK_HELPER_THRESHOLD: number = 4;
 
 export const Link: FC<ILinkProps> = (props: ILinkProps) => {
-  props = merge({}, DEFAULT_LINK_PROPS, props);
+  props = mergeConfig(DEFAULT_LINK_PROPS, props);
+  const [start, end] = calcDraw(props.start, props.end);
+  if (isNaN(start.x) || isNaN(start.y) || isNaN(end.x) || isNaN(end.y)) {
+    return <></>;
+  }
 
   const eventHandlers: HTMLAttributes<HTMLElement> = {
     onClick: event => props.onClickLink?.(event, props),
@@ -22,66 +34,45 @@ export const Link: FC<ILinkProps> = (props: ILinkProps) => {
     onKeyDown: event => props.onKeyDownLink?.(event, props)
   };
 
-  const [start, end] = calcDraw(props.start, props.end);
-
-  if (isNaN(start.x) || isNaN(start.y) || isNaN(end.x) || isNaN(end.y)) {
-    return <></>;
-  }
-
   const lineCenterPos = center(start, end);
-  const linkPosition: CSSProperties = {
+  const linePosition: CSSProperties = {
     width: len(start, end),
+    borderBottomWidth: props.size,
     top: lineCenterPos.y,
     left: lineCenterPos.x,
     transform: `translate(-50%, -50%) rotate(${deg(start, end)}deg)`
   };
 
-  const lineProps: React.DetailedHTMLProps<
-    React.HTMLAttributes<HTMLDivElement>,
-    HTMLDivElement
-  > = {
+  const lineProps: HTMLAttributes<HTMLDivElement> = {
     ...eventHandlers,
     style: {
-      outlineColor: "black",
-      outlineOffset: 2,
-      position: "absolute",
-      zIndex: 1,
-      ...props.lineStyle,
-      ...linkPosition
+      borderBottomColor: props.color,
+      borderBottomStyle: props.lineType,
+      ...linePosition,
+      ...props.lineStyle
     },
-    className: props.className || "fg-link",
     tabIndex: props.focusable ? 0 : undefined,
-    "aria-label": props.getLinkAriaLabel?.(props)
+    "aria-label": props.lineAriaLabel
   };
 
-  const strokeWidth: string | number | undefined = props.lineStyle?.strokeWidth;
   const needClickHelper: boolean =
     !!props.onClickLink &&
-    (!isNumber(strokeWidth) || strokeWidth < CLICK_HELPER_THRESHOLD);
+    (!isFinite(props.size!) || props.size! < CLICK_HELPER_THRESHOLD);
 
   const clickHelperLineStyle: CSSProperties = {
     ...lineProps.style,
     opacity: 0,
-    zIndex: 2,
-    height: CLICK_HELPER_THRESHOLD
+    borderBottomWidth: CLICK_HELPER_THRESHOLD
   };
-  const clickHelperLineProps: React.DetailedHTMLProps<
-    React.HTMLAttributes<HTMLDivElement>,
-    HTMLDivElement
-  > = {
+  const clickHelperLineProps: React.HTMLAttributes<HTMLDivElement> = {
     ...eventHandlers,
-    className: props.className || "fg-link",
     style: clickHelperLineStyle
   };
 
-  if (needClickHelper) {
-    return (
-      <>
-        <div {...lineProps}></div>
-        <div {...clickHelperLineProps}></div>
-      </>
-    );
-  }
-
-  return <div {...lineProps}></div>;
+  return (
+    <div className={LINK_CLASS_ROOT} style={props.style}>
+      <div className={LINK_CLASS_LINE} {...lineProps}></div>
+      {needClickHelper && <div {...clickHelperLineProps}></div>}
+    </div>
+  );
 };

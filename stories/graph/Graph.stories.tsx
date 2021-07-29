@@ -1,19 +1,18 @@
-import React from 'react';
-import { Meta, Story } from '@storybook/react';
-import { Graph } from '../../src';
-import { Args, BaseStory } from '@storybook/addons';
-import { StoryFnReactReturnType } from '@storybook/react/dist/client/preview/types';
-import { IGraphProps } from '../../src/components/graph/Graph.types';
+import React from "react";
+import { Meta, Story } from "@storybook/react";
+import { Graph } from "../../src";
+import { Args, BaseStory } from "@storybook/addons";
+import { StoryFnReactReturnType } from "@storybook/react/dist/client/preview/types";
+import { IGraphProps } from "../../src/components/graph/Graph.types";
 
 const meta: Meta = {
-  title: 'Graph',
-  component: Graph,
+  title: "Graph"
 };
 
 export default meta;
 
 interface ITemplateArgs extends BaseStory<Args, StoryFnReactReturnType> {
-  graphProps: IGraphProps
+  graphProps: IGraphProps;
 }
 
 const Template: Story<ITemplateArgs> = (args: ITemplateArgs) => (
@@ -27,21 +26,21 @@ Basic.args = {
   graphProps: {
     id: "graph",
     nodes: [
-      { id: "Fluent Graph", label: "Fluent Graph" },
-      { id: "React", label: "React" },
-      { id: "D3", label: "D3" },
-      { id: "D4", label: "D4" },
-      { id: "D5", label: "D5" },
-      { id: "D6", label: "D6" },
-      { id: "D7", label: "D7" },
-      { id: "D8", label: "D8" },
-      { id: "D9", label: "D9" },
-      { id: "D10", label: "D10" },
-      { id: "D11", label: "D11" },
-      { id: "D12", label: "D12" },
-      { id: "D13", label: "D13" },
-      { id: "D14", label: "D14" },
-      { id: "D15", label: "D15" },
+      { id: "Fluent Graph" },
+      { id: "React" },
+      { id: "D3" },
+      { id: "D4" },
+      { id: "D5" },
+      { id: "D6" },
+      { id: "D7" },
+      { id: "D8" },
+      { id: "D9" },
+      { id: "D10" },
+      { id: "D11" },
+      { id: "D12" },
+      { id: "D13" },
+      { id: "D14" },
+      { id: "D15" }
     ],
     links: [
       { source: "Fluent Graph", target: "React" },
@@ -57,10 +56,10 @@ Basic.args = {
       { source: "D5", target: "D12" },
       { source: "D6", target: "D11" },
       { source: "D7", target: "D10" },
-      { source: "D8", target: "D9" },
+      { source: "D8", target: "D9" }
     ],
     config: {
-      d3: {
+      sim: {
         gravity: -150,
         linkLength: 120,
         linkStrength: 2,
@@ -77,7 +76,7 @@ Styled.args = {
     nodes: [{ id: "Fluent Graph" }, { id: "React" }, { id: "D3" }],
     links: [
       { source: "Fluent Graph", target: "React" },
-      { source: "Fluent Graph", target: "D3" },
+      { source: "Fluent Graph", target: "D3" }
     ],
     nodeConfig: {
       nodeStyle: {
@@ -105,7 +104,7 @@ Loop.args = {
       { source: "A", target: "B1" },
       { source: "A", target: "B2" },
       { source: "B1", target: "C" },
-      { source: "B2", target: "C" },
+      { source: "B2", target: "C" }
     ]
   }
 };
@@ -115,36 +114,36 @@ Complex.args = {
   graphProps: {
     id: "graph",
     nodes: [
-      { id: "Mark 8", label: "Mark 8" },
-      { id: "Aerial", label: "Aerial" },
-      { id: "GIS Mapping", label: "GIS Mapping" },
-      { id: "Survey Intelligence", label: "Survey Intelligence" },
-      { id: "Flight Operations", label: "Flight Operations" },
-      { id: "Structual Integrity", label: "Structual Integrity" },
-      { id: "Spaces", label: "Spaces" },
-      { id: "Digital Surfaces", label: "Digital Surfaces" },
-      { id: "3D Modeling", label: "3D Modeling" },
-      { id: "Partners", label: "Partners" },
-      { id: "Geothermal", label: "Geothermal" },
-      { id: "United", label: "United" },
-      { id: "Delta", label: "Delta" },
-      { id: "Swiftly", label: "Swiftly" },
-      { id: "Data Visualization", label: "Data Visualization" },
-      { id: "Fjord", label: "Fjord" },
-      { id: "Altas", label: "Altas" },
-      { id: "Construction Operations", label: "Construction Operations" },
-      { id: "Athena", label: "Athena" },
-      { id: "Elements", label: "Elements" },
-      { id: "Juno", label: "Juno" },
-      { id: "Milk", label: "Milk" },
-      { id: "Coffee", label: "Coffee" },
-      { id: "Tea", label: "Tea" },
-      { id: "Juice", label: "Juice" },
-      { id: "Orange Juice", label: "Orange Juice" },
-      { id: "Black Tea", label: "Black Tea" },
-      { id: "Espresso", label: "Espresso" },
-      { id: "Espresso1", label: "Espresso1" },
-      { id: "Espresso2", label: "Espresso2" }
+      { id: "Mark 8" },
+      { id: "Aerial" },
+      { id: "GIS Mapping" },
+      { id: "Survey Intelligence" },
+      { id: "Flight Operations" },
+      { id: "Structual Integrity" },
+      { id: "Spaces" },
+      { id: "Digital Surfaces" },
+      { id: "3D Modeling" },
+      { id: "Partners" },
+      { id: "Geothermal" },
+      { id: "United" },
+      { id: "Delta" },
+      { id: "Swiftly" },
+      { id: "Data Visualization" },
+      { id: "Fjord" },
+      { id: "Altas" },
+      { id: "Construction Operations" },
+      { id: "Athena" },
+      { id: "Elements" },
+      { id: "Juno" },
+      { id: "Milk" },
+      { id: "Coffee" },
+      { id: "Tea" },
+      { id: "Juice" },
+      { id: "Orange Juice" },
+      { id: "Black Tea" },
+      { id: "Espresso" },
+      { id: "Espresso1" },
+      { id: "Espresso2" }
     ],
     links: [
       { source: "Mark 8", target: "Aerial" },
@@ -176,16 +175,16 @@ Complex.args = {
       { source: "Partners", target: "Athena" },
       { source: "United", target: "Elements" },
       { source: "Delta", target: "Juno" },
-      { source: "Juno", target: "Milk" },
+      { source: "Juno", target: "Milk" }
     ],
     nodeConfig: {
-      focusable: true,
+      nodeFocusable: true
     },
     linkConfig: {
-      focusable: true,
+      focusable: true
     },
     config: {
-      d3: {
+      sim: {
         gravity: -150,
         linkLength: 120,
         linkStrength: 2,

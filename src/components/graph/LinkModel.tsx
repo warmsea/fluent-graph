@@ -2,11 +2,11 @@ import React from "react";
 import { mergeConfig } from "../../utils";
 import { Link } from "../link/Link";
 import { ILinkCommonConfig, ILinkEnd } from "../link/Link.types";
-import { IGraphPropsLink } from "./Graph.types";
+import { IGraphLinkDatum, IGraphPropsLink } from "./Graph.types";
 import { NodeMap } from "./NodeMap";
 import { NodeModel } from "./NodeModel";
-import { SimulationLinkDatum, SimulationNodeDatum } from "d3";
 import { default as CONST } from "./graph.const";
+const DELIMITER_SYMBOL: string = ",";
 
 export class LinkModel {
   public sourceNode: NodeModel;
@@ -17,7 +17,7 @@ export class LinkModel {
   private linkNodeId: string;
   private props: IGraphPropsLink;
 
-  public force: SimulationLinkDatum<SimulationNodeDatum>;
+  public force: IGraphLinkDatum;
 
   constructor(
     props: IGraphPropsLink,
@@ -31,8 +31,8 @@ export class LinkModel {
     this.linkNode = nodeMap.get(this.linkNodeId);
     this.props = mergeConfig(linkConfig, props);
     this.force = {
-      source: this.props.source,
-      target: this.props.target
+      source: this.sourceNode.force,
+      target: this.targetNode.force
     };
   }
 
@@ -85,5 +85,5 @@ export function getLinkNodeId(link: {
   source: string;
   target: string;
 }): string {
-  return `${CONST.LINK_NODE_PREFIX}${link.source}-${link.target}`;
+  return `${CONST.LINK_NODE_PREFIX}${link.source}${DELIMITER_SYMBOL}${link.target}`;
 }

@@ -1,45 +1,104 @@
 import * as d3 from "d3";
-import { DragBehavior, ZoomBehavior } from "d3";
 import React, {
   FC,
-  MutableRefObject,
   useCallback,
   useEffect,
   useMemo,
   useReducer,
   useRef
 } from "react";
-import { IGraphConfig, IGraphProps, IGraphPropsNode } from "./Graph.types";
+import {
+  IGraphBehavior,
+  IGraphConfig,
+  IGraphNodeDatum,
+  IGraphProps,
+  IGraphPropsNode
+} from "./Graph.types";
 import { NodeMap } from "./NodeMap";
 import { LinkMatrix } from "./LinkMatrix";
-import { clamp, throttle } from "lodash";
-import { mergeConfig, useStateRef } from "../../utils";
+import { throttle } from "lodash";
+import { mergeConfig } from "../../utils";
 import { DEFAULT_CONFIG } from "./graph.config";
 import { NodeModel } from "./NodeModel";
 import { LinkModel, getLinkNodeId } from "./LinkModel";
-import { default as CONST } from "./graph.const";
-import { LinkMap, IGraphNodeDatum } from "./LinkMap";
+import { LinkMap } from "./LinkMap";
 import { INodeCommonConfig } from "../node/Node.types";
-import { DEFAULT_NODE_PROPS } from "../node/Node";
+import {
+  DEFAULT_NODE_PROPS,
+  NODE_CLASS_NODE,
+  NODE_CLASS_ROOT
+} from "../node/Node";
 import { ILinkCommonConfig } from "../link/Link.types";
 import { DEFAULT_LINK_PROPS } from "../link/Link";
-
-// Type alias to make the code easier to read
-type Drag = DragBehavior<Element, unknown, unknown>;
-type Ref<T> = MutableRefObject<T>;
-type Selection = d3.Selection<Element, unknown, Element, unknown>;
-type Simulation = d3.Simulation<IGraphNodeDatum, undefined>;
-type Zoom = ZoomBehavior<Element, unknown>;
+import {
+  Drag,
+  IZoomState,
+  Ref,
+  Selection,
+  Simulation,
+  Zoom
+} from "./Graph.types.internal";
+import { GraphBehavior } from "./GraphBehavior";
+import { useForceUpdate, useStateRef } from "./Graph.hooks";
 
 const GRAPH_CLASS_MAIN: string = "fg-main";
-const DISPLAY_THROTTLE_MS: number = 50;
+const DISPLAY_DEBOUNCE_MS: number = 50;
+const INITIAL_ZOOM: IZoomState = { x: 0, y: 0, k: 1 };
+
+function getTransform(width: number, height: number, zoom: IZoomState): string {
+  const x: number = zoom.x + (width / 2) * zoom.k;
+  const y: number = zoom.y + (height / 2) * zoom.k;
+  return `translate(${x}px,${y}px) scale(${zoom.k})`;
+}
+
+function getGraphBehavior(
+  ref: Ref<IGraphBehavior> | undefined
+): GraphBehavior | undefined {
+  if (ref) {
+    if (!ref.current) {
+      ref.current = new GraphBehavior();
+    }
+    // Users are not supposed to pass any concrete IGraphBehavior to the ref.
+    // And we know we pass GraphBehavior to it.
+    return ref.current as GraphBehavior;
+  } else {
+    return undefined;
+  }
+}
+
+function onRenderElements(
+  rootId: string | undefined,
+  nodeMap: NodeMap,
+  linkMatrix: LinkMatrix
+) {
+  if (!rootId) {
+    return <></>;
+  }
+
+  const elements: React.ReactNode[] = [nodeMap.get(rootId).renderNode()];
+  const queue: NodeModel[] = [nodeMap.get(rootId)];
+  const rendered: Set<NodeModel | LinkModel> = new Set();
+  // The render order decides tab/focus order as well.
+  while (queue.length > 0) {
+    const current: NodeModel = queue.shift()!;
+    linkMatrix.forEachWithSource(current.id, (link: LinkModel) => {
+      if (!rendered.has(link)) {
+        elements.push(link.renderLink());
+        rendered.add(link);
+      }
+      if (!rendered.has(link.targetNode)) {
+        elements.push(link.targetNode.renderNode());
+        rendered.add(link.targetNode);
+        queue.push(link.targetNode);
+      }
+    });
+  }
+  return elements;
+}
 
 export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
-  const nodeMapRef: Ref<NodeMap> = useRef(new NodeMap());
-  const linkMapRef: Ref<LinkMap> = useRef(new LinkMap());
   const simulationRef: Ref<Simulation | undefined> = useRef();
-  const zoomRef: Ref<Zoom | undefined> = useRef();
-  const draggingNodeRef: Ref<NodeModel | undefined> = useRef();
+  const zoomRef: Ref<Zoom> = useRef(d3.zoom());
 
   const graphId: string = props.id.replaceAll(/ /g, "_");
   const graphContainerId: string = `fg-container-${graphId}`;
@@ -56,46 +115,32 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   const { width, height } = graphConfig;
 
   const [topology, increaseTopologyVersion] = useReducer(v => v + 1, 0);
-  const [zoomState, setZoomState, zoomStateRef] = useStateRef({
-    x: 0,
-    y: 0,
-    k: 1
-  });
-  const throttledSetZoomState = throttle(setZoomState, DISPLAY_THROTTLE_MS);
+  const [zoomState, setZoomState, zoomStateRef] = useStateRef(
+    INITIAL_ZOOM,
+    DISPLAY_DEBOUNCE_MS
+  );
+  const forceUpdate = useForceUpdate(DISPLAY_DEBOUNCE_MS);
 
-  // @ts-ignore: Unused locals
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [ignored, forceUpdate] = useReducer(v => v + 1, 0);
+  const nodeMapRef: Ref<NodeMap> = useRef(new NodeMap(zoomStateRef));
+  const linkMapRef: Ref<LinkMap> = useRef(new LinkMap());
+  const draggingNodeRef: Ref<NodeModel | undefined> = useRef();
 
   const tick = useCallback(
     throttle(() => {
-      const radius: number =
-        graphConfig.d3.paddingRadius || DEFAULT_NODE_PROPS.size! / 2;
-      // constrain nodes from exceed the border of the graph.
       const nodeMap: NodeMap = nodeMapRef.current;
       nodeMap.getSimulationNodeDatums().forEach(node => {
-        if (node.id.indexOf(CONST.LINK_NODE_PREFIX) !== -1) {
+        const currentNode = nodeMap.get(node.id);
+        if (currentNode.isLinkNode) {
           node.x =
-            (nodeMap.get(node.id.split("-")[1]).force.x ?? 0) * 0.5 +
-            (nodeMap.get(node.id.split("-")[2]).force.x ?? 0) * 0.5;
+            (nodeMap.get(currentNode.relatedNodesOfLinkNode[0]).force.x ?? 0) * 0.5 +
+            (nodeMap.get(currentNode.relatedNodesOfLinkNode[1]).force.x ?? 0) * 0.5;
           node.y =
-            (nodeMap.get(node.id.split("-")[1]).force.y ?? 0) * 0.5 +
-            (nodeMap.get(node.id.split("-")[2]).force.y ?? 0) * 0.5;
-        } else {
-          node.x = clamp(
-            node.x ?? 0,
-            Math.min(radius, width - radius),
-            Math.max(radius, width - radius)
-          );
-          node.y = clamp(
-            node.y ?? 0,
-            Math.min(radius, height - radius),
-            Math.max(radius, height - radius)
-          );
+            (nodeMap.get(currentNode.relatedNodesOfLinkNode[0]).force.y ?? 0) * 0.5 +
+            (nodeMap.get(currentNode.relatedNodesOfLinkNode[1]).force.y ?? 0) * 0.5;
         }
       });
       forceUpdate();
-    }, DISPLAY_THROTTLE_MS),
+    }, DISPLAY_DEBOUNCE_MS),
     []
   );
 
@@ -108,13 +153,12 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
     );
 
     simulationRef.current
-      .force("charge", d3.forceManyBody().strength(graphConfig.d3.gravity))
-      .force("center", d3.forceCenter(width / 2, height / 2).strength(0.1))
+      .force("charge", d3.forceManyBody().strength(graphConfig.sim.gravity))
       .force(
         "collide",
         d3.forceCollide(node => {
           if (
-            (node as IGraphNodeDatum).id.indexOf(CONST.LINK_NODE_PREFIX) !== -1
+            nodeMapRef.current.get((node as IGraphNodeDatum).id).isLinkNode
           ) {
             return 10;
           } else {
@@ -127,10 +171,10 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
     const forceLink = d3
       .forceLink(linkMapRef.current.getSimulationLinkDatums())
       .id(node => (node as IGraphNodeDatum).id)
-      .distance(graphConfig.d3.linkLength)
-      .strength(graphConfig.d3.linkStrength);
+      .distance(graphConfig.sim.linkLength)
+      .strength(graphConfig.sim.linkStrength);
 
-    simulationRef.current.force(CONST.LINK_CLASS_NAME, forceLink);
+    simulationRef.current.force("link", forceLink);
   }
 
   function stopForceSimulation(): void {
@@ -140,29 +184,33 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   function setupDrag(): void {
     const dragBehavior: Drag = d3.drag();
     dragBehavior.on("start", event => {
-      // TODO don't stop the drag but fix this node only
-      stopForceSimulation();
-      for (const element of event.sourceEvent.path) {
-        if (element.matches?.(".fg-node")) {
-          draggingNodeRef.current = nodeMapRef.current.get(element.id);
-          return;
+      const eventTarget: Element = event.sourceEvent.target;
+      // Clicking node should start dragging. Clicking node label should not.
+      if (eventTarget.closest(`.${NODE_CLASS_NODE}`)) {
+        const nodeRoot = eventTarget.closest(`.${NODE_CLASS_ROOT}`);
+        if (nodeRoot) {
+          draggingNodeRef.current = nodeMapRef.current.get(nodeRoot.id);
+          simulationRef.current?.alphaTarget(0.3).restart();
         }
       }
-      draggingNodeRef.current = undefined;
     });
     dragBehavior.on("drag", event => {
-      if (draggingNodeRef.current?.force) {
-        draggingNodeRef.current.force.x = event.x / zoomStateRef.current.k;
-        draggingNodeRef.current.force.y = event.y / zoomStateRef.current.k;
+      const force = draggingNodeRef.current?.force;
+      if (force) {
+        force.fx = event.x / zoomStateRef.current.k;
+        force.fy = event.y / zoomStateRef.current.k;
         forceUpdate();
       }
     });
     dragBehavior.on("end", () => {
+      const force = draggingNodeRef.current?.force;
+      if (force) {
+        force.fx = force.fy = undefined;
+      }
       draggingNodeRef.current = undefined;
-      simulationRef.current?.alpha(1);
-      simulationRef.current?.restart();
+      simulationRef.current?.alphaTarget(0).restart();
     });
-    const dragSelection: Selection = d3.selectAll(".fg-node");
+    const dragSelection: Selection = d3.selectAll(`.${NODE_CLASS_ROOT}`);
     dragSelection.call(dragBehavior);
   }
 
@@ -180,34 +228,30 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
     [topology]
   );
 
-  // Zoom and pan behavior
+  // Zoom: update min and max zoom scale
   useEffect(() => {
-    if (!zoomRef.current) {
-      const zoomBehavior = d3.zoom();
-      zoomRef.current = zoomBehavior;
-      const zoomSelection: Selection = d3.select(`#${graphContainerId}`);
-      zoomSelection.call(zoomBehavior);
-    }
-    zoomRef.current.scaleExtent([graphConfig.minZoom, graphConfig.maxZoom]);
-    zoomRef.current.on("zoom", event => {
-      throttledSetZoomState(event.transform);
+    zoomRef.current.scaleExtent([
+      graphConfig.zoom.minZoom,
+      graphConfig.zoom.maxZoom
+    ]);
+  }, [graphConfig.zoom.minZoom, graphConfig.zoom.maxZoom]);
+  // Zoom: handle zoom event
+  useEffect(() => {
+    const zoomBehavior = zoomRef.current;
+    zoomBehavior.on("zoom", event => {
+      setZoomState(event.transform);
     });
-  }, [
-    graphContainerId,
-    graphConfig.minZoom,
-    graphConfig.maxZoom,
-    throttledSetZoomState
-  ]);
-
-  const onClickGraph = useCallback(
-    event => {
-      if ((event.target as HTMLElement)?.classList.contains(GRAPH_CLASS_MAIN)) {
-        props.onClickGraph?.(event);
-      }
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [props.onClickGraph]
-  );
+    return () => {
+      zoomBehavior.on("zoom", null);
+    };
+  }, [setZoomState]);
+  // Zoom: setup zoom/pan and update behavior ref
+  useEffect(() => {
+    const zoomSelection: Selection = d3.select(`#${graphContainerId}`);
+    zoomSelection.call(zoomRef.current);
+    const behavior = getGraphBehavior(props.behaviorRef);
+    behavior?.setupZoomBehavior(zoomSelection, zoomRef);
+  }, [graphContainerId, props.behaviorRef]);
 
   const rootId: string | undefined =
     props.nodes.length > 0 ? props.nodes[0].id : undefined;
@@ -237,49 +281,16 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   );
 
   return (
-    <div id={graphContainerId}>
+    <div id={graphContainerId} style={{ overflow: "hidden", width, height }}>
       <div
         style={{
-          position: "relative",
-          width,
-          height,
           transformOrigin: "0 0",
-          transform: `translate(${zoomState.x}px,${zoomState.y}px) scale(${zoomState.k})`
+          transform: getTransform(width, height, zoomState)
         }}
         className={GRAPH_CLASS_MAIN}
-        onClick={onClickGraph}
       >
         {elements}
       </div>
     </div>
   );
 };
-
-export function onRenderElements(
-  rootId: string | undefined,
-  nodeMap: NodeMap,
-  linkMatrix: LinkMatrix
-) {
-  if (!rootId) {
-    return <></>;
-  }
-
-  const elements: React.ReactNode[] = [nodeMap.get(rootId).renderNode()];
-  const queue: NodeModel[] = [nodeMap.get(rootId)];
-  const rendered: Set<NodeModel | LinkModel> = new Set();
-  while (queue.length > 0) {
-    const current: NodeModel = queue.shift()!;
-    linkMatrix.forEachWithSource(current.id, (link: LinkModel) => {
-      if (!rendered.has(link)) {
-        elements.push(link.renderLink());
-        rendered.add(link);
-      }
-      if (!rendered.has(link.targetNode)) {
-        elements.push(link.targetNode.renderNode());
-        rendered.add(link.targetNode);
-        queue.push(link.targetNode);
-      }
-    });
-  }
-  return elements;
-}

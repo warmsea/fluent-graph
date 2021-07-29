@@ -1,80 +1,78 @@
 import React from "react";
 import { mergeConfig } from "../../utils";
 import { Node } from "../node/Node";
-import NodeLabel from "../node/NodeLabel";
 import { INodeCommonConfig } from "../node/Node.types";
-import { IGraphPropsNode } from "./Graph.types";
-import { IGraphNodeDatum } from "./LinkMap";
+import { IGraphNodeDatum, IGraphPropsNode } from "./Graph.types";
+import { IZoomState, Ref } from "./Graph.types.internal";
 
 export class NodeModel {
   private props: IGraphPropsNode;
+  private _zoomStateRef: Ref<IZoomState> | undefined;
   public id: string;
   public size: number;
   public force: IGraphNodeDatum;
+  public relatedNodesOfLinkNode: string[];
+  public isLinkNode: boolean;
 
-  constructor(props: IGraphPropsNode, nodeConfig: INodeCommonConfig) {
+  constructor(
+    props: IGraphPropsNode,
+    nodeConfig: INodeCommonConfig,
+    zoomStateRef?: Ref<IZoomState>,
+    relatedNodesOfLinkNode?: string[],
+    isLinkNode?: boolean
+  ) {
     this.id = props.id;
     this.size = props.size ?? 0;
     this.force = {
       id: props.id,
-      x: props.initialX,
-      y: props.initialY
+      size: this.size,
+      ...props.force
     };
+    this._zoomStateRef = zoomStateRef;
 
     this.props = mergeConfig(nodeConfig, props);
     this.size = this.props.size ?? 0;
+    this.relatedNodesOfLinkNode = relatedNodesOfLinkNode ?? [];
+    this.isLinkNode = !!isLinkNode;
   }
 
-  public update(props: IGraphPropsNode, nodeConfig: INodeCommonConfig) {
+  public update(
+    props: IGraphPropsNode,
+    nodeConfig: INodeCommonConfig,
+    relatedNodesOfLinkNode?: string[],
+    isLinkNode?: boolean
+  ) {
     if (props.id !== this.props.id) {
       // TODO should not reach here
       return;
     }
-
     this.props = mergeConfig(nodeConfig, props);
     this.size = this.props.size ?? 0;
+    this.relatedNodesOfLinkNode = relatedNodesOfLinkNode ?? [];
+    this.isLinkNode = !!isLinkNode;
   }
 
   public renderNode(): JSX.Element {
-    const {
-      label,
-      onRenderNodeLabel,
-      size = 8,
-      nodeStyle,
-      labelStyle,
-      labelOffset
-    } = this.props;
-
+    let zoom: number | undefined = this._zoomStateRef?.current.k;
+    if (zoom !== undefined) {
+      if (zoom > 1) {
+        zoom = 1 / zoom;
+      } else {
+        zoom = 1;
+      }
+    }
     return (
-      <div className="fg-node" id={this.id} key={this.id}>
-        <Node
-          size={size}
-          style={{
-            position: "absolute",
-            left: this.force.x,
-            top: this.force.y
-          }}
-          nodeStyle={nodeStyle}
-          {...this.props}
-        />
-        {(label || onRenderNodeLabel) && (
-          <NodeLabel
-            style={{
-              position: "absolute",
-              display: "inline-block",
-              top: this.force.y,
-              left: this.force.x,
-              transform: `translate(-50%, ${labelOffset || 10}px)`,
-              whiteSpace: "nowrap",
-              zIndex: 3,
-              ...labelStyle
-            }}
-            label={label}
-            onRenderNodeLabel={onRenderNodeLabel}
-            {...this.props}
-          />
-        )}
-      </div>
+      <Node
+        key={this.props.id}
+        {...this.props}
+        style={{
+          position: "absolute",
+          left: this.force.x,
+          top: this.force.y,
+          ...this.props.style
+        }}
+        labelZoom={this.props.labelZoom ?? zoom}
+      />
     );
   }
 }

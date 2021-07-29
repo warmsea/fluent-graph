@@ -1,20 +1,32 @@
 import React, { CSSProperties } from "react";
 
+export type ILinkType =
+  | "none"
+  | "hidden"
+  | "dotted"
+  | "dashed"
+  | "solid"
+  | "double"
+  | "groove"
+  | "ridge"
+  | "inset"
+  | "outset";
+
 export interface ILinkProps extends ILinkCommonConfig {
   id: string;
   start: ILinkEnd;
   end: ILinkEnd;
-  getLinkAriaLabel?: (props: ILinkProps) => string; // TODO find a better way?
-  // TODO accept offset for start and end
+  lineAriaLabel?: string;
 }
 
 export interface ILinkCommonConfig extends ILinkEventHandlers {
+  size?: number;
+  color?: string;
+  lineType?: ILinkType;
+  style?: CSSProperties;
   className?: string;
   lineStyle?: CSSProperties;
-
   focusable?: boolean;
-  label?: string;
-  labelStyle?: CSSProperties;
 }
 
 export interface ILinkEventHandlers {
