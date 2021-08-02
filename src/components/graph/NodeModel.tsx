@@ -50,6 +50,8 @@ export class NodeModel {
     this.size = this.props.size ?? 0;
     this.relatedNodesOfLinkNode = relatedNodesOfLinkNode ?? [];
     this.isLinkNode = !!isLinkNode;
+    this.force.fx = props.force?.fx;
+    this.force.fy = props.force?.fy;
   }
 
   public renderNode(): JSX.Element {
