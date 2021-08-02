@@ -34,7 +34,6 @@ export interface IGraphProps {
   id: string;
   nodes: IGraphPropsNode[];
   links: IGraphPropsLink[];
-  focusedNodeId?: string;
   nodeConfig?: INodeCommonConfig;
   linkConfig?: ILinkCommonConfig;
   config?: IGraphPropsConfig;
