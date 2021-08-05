@@ -17,17 +17,29 @@ export const AddingAndDeleting: FC = () => {
     props: INodeProps,
     event: React.MouseEvent<HTMLElement, MouseEvent>
   ) => {
-    const parentX = event.clientX ?? 0;
-    const parentY = event.clientY ?? 0;
-    const angle: number = Math.random() * Math.PI * 2;
-    const newX: number = Math.cos(angle) * 100 + parentX;
-    const newY: number = Math.sin(angle) * 100 + parentY;
+    const nodesCopy = nodes.map(node => {
+      if (node.id === props.id) {
+        return {
+          id: node.id,
+          label: node.label,
+          force: {
+            fx: 0,
+            fy: 0
+          }
+        };
+      }
+      return {
+        id: node.id,
+        label: node.label
+      };
+    });
+
+    const newId = `${Math.random()}`;
     const newNode = {
-      id: `${Math.random()}`,
-      label: "",
-      force: { x: newX, y: newY }
+      id: newId,
+      label: newId
     };
-    setNodes([...nodes, newNode]);
+    setNodes([...nodesCopy, newNode]);
     setLinks([...links, { source: props.id, target: newNode.id }]);
   };
 
