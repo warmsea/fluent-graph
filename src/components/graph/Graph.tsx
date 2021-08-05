@@ -1,7 +1,6 @@
 import * as d3 from "d3";
 import React, {
   FC,
-  useCallback,
   useEffect,
   useMemo,
   useReducer,
@@ -125,23 +124,32 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   const linkMapRef: Ref<LinkMap> = useRef(new LinkMap());
   const draggingNodeRef: Ref<NodeModel | undefined> = useRef();
 
-  const tick = useCallback(
-    throttle(() => {
-      const nodeMap: NodeMap = nodeMapRef.current;
-      nodeMap.getSimulationNodeDatums().forEach(node => {
-        const currentNode = nodeMap.get(node.id);
-        if (currentNode.isLinkNode) {
-          node.x =
-            (nodeMap.get(currentNode.relatedNodesOfLinkNode[0]).force.x ?? 0) * 0.5 +
-            (nodeMap.get(currentNode.relatedNodesOfLinkNode[1]).force.x ?? 0) * 0.5;
-          node.y =
-            (nodeMap.get(currentNode.relatedNodesOfLinkNode[0]).force.y ?? 0) * 0.5 +
-            (nodeMap.get(currentNode.relatedNodesOfLinkNode[1]).force.y ?? 0) * 0.5;
-        }
-      });
-      forceUpdate();
-    }, DISPLAY_DEBOUNCE_MS),
-    []
+  const tick = useMemo(
+    () =>
+      throttle(() => {
+        const nodeMap: NodeMap = nodeMapRef.current;
+        nodeMap.getSimulationNodeDatums().forEach(node => {
+          const currentNode = nodeMap.get(node.id);
+          if (currentNode.isLinkNode) {
+            node.x =
+              (nodeMap.get(currentNode.relatedNodesOfLinkNode[0]).force.x ??
+                0) *
+              0.5 +
+              (nodeMap.get(currentNode.relatedNodesOfLinkNode[1]).force.x ??
+                0) *
+              0.5;
+            node.y =
+              (nodeMap.get(currentNode.relatedNodesOfLinkNode[0]).force.y ??
+                0) *
+              0.5 +
+              (nodeMap.get(currentNode.relatedNodesOfLinkNode[1]).force.y ??
+                0) *
+              0.5;
+          }
+        });
+        forceUpdate();
+      }, DISPLAY_DEBOUNCE_MS),
+    [forceUpdate]
   );
 
   function restartForceSimulation(): void {
@@ -157,9 +165,7 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
       .force(
         "collide",
         d3.forceCollide(node => {
-          if (
-            nodeMapRef.current.get((node as IGraphNodeDatum).id).isLinkNode
-          ) {
+          if (nodeMapRef.current.get((node as IGraphNodeDatum).id).isLinkNode) {
             return 10;
           } else {
             return 50;
@@ -250,8 +256,16 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
     const zoomSelection: Selection = d3.select(`#${graphContainerId}`);
     zoomSelection.call(zoomRef.current);
     const behavior = getGraphBehavior(props.behaviorRef);
-    behavior?.setupZoomBehavior(zoomSelection, zoomRef);
-  }, [graphContainerId, props.behaviorRef]);
+    behavior?.setupZoomBehavior(
+      zoomSelection,
+      zoomRef,
+      props.config?.zoom?.disableScrollToZoom
+    );
+  }, [
+    graphContainerId,
+    props.behaviorRef,
+    props.config?.zoom?.disableScrollToZoom
+  ]);
 
   const rootId: string | undefined =
     props.nodes.length > 0 ? props.nodes[0].id : undefined;

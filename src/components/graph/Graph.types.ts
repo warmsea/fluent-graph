@@ -28,6 +28,7 @@ export interface IGraphConfigZoom {
   maxZoom: number;
   minZoom: number;
   initialZoom: number;
+  disableScrollToZoom?: boolean;
 }
 
 export interface IGraphProps {
