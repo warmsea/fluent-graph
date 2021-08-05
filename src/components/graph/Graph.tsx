@@ -250,15 +250,8 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
     const zoomSelection: Selection = d3.select(`#${graphContainerId}`);
     zoomSelection.call(zoomRef.current);
     const behavior = getGraphBehavior(props.behaviorRef);
-    behavior?.setupZoomBehavior(zoomSelection, zoomRef);
-  }, [graphContainerId, props.behaviorRef]);
-
-  useEffect(() => {
-    const zoomSelection: Selection = d3.select(`#${graphContainerId}`);
-    if (props.config?.zoom?.disableScrollToZoom) {
-      zoomSelection.call(d3.zoom).on("wheel.zoom", null);
-    }
-  }, [props.config?.zoom?.disableScrollToZoom]);
+    behavior?.setupZoomBehavior(zoomSelection, zoomRef, props.config?.zoom?.disableScrollToZoom);
+  }, [graphContainerId, props.behaviorRef, props.config?.zoom?.disableScrollToZoom]);
 
   const rootId: string | undefined =
     props.nodes.length > 0 ? props.nodes[0].id : undefined;
