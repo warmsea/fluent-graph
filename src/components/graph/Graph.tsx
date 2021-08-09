@@ -1,11 +1,5 @@
 import * as d3 from "d3";
-import React, {
-  FC,
-  useEffect,
-  useMemo,
-  useReducer,
-  useRef
-} from "react";
+import React, { FC, useEffect, useMemo, useReducer, useRef } from "react";
 import {
   IGraphBehavior,
   IGraphConfig,
@@ -134,17 +128,17 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
             node.x =
               (nodeMap.get(currentNode.relatedNodesOfLinkNode[0]).force.x ??
                 0) *
-              0.5 +
+                0.5 +
               (nodeMap.get(currentNode.relatedNodesOfLinkNode[1]).force.x ??
                 0) *
-              0.5;
+                0.5;
             node.y =
               (nodeMap.get(currentNode.relatedNodesOfLinkNode[0]).force.y ??
                 0) *
-              0.5 +
+                0.5 +
               (nodeMap.get(currentNode.relatedNodesOfLinkNode[1]).force.y ??
                 0) *
-              0.5;
+                0.5;
           }
         });
         forceUpdate();
@@ -255,17 +249,12 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   useEffect(() => {
     const zoomSelection: Selection = d3.select(`#${graphContainerId}`);
     zoomSelection.call(zoomRef.current);
+    if (!graphConfig.zoom.zoomByScroll) {
+      zoomSelection.on("wheel.zoom", null);
+    }
     const behavior = getGraphBehavior(props.behaviorRef);
-    behavior?.setupZoomBehavior(
-      zoomSelection,
-      zoomRef,
-      props.config?.zoom?.disableScrollToZoom
-    );
-  }, [
-    graphContainerId,
-    props.behaviorRef,
-    props.config?.zoom?.disableScrollToZoom
-  ]);
+    behavior?.setupZoomBehavior(zoomSelection, zoomRef);
+  }, [graphContainerId, graphConfig.zoom.zoomByScroll, props.behaviorRef]);
 
   const rootId: string | undefined =
     props.nodes.length > 0 ? props.nodes[0].id : undefined;

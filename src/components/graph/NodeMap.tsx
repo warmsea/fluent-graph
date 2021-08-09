@@ -55,7 +55,7 @@ export class NodeMap {
             id: getLinkNodeId(link)
           },
           {},
-          [link.target,link.source],
+          [link.target, link.source],
           true
         );
       } else {
@@ -67,7 +67,7 @@ export class NodeMap {
             },
             {},
             undefined,
-            [link.target,link.source],
+            [link.target, link.source],
             true
           )
         );

@@ -12,6 +12,7 @@ export const DEFAULT_CONFIG: IGraphConfig = {
   zoom: {
     initialZoom: 1,
     maxZoom: 8,
-    minZoom: 0.125
+    minZoom: 0.125,
+    zoomByScroll: true
   }
 };
