@@ -73,6 +73,7 @@
   },
   "resolutions": {
     "**/@typescript-eslint/eslint-plugin": "^4.20.0",
-    "**/@typescript-eslint/parser": "^4.20.0"
+    "**/@typescript-eslint/parser": "^4.20.0",
+    "**/eslint-plugin-react-hooks": "^4.0.6"
   }
 }

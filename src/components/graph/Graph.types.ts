@@ -28,13 +28,13 @@ export interface IGraphConfigZoom {
   maxZoom: number;
   minZoom: number;
   initialZoom: number;
+  zoomByScroll?: boolean;
 }
 
 export interface IGraphProps {
   id: string;
   nodes: IGraphPropsNode[];
   links: IGraphPropsLink[];
-  focusedNodeId?: string;
   nodeConfig?: INodeCommonConfig;
   linkConfig?: ILinkCommonConfig;
   config?: IGraphPropsConfig;
