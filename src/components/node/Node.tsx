@@ -8,7 +8,9 @@ export const NODE_CLASS_LABEL: string = "fg-node-label";
 export const DEFAULT_NODE_PROPS: INodeCommonConfig = {
   size: 20,
   style: {
-    zIndex: 3
+    zIndex: 3,
+    width: 0,
+    height: 0
   },
   nodeStyle: {
     boxSizing: "border-box",
