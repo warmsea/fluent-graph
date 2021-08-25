@@ -8,7 +8,11 @@ export const NODE_CLASS_LABEL: string = "fg-node-label";
 export const DEFAULT_NODE_PROPS: INodeCommonConfig = {
   size: 20,
   style: {
-    zIndex: 3
+    zIndex: 3,
+    // Since node and label used transform to calculate their positions.
+    // The root node container will have offset, set the size to 0 to avoid the offset of root node container. 
+    width: 0,
+    height: 0
   },
   nodeStyle: {
     boxSizing: "border-box",
