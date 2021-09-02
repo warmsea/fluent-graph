@@ -128,17 +128,17 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
             node.x =
               (nodeMap.get(currentNode.relatedNodesOfLinkNode[0]).force.x ??
                 0) *
-                0.5 +
+              0.5 +
               (nodeMap.get(currentNode.relatedNodesOfLinkNode[1]).force.x ??
                 0) *
-                0.5;
+              0.5;
             node.y =
               (nodeMap.get(currentNode.relatedNodesOfLinkNode[0]).force.y ??
                 0) *
-                0.5 +
+              0.5 +
               (nodeMap.get(currentNode.relatedNodesOfLinkNode[1]).force.y ??
                 0) *
-                0.5;
+              0.5;
           }
         });
         forceUpdate();
@@ -252,9 +252,12 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
     if (!graphConfig.zoom.zoomByScroll) {
       zoomSelection.on("wheel.zoom", null);
     }
+    if (!graphConfig.zoom.zoomByDoubleClick) {
+      zoomSelection.on("dblclick.zoom", null);
+    }
     const behavior = getGraphBehavior(props.behaviorRef);
     behavior?.setupZoomBehavior(zoomSelection, zoomRef);
-  }, [graphContainerId, graphConfig.zoom.zoomByScroll, props.behaviorRef]);
+  }, [graphContainerId, graphConfig.zoom.zoomByScroll, graphConfig.zoom.zoomByDoubleClick, props.behaviorRef]);
 
   const rootId: string | undefined =
     props.nodes.length > 0 ? props.nodes[0].id : undefined;

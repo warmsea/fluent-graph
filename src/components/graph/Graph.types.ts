@@ -29,6 +29,7 @@ export interface IGraphConfigZoom {
   minZoom: number;
   initialZoom: number;
   zoomByScroll?: boolean;
+  zoomByDoubleClick?: boolean;
 }
 
 export interface IGraphProps {
