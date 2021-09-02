@@ -24,7 +24,10 @@ export const Zoom: FC = () => {
         id="graph"
         config={{
           width: 400,
-          height: 300
+          height: 300,
+          zoom: {
+            zoomByDoubleClick: false
+          }
         }}
         nodes={[{ id: "Fluent Graph" }, { id: "React" }, { id: "D3" }]}
         links={[
