@@ -93,7 +93,7 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   const simulationRef: Ref<Simulation | undefined> = useRef();
   const zoomRef: Ref<Zoom> = useRef(d3.zoom());
 
-  const graphId: string = props.id.replaceAll(/ /g, "_");
+  const graphId: string = props.id.replace(/ /g, "_");
   const graphContainerId: string = `fg-container-${graphId}`;
   const graphConfig: IGraphConfig = useMemo(
     () => mergeConfig(DEFAULT_CONFIG, props.config),
