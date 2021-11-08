@@ -44,6 +44,15 @@ Styled.args = {
   }
 };
 
+export const ClickableLink: Story<ITemplateArgs> = Template.bind({});
+ClickableLink.args = {
+  linkProps: {
+    ...DEFAULT_REQUIRED_PROPS,
+    size: 4,
+    onClickLink: (ev, linkProps) => console.log("clicking on link: ", linkProps)
+  }
+};
+
 export const Offset: FC = () => (
   <div style={{ position: "absolute" }}>
     <Node

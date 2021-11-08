@@ -18,7 +18,7 @@ export const DEFAULT_LINK_PROPS: ILinkCommonConfig = {
     background: "transparent"
   }
 };
-export const CLICK_HELPER_THRESHOLD: number = 4;
+export const CLICK_HELPER_THRESHOLD: number = 12;
 
 export const Link: FC<ILinkProps> = (props: ILinkProps) => {
   props = mergeConfig(DEFAULT_LINK_PROPS, props);
@@ -62,6 +62,7 @@ export const Link: FC<ILinkProps> = (props: ILinkProps) => {
   const clickHelperLineStyle: CSSProperties = {
     ...lineProps.style,
     opacity: 0,
+    cursor: "pointer",
     borderBottomWidth: CLICK_HELPER_THRESHOLD
   };
   const clickHelperLineProps: React.HTMLAttributes<HTMLDivElement> = {
