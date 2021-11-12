@@ -128,17 +128,17 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
             node.x =
               (nodeMap.get(currentNode.relatedNodesOfLinkNode[0]).force.x ??
                 0) *
-              0.5 +
+                0.5 +
               (nodeMap.get(currentNode.relatedNodesOfLinkNode[1]).force.x ??
                 0) *
-              0.5;
+                0.5;
             node.y =
               (nodeMap.get(currentNode.relatedNodesOfLinkNode[0]).force.y ??
                 0) *
-              0.5 +
+                0.5 +
               (nodeMap.get(currentNode.relatedNodesOfLinkNode[1]).force.y ??
                 0) *
-              0.5;
+                0.5;
           }
         });
         forceUpdate();
@@ -189,7 +189,14 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
       if (eventTarget.closest(`.${NODE_CLASS_NODE}`)) {
         const nodeRoot = eventTarget.closest(`.${NODE_CLASS_ROOT}`);
         if (nodeRoot) {
-          draggingNodeRef.current = nodeMapRef.current.get(nodeRoot.id);
+          const draggingNode = nodeMapRef.current.get(nodeRoot.id);
+          if (
+            draggingNode &&
+            typeof draggingNode.force?.fx !== "number" &&
+            typeof draggingNode.force?.fy !== "number"
+          ) {
+            draggingNodeRef.current = draggingNode;
+          }
           simulationRef.current?.alphaTarget(0.3).restart();
         }
       }
@@ -257,7 +264,12 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
     }
     const behavior = getGraphBehavior(props.behaviorRef);
     behavior?.setupZoomBehavior(zoomSelection, zoomRef);
-  }, [graphContainerId, graphConfig.zoom.zoomByScroll, graphConfig.zoom.zoomByDoubleClick, props.behaviorRef]);
+  }, [
+    graphContainerId,
+    graphConfig.zoom.zoomByScroll,
+    graphConfig.zoom.zoomByDoubleClick,
+    props.behaviorRef
+  ]);
 
   const rootId: string | undefined =
     props.nodes.length > 0 ? props.nodes[0].id : undefined;
