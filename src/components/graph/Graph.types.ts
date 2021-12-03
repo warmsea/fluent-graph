@@ -28,6 +28,7 @@ export interface IGraphConfigZoom {
   maxZoom: number;
   minZoom: number;
   initialZoom: number;
+  panByDrag?: boolean;
   zoomByScroll?: boolean;
   zoomByDoubleClick?: boolean;
 }

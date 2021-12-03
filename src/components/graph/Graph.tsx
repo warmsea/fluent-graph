@@ -259,6 +259,9 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
     if (!graphConfig.zoom.zoomByScroll) {
       zoomSelection.on("wheel.zoom", null);
     }
+    if (!graphConfig.zoom.panByDrag) {
+      zoomSelection.on("mousedown.zoom", null);
+    }
     if (!graphConfig.zoom.zoomByDoubleClick) {
       zoomSelection.on("dblclick.zoom", null);
     }
