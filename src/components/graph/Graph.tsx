@@ -269,6 +269,7 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
     behavior?.setupZoomBehavior(zoomSelection, zoomRef);
   }, [
     graphContainerId,
+    graphConfig.zoom.panByDrag,
     graphConfig.zoom.zoomByScroll,
     graphConfig.zoom.zoomByDoubleClick,
     props.behaviorRef
