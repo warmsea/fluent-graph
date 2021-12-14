@@ -89,7 +89,7 @@ Styled.args = {
     },
     linkConfig: {
       lineStyle: {
-        stroke: "deepskyblue"
+        borderColor: "deepskyblue"
       }
     }
   }
@@ -181,7 +181,8 @@ Complex.args = {
       nodeFocusable: true
     },
     linkConfig: {
-      focusable: true
+      onClickLink: (ev, linkProps) => console.log("Clicked on link", linkProps),
+      customAttributes: { className: "link-test", tabIndex: 0 }
     },
     config: {
       sim: {

@@ -1,5 +1,5 @@
 import React, { CSSProperties, FC, HTMLAttributes } from "react";
-import { mergeConfig } from "../../utils";
+import { css, mergeConfig } from "../../utils";
 import { calcDraw, len, deg, center } from "./Link.helper";
 import { ILinkCommonConfig, ILinkProps } from "./Link.types";
 
@@ -34,46 +34,45 @@ export const Link: FC<ILinkProps> = (props: ILinkProps) => {
     onKeyDown: event => props.onKeyDownLink?.(event, props)
   };
 
-  const lineCenterPos = center(start, end);
-  const linePosition: CSSProperties = {
-    width: len(start, end),
-    borderBottomWidth: props.size,
-    top: lineCenterPos.y,
-    left: lineCenterPos.x,
-    transform: `translate(-50%, -50%) rotate(${deg(start, end)}deg)`
-  };
-
-  const lineProps: HTMLAttributes<HTMLDivElement> = {
-    ...eventHandlers,
-    style: {
-      borderBottomColor: props.color,
-      borderBottomStyle: props.lineType,
-      ...linePosition,
-      ...props.lineStyle
-    },
-    tabIndex: props.focusable ? 0 : undefined,
-    "aria-label": props.lineAriaLabel
-  };
-
   const needClickHelper: boolean =
     !!props.onClickLink &&
     (!isFinite(props.size!) || props.size! < CLICK_HELPER_THRESHOLD);
 
-  const clickHelperLineStyle: CSSProperties = {
-    ...lineProps.style,
-    opacity: 0,
-    cursor: "pointer",
-    borderBottomWidth: CLICK_HELPER_THRESHOLD
-  };
-  const clickHelperLineProps: React.HTMLAttributes<HTMLDivElement> = {
+  const lineCenterPos = center(start, end);
+  const lineLength = len(start, end);
+  const lineProps: HTMLAttributes<HTMLDivElement> = {
     ...eventHandlers,
-    style: clickHelperLineStyle
+    ...props.customAttributes,
+    className: css(LINK_CLASS_LINE, props.customAttributes?.className),
+    style: {
+      position: "absolute",
+      width: lineLength,
+      height: props.size,
+      top: lineCenterPos.y,
+      left: lineCenterPos.x,
+      transform: `translate(-50%, -50%) rotate(${deg(start, end)}deg)`,
+      display: "flex",
+      alignItems: "center",
+      ...(needClickHelper && {
+        cursor: "pointer",
+        height: CLICK_HELPER_THRESHOLD
+      })
+    }
+  };
+
+  const lineInnerStyles: CSSProperties = {
+    borderBottomColor: props.color,
+    borderBottomStyle: props.lineType,
+    borderBottomWidth: props.size,
+    width: "100%",
+    ...props.lineStyle
   };
 
   return (
     <div className={LINK_CLASS_ROOT} style={props.style}>
-      <div className={LINK_CLASS_LINE} {...lineProps}></div>
-      {needClickHelper && <div {...clickHelperLineProps}></div>}
+      <div {...lineProps}>
+        <div style={lineInnerStyles}></div>
+      </div>
     </div>
   );
 };
