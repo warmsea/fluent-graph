@@ -1,4 +1,4 @@
-import React, { CSSProperties } from "react";
+import React, { CSSProperties, HTMLAttributes } from "react";
 
 export type ILinkType =
   | "none"
@@ -16,7 +16,6 @@ export interface ILinkProps extends ILinkCommonConfig {
   id: string;
   start: ILinkEnd;
   end: ILinkEnd;
-  lineAriaLabel?: string;
 }
 
 export interface ILinkCommonConfig extends ILinkEventHandlers {
@@ -24,9 +23,8 @@ export interface ILinkCommonConfig extends ILinkEventHandlers {
   color?: string;
   lineType?: ILinkType;
   style?: CSSProperties;
-  className?: string;
   lineStyle?: CSSProperties;
-  focusable?: boolean;
+  lineProps?: HTMLAttributes<HTMLDivElement>;
 }
 
 export interface ILinkEventHandlers {
