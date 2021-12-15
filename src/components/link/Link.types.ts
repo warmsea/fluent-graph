@@ -24,7 +24,7 @@ export interface ILinkCommonConfig extends ILinkEventHandlers {
   lineType?: ILinkType;
   style?: CSSProperties;
   lineStyle?: CSSProperties;
-  rootProps?: HTMLAttributes<HTMLDivElement>;
+  lineProps?: HTMLAttributes<HTMLDivElement>;
 }
 
 export interface ILinkEventHandlers {

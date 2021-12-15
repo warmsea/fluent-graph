@@ -42,8 +42,8 @@ export const Link: FC<ILinkProps> = (props: ILinkProps) => {
   const lineLength = len(start, end);
   const lineProps: HTMLAttributes<HTMLDivElement> = {
     ...eventHandlers,
-    ...props.rootProps,
-    className: css(LINK_CLASS_LINE, props.rootProps?.className),
+    ...props.lineProps,
+    className: css(LINK_CLASS_LINE, props.lineProps?.className),
     style: {
       position: "absolute",
       width: lineLength,
