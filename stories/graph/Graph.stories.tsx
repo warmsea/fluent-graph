@@ -182,7 +182,7 @@ Complex.args = {
     },
     linkConfig: {
       onClickLink: (ev, linkProps) => console.log("Clicked on link", linkProps),
-      customAttributes: { className: "link-test", tabIndex: 0 }
+      rootProps: { className: "link-test", tabIndex: 0 }
     },
     config: {
       sim: {
