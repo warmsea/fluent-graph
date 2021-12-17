@@ -7,7 +7,7 @@ export const DEFAULT_CONFIG: IGraphConfig = {
     gravity: -100,
     linkLength: 100,
     linkStrength: 1,
-    paddingRadius: 30
+    paddingRadius: 30,
   },
   zoom: {
     initialZoom: 1,
@@ -15,6 +15,6 @@ export const DEFAULT_CONFIG: IGraphConfig = {
     minZoom: 0.125,
     panByDrag: true,
     zoomByScroll: true,
-    zoomByDoubleClick: true
-  }
+    zoomByDoubleClick: true,
+  },
 };

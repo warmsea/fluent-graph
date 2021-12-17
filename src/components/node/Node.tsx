@@ -12,13 +12,13 @@ export const DEFAULT_NODE_PROPS: INodeCommonConfig = {
     // Since node and label used transform to calculate their positions.
     // The root node container will have offset, set the size to 0 to avoid the offset of root node container.
     width: 0,
-    height: 0
+    height: 0,
   },
   nodeStyle: {
     boxSizing: "border-box",
     backgroundColor: "lightgray",
-    transform: "translate(-50%, -50%)"
-  }
+    transform: "translate(-50%, -50%)",
+  },
 };
 
 function defaultOnRenderNode(props: INodeProps): ReactNode {
@@ -29,16 +29,16 @@ function defaultOnRenderNode(props: INodeProps): ReactNode {
       width: size,
       height: size,
       borderRadius: size / 2,
-      ...props.nodeStyle
+      ...props.nodeStyle,
     },
 
     tabIndex: props.nodeFocusable ? 0 : undefined,
     "aria-label": props.nodeAriaLabel,
 
-    onClick: event => props.onClickNode?.(props, event),
-    onContextMenu: event => props.onContextMenu?.(props, event),
-    onMouseOver: event => props.onMouseOverNode?.(props, event),
-    onMouseOut: event => props.onMouseOutNode?.(props, event)
+    onClick: (event) => props.onClickNode?.(props, event),
+    onContextMenu: (event) => props.onContextMenu?.(props, event),
+    onMouseOver: (event) => props.onMouseOverNode?.(props, event),
+    onMouseOut: (event) => props.onMouseOutNode?.(props, event),
   };
 
   return <div className={NODE_CLASS_NODE} {...nodeProps} />;
@@ -50,10 +50,9 @@ function defaultOnRenderLabel(props: INodeProps): ReactNode {
     return (
       <div
         style={{
-          transform: `translate(-50%, ${props.labelOffset ??
-            0}px) scale(${props.labelZoom ?? 1})`,
+          transform: `translate(-50%, ${props.labelOffset ?? 0}px) scale(${props.labelZoom ?? 1})`,
           width: "fit-content",
-          ...props.labelStyle
+          ...props.labelStyle,
         }}
       >
         {label}
@@ -68,11 +67,7 @@ export const Node = (props: INodeProps) => {
   props = mergeConfig(DEFAULT_NODE_PROPS, props);
 
   return (
-    <div
-      id={props.id}
-      className={css(NODE_CLASS_ROOT, props.className)}
-      style={props.style}
-    >
+    <div id={props.id} className={css(NODE_CLASS_ROOT, props.className)} style={props.style}>
       {(props.onRenderNode ?? defaultOnRenderNode)(props)}
       {(props.onRenderLabel ?? defaultOnRenderLabel)(props)}
     </div>

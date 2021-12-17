@@ -2,5 +2,5 @@
  * @deprecated
  */
 export default {
-  LINK_NODE_PREFIX: `linkNode-`
+  LINK_NODE_PREFIX: `linkNode-`,
 };

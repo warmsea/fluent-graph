@@ -11,10 +11,7 @@ export class GraphBehavior implements IGraphBehavior {
     this.resetZoom = noop;
   }
 
-  public setupZoomBehavior(
-    zoomSelection: Selection,
-    zoomRef: Ref<Zoom | undefined>
-  ): void {
+  public setupZoomBehavior(zoomSelection: Selection, zoomRef: Ref<Zoom | undefined>): void {
     this.zoomBy = (k: number) => {
       zoomRef.current?.scaleBy(zoomSelection, k);
     };

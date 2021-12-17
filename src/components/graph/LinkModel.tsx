@@ -19,11 +19,7 @@ export class LinkModel {
 
   public force: IGraphLinkDatum;
 
-  constructor(
-    props: IGraphPropsLink,
-    linkConfig: ILinkCommonConfig,
-    nodeMap: NodeMap
-  ) {
+  constructor(props: IGraphPropsLink, linkConfig: ILinkCommonConfig, nodeMap: NodeMap) {
     this.id = getLinkId(props);
     this.linkNodeId = getLinkNodeId(props);
     this.sourceNode = nodeMap.get(props.source);
@@ -32,7 +28,7 @@ export class LinkModel {
     this.props = mergeConfig(linkConfig, props);
     this.force = {
       source: this.sourceNode.force,
-      target: this.targetNode.force
+      target: this.targetNode.force,
     };
   }
 
@@ -57,23 +53,15 @@ export class LinkModel {
     const start: ILinkEnd = {
       x: this.sourceNode.force.x,
       y: this.sourceNode.force.y,
-      offset: this.sourceNode.size / 2
+      offset: this.sourceNode.size / 2,
     };
     const end: ILinkEnd = {
       x: this.targetNode.force.x,
       y: this.targetNode.force.y,
-      offset: this.targetNode.size / 2
+      offset: this.targetNode.size / 2,
     };
 
-    return (
-      <Link
-        key={this.id}
-        id={this.id}
-        start={start}
-        end={end}
-        {...this.props}
-      />
-    );
+    return <Link key={this.id} id={this.id} start={start} end={end} {...this.props} />;
   }
 }
 
@@ -81,9 +69,6 @@ export function getLinkId(link: { source: string; target: string }): string {
   return `${link.source},${link.target}`;
 }
 
-export function getLinkNodeId(link: {
-  source: string;
-  target: string;
-}): string {
+export function getLinkNodeId(link: { source: string; target: string }): string {
   return `${CONST.LINK_NODE_PREFIX}${link.source}${DELIMITER_SYMBOL}${link.target}`;
 }

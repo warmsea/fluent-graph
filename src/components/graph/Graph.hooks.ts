@@ -7,7 +7,7 @@ import {
   useMemo,
   useReducer,
   useRef,
-  useState
+  useState,
 } from "react";
 
 export function useStateRef<S = undefined>(
@@ -25,7 +25,7 @@ export function useStateRef<S = undefined>(
   );
 
   var dispatch = useCallback(
-    value => {
+    (value) => {
       if (isFunction(value)) {
         ref.current = value(ref.current);
       } else {

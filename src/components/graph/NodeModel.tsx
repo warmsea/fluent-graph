@@ -26,7 +26,7 @@ export class NodeModel {
     this.force = {
       id: props.id,
       size: this.size,
-      ...props.force
+      ...props.force,
     };
     this._zoomStateRef = zoomStateRef;
 
@@ -71,7 +71,7 @@ export class NodeModel {
           position: "absolute",
           left: this.force.x,
           top: this.force.y,
-          ...this.props.style
+          ...this.props.style,
         }}
         labelZoom={this.props.labelZoom ?? zoom}
       />

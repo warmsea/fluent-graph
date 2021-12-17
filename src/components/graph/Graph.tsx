@@ -1,12 +1,6 @@
 import * as d3 from "d3";
 import React, { FC, useEffect, useMemo, useReducer, useRef } from "react";
-import {
-  IGraphBehavior,
-  IGraphConfig,
-  IGraphNodeDatum,
-  IGraphProps,
-  IGraphPropsNode
-} from "./Graph.types";
+import { IGraphBehavior, IGraphConfig, IGraphNodeDatum, IGraphProps, IGraphPropsNode } from "./Graph.types";
 import { NodeMap } from "./NodeMap";
 import { LinkMatrix } from "./LinkMatrix";
 import { throttle } from "lodash";
@@ -16,21 +10,10 @@ import { NodeModel } from "./NodeModel";
 import { LinkModel, getLinkNodeId } from "./LinkModel";
 import { LinkMap } from "./LinkMap";
 import { INodeCommonConfig } from "../node/Node.types";
-import {
-  DEFAULT_NODE_PROPS,
-  NODE_CLASS_NODE,
-  NODE_CLASS_ROOT
-} from "../node/Node";
+import { DEFAULT_NODE_PROPS, NODE_CLASS_NODE, NODE_CLASS_ROOT } from "../node/Node";
 import { ILinkCommonConfig } from "../link/Link.types";
 import { DEFAULT_LINK_PROPS } from "../link/Link";
-import {
-  Drag,
-  IZoomState,
-  Ref,
-  Selection,
-  Simulation,
-  Zoom
-} from "./Graph.types.internal";
+import { Drag, IZoomState, Ref, Selection, Simulation, Zoom } from "./Graph.types.internal";
 import { GraphBehavior } from "./GraphBehavior";
 import { useForceUpdate, useStateRef } from "./Graph.hooks";
 
@@ -44,9 +27,7 @@ function getTransform(width: number, height: number, zoom: IZoomState): string {
   return `translate(${x}px,${y}px) scale(${zoom.k})`;
 }
 
-function getGraphBehavior(
-  ref: Ref<IGraphBehavior> | undefined
-): GraphBehavior | undefined {
+function getGraphBehavior(ref: Ref<IGraphBehavior> | undefined): GraphBehavior | undefined {
   if (ref) {
     if (!ref.current) {
       ref.current = new GraphBehavior();
@@ -59,11 +40,7 @@ function getGraphBehavior(
   }
 }
 
-function onRenderElements(
-  rootId: string | undefined,
-  nodeMap: NodeMap,
-  linkMatrix: LinkMatrix
-) {
+function onRenderElements(rootId: string | undefined, nodeMap: NodeMap, linkMatrix: LinkMatrix) {
   if (!rootId) {
     return <></>;
   }
@@ -95,10 +72,7 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
 
   const graphId: string = props.id.replace(/ /g, "_");
   const graphContainerId: string = `fg-container-${graphId}`;
-  const graphConfig: IGraphConfig = useMemo(
-    () => mergeConfig(DEFAULT_CONFIG, props.config),
-    [props.config]
-  );
+  const graphConfig: IGraphConfig = useMemo(() => mergeConfig(DEFAULT_CONFIG, props.config), [props.config]);
   const nodeConfig: INodeCommonConfig = useMemo(() => {
     return mergeConfig(DEFAULT_NODE_PROPS, props.nodeConfig);
   }, [props.nodeConfig]);
@@ -107,11 +81,8 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   }, [props.linkConfig]);
   const { width, height } = graphConfig;
 
-  const [topology, increaseTopologyVersion] = useReducer(v => v + 1, 0);
-  const [zoomState, setZoomState, zoomStateRef] = useStateRef(
-    INITIAL_ZOOM,
-    DISPLAY_DEBOUNCE_MS
-  );
+  const [topology, increaseTopologyVersion] = useReducer((v) => v + 1, 0);
+  const [zoomState, setZoomState, zoomStateRef] = useStateRef(INITIAL_ZOOM, DISPLAY_DEBOUNCE_MS);
   const forceUpdate = useForceUpdate(DISPLAY_DEBOUNCE_MS);
 
   const nodeMapRef: Ref<NodeMap> = useRef(new NodeMap(zoomStateRef));
@@ -122,23 +93,15 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
     () =>
       throttle(() => {
         const nodeMap: NodeMap = nodeMapRef.current;
-        nodeMap.getSimulationNodeDatums().forEach(node => {
+        nodeMap.getSimulationNodeDatums().forEach((node) => {
           const currentNode = nodeMap.get(node.id);
           if (currentNode.isLinkNode) {
             node.x =
-              (nodeMap.get(currentNode.relatedNodesOfLinkNode[0]).force.x ??
-                0) *
-                0.5 +
-              (nodeMap.get(currentNode.relatedNodesOfLinkNode[1]).force.x ??
-                0) *
-                0.5;
+              (nodeMap.get(currentNode.relatedNodesOfLinkNode[0]).force.x ?? 0) * 0.5 +
+              (nodeMap.get(currentNode.relatedNodesOfLinkNode[1]).force.x ?? 0) * 0.5;
             node.y =
-              (nodeMap.get(currentNode.relatedNodesOfLinkNode[0]).force.y ??
-                0) *
-                0.5 +
-              (nodeMap.get(currentNode.relatedNodesOfLinkNode[1]).force.y ??
-                0) *
-                0.5;
+              (nodeMap.get(currentNode.relatedNodesOfLinkNode[0]).force.y ?? 0) * 0.5 +
+              (nodeMap.get(currentNode.relatedNodesOfLinkNode[1]).force.y ?? 0) * 0.5;
           }
         });
         forceUpdate();
@@ -150,15 +113,13 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
     // Stop current simulation if exist
     stopForceSimulation();
 
-    simulationRef.current = d3.forceSimulation(
-      nodeMapRef.current.getSimulationNodeDatums()
-    );
+    simulationRef.current = d3.forceSimulation(nodeMapRef.current.getSimulationNodeDatums());
 
     simulationRef.current
       .force("charge", d3.forceManyBody().strength(graphConfig.sim.gravity))
       .force(
         "collide",
-        d3.forceCollide(node => {
+        d3.forceCollide((node) => {
           if (nodeMapRef.current.get((node as IGraphNodeDatum).id).isLinkNode) {
             return 10;
           } else {
@@ -170,7 +131,7 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
 
     const forceLink = d3
       .forceLink(linkMapRef.current.getSimulationLinkDatums())
-      .id(node => (node as IGraphNodeDatum).id)
+      .id((node) => (node as IGraphNodeDatum).id)
       .distance(graphConfig.sim.linkLength)
       .strength(graphConfig.sim.linkStrength);
 
@@ -183,7 +144,7 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
 
   function setupDrag(): void {
     const dragBehavior: Drag = d3.drag();
-    dragBehavior.on("start", event => {
+    dragBehavior.on("start", (event) => {
       const eventTarget: Element = event.sourceEvent.target;
       // Clicking node should start dragging. Clicking node label should not.
       if (eventTarget.closest(`.${NODE_CLASS_NODE}`)) {
@@ -201,7 +162,7 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
         }
       }
     });
-    dragBehavior.on("drag", event => {
+    dragBehavior.on("drag", (event) => {
       const force = draggingNodeRef.current?.force;
       if (force) {
         force.fx = event.x / zoomStateRef.current.k;
@@ -237,15 +198,12 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
 
   // Zoom: update min and max zoom scale
   useEffect(() => {
-    zoomRef.current.scaleExtent([
-      graphConfig.zoom.minZoom,
-      graphConfig.zoom.maxZoom
-    ]);
+    zoomRef.current.scaleExtent([graphConfig.zoom.minZoom, graphConfig.zoom.maxZoom]);
   }, [graphConfig.zoom.minZoom, graphConfig.zoom.maxZoom]);
   // Zoom: handle zoom event
   useEffect(() => {
     const zoomBehavior = zoomRef.current;
-    zoomBehavior.on("zoom", event => {
+    zoomBehavior.on("zoom", (event) => {
       setZoomState(event.transform);
     });
     return () => {
@@ -272,22 +230,17 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
     graphConfig.zoom.panByDrag,
     graphConfig.zoom.zoomByScroll,
     graphConfig.zoom.zoomByDoubleClick,
-    props.behaviorRef
+    props.behaviorRef,
   ]);
 
-  const rootId: string | undefined =
-    props.nodes.length > 0 ? props.nodes[0].id : undefined;
+  const rootId: string | undefined = props.nodes.length > 0 ? props.nodes[0].id : undefined;
 
   const nodes: IGraphPropsNode[] = props.nodes.concat(
-    props.links.map(link => {
+    props.links.map((link) => {
       return { id: getLinkNodeId(link) };
     })
   );
-  const addedOrRemovedNodes: boolean = nodeMapRef.current.updateNodeMap(
-    nodes,
-    nodeConfig,
-    props.links
-  );
+  const addedOrRemovedNodes: boolean = nodeMapRef.current.updateNodeMap(nodes, nodeConfig, props.links);
   const addedOrRemovedLinks: boolean = linkMapRef.current.updateLinkMap(
     props.links,
     linkConfig,
@@ -307,7 +260,7 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
       <div
         style={{
           transformOrigin: "0 0",
-          transform: getTransform(width, height, zoomState)
+          transform: getTransform(width, height, zoomState),
         }}
         className={GRAPH_CLASS_MAIN}
       >

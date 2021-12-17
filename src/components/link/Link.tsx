@@ -11,12 +11,12 @@ export const DEFAULT_LINK_PROPS: ILinkCommonConfig = {
   lineType: "solid",
   style: {
     position: "absolute",
-    zIndex: 1
+    zIndex: 1,
   },
   lineStyle: {
     position: "absolute",
-    background: "transparent"
-  }
+    background: "transparent",
+  },
 };
 export const CLICK_HELPER_THRESHOLD: number = 12;
 
@@ -28,15 +28,14 @@ export const Link: FC<ILinkProps> = (props: ILinkProps) => {
   }
 
   const eventHandlers: HTMLAttributes<HTMLElement> = {
-    onClick: event => props.onClickLink?.(event, props),
-    onMouseOver: event => props.onMouseOverLink?.(event, props),
-    onMouseOut: event => props.onMouseOutLink?.(event, props),
-    onKeyDown: event => props.onKeyDownLink?.(event, props)
+    onClick: (event) => props.onClickLink?.(event, props),
+    onMouseOver: (event) => props.onMouseOverLink?.(event, props),
+    onMouseOut: (event) => props.onMouseOutLink?.(event, props),
+    onKeyDown: (event) => props.onKeyDownLink?.(event, props),
   };
 
   const needClickHelper: boolean =
-    !!props.onClickLink &&
-    (!isFinite(props.size!) || props.size! < CLICK_HELPER_THRESHOLD);
+    !!props.onClickLink && (!isFinite(props.size!) || props.size! < CLICK_HELPER_THRESHOLD);
 
   const lineCenterPos = center(start, end);
   const lineLength = len(start, end);
@@ -55,9 +54,9 @@ export const Link: FC<ILinkProps> = (props: ILinkProps) => {
       alignItems: "center",
       ...(needClickHelper && {
         cursor: "pointer",
-        height: CLICK_HELPER_THRESHOLD
-      })
-    }
+        height: CLICK_HELPER_THRESHOLD,
+      }),
+    },
   };
 
   const lineInnerStyles: CSSProperties = {
@@ -65,7 +64,7 @@ export const Link: FC<ILinkProps> = (props: ILinkProps) => {
     borderBottomStyle: props.lineType,
     borderBottomWidth: props.size,
     width: "100%",
-    ...props.lineStyle
+    ...props.lineStyle,
   };
 
   return (

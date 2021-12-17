@@ -10,11 +10,7 @@ export class LinkMap {
     this._map = new Map();
   }
 
-  public updateLinkMap(
-    links: IGraphPropsLink[],
-    linkConfig: ILinkCommonConfig,
-    nodeMap: NodeMap
-  ): boolean {
+  public updateLinkMap(links: IGraphPropsLink[], linkConfig: ILinkCommonConfig, nodeMap: NodeMap): boolean {
     let addedOrRemovedLinks: boolean = false;
 
     // Delete links that are no longer there
@@ -57,7 +53,7 @@ export class LinkMap {
 
   public getSimulationLinkDatums(): IGraphLinkDatum[] {
     const datums: IGraphLinkDatum[] = [];
-    this._map.forEach(link => datums.push(link.force));
+    this._map.forEach((link) => datums.push(link.force));
     return datums;
   }
 }

@@ -15,7 +15,7 @@ describe("mergeConfig", () => {
     const explicits = {
       onlyB: "B",
       both: "B",
-      deep: { onlyB: "B", both: "B" }
+      deep: { onlyB: "B", both: "B" },
     };
     expect(mergeConfig(defaults, explicits)).toEqual({
       onlyA: "A",
@@ -24,18 +24,18 @@ describe("mergeConfig", () => {
       deep: {
         onlyA: "A",
         onlyB: "B",
-        both: "B"
-      }
+        both: "B",
+      },
     });
     expect(defaults).toEqual({
       onlyA: "A",
       both: "A",
-      deep: { onlyA: "A", both: "A" }
+      deep: { onlyA: "A", both: "A" },
     });
     expect(explicits).toEqual({
       onlyB: "B",
       both: "B",
-      deep: { onlyB: "B", both: "B" }
+      deep: { onlyB: "B", both: "B" },
     });
   });
 });

@@ -1,9 +1,5 @@
 import { INodeCommonConfig } from "../node/Node.types";
-import {
-  IGraphNodeDatum,
-  IGraphPropsLink,
-  IGraphPropsNode
-} from "./Graph.types";
+import { IGraphNodeDatum, IGraphPropsLink, IGraphPropsNode } from "./Graph.types";
 import { IZoomState, Ref } from "./Graph.types.internal";
 import { NodeModel } from "./NodeModel";
 import { getLinkNodeId } from "./LinkModel";
@@ -41,18 +37,15 @@ export class NodeMap {
         this._map.get(node.id)?.update(node, nodeConfig);
       } else {
         addedOrRemovedNodes = true;
-        this._map.set(
-          node.id,
-          new NodeModel(node, nodeConfig, this._zoomStateRef)
-        );
+        this._map.set(node.id, new NodeModel(node, nodeConfig, this._zoomStateRef));
       }
     });
 
-    links.forEach(link => {
+    links.forEach((link) => {
       if (this._map.has(getLinkNodeId(link))) {
         this._map.get(getLinkNodeId(link))?.update(
           {
-            id: getLinkNodeId(link)
+            id: getLinkNodeId(link),
           },
           {},
           [link.target, link.source],
@@ -63,7 +56,7 @@ export class NodeMap {
           getLinkNodeId(link),
           new NodeModel(
             {
-              id: getLinkNodeId(link)
+              id: getLinkNodeId(link),
             },
             {},
             undefined,
@@ -96,7 +89,7 @@ export class NodeMap {
 
   public getSimulationNodeDatums(): IGraphNodeDatum[] {
     const datums: IGraphNodeDatum[] = [];
-    this._map.forEach(node => datums.push(node.force));
+    this._map.forEach((node) => datums.push(node.force));
     return datums;
   }
 }

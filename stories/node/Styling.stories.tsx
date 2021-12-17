@@ -6,7 +6,7 @@ import { Args, BaseStory } from "@storybook/addons";
 import { StoryFnReactReturnType } from "@storybook/react/dist/client/preview/types";
 
 const meta: Meta = {
-  title: "Node: Styling"
+  title: "Node: Styling",
 };
 
 export default meta;
@@ -21,7 +21,7 @@ const Template: Story<ITemplateArgs> = (args: ITemplateArgs) => (
       style={{
         position: "absolute",
         left: 100,
-        top: 100
+        top: 100,
       }}
       {...args.nodeProps}
     />
@@ -34,8 +34,8 @@ export const Basic: Story<ITemplateArgs> = Template.bind({});
 Basic.args = {
   nodeProps: {
     id: "Fluent Graph",
-    label: "Fluent Graph"
-  }
+    label: "Fluent Graph",
+  },
 };
 
 export const Styled: Story<ITemplateArgs> = Template.bind({});
@@ -46,16 +46,16 @@ Styled.args = {
     label: "Graph",
     nodeStyle: {
       backgroundColor: "none",
-      border: "solid skyblue 5px"
+      border: "solid skyblue 5px",
     },
     labelStyle: {
       color: "gray",
       fontSize: 12,
       fontWeight: "bold",
-      textAlign: "center"
+      textAlign: "center",
     },
-    labelOffset: -57
-  }
+    labelOffset: -57,
+  },
 };
 
 export const CustomizeNode: Story<ITemplateArgs> = Template.bind({});
@@ -75,7 +75,7 @@ CustomizeNode.args = {
               backgroundColor: "#d3d3d3",
               width: 20,
               height: 20,
-              borderRadius: 10
+              borderRadius: 10,
             }}
           />
           <div
@@ -87,13 +87,13 @@ CustomizeNode.args = {
               border: "solid 2px #d3d3d3",
               width: 30,
               height: 30,
-              borderRadius: 15
+              borderRadius: 15,
             }}
           />
         </div>
       );
-    }
-  }
+    },
+  },
 };
 
 export const CustomizeLabel: Story<ITemplateArgs> = Template.bind({});
@@ -106,6 +106,6 @@ CustomizeLabel.args = {
           Hello, <strong>Fluent Graph</strong>!
         </div>
       );
-    }
-  }
+    },
+  },
 };

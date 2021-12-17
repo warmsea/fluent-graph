@@ -6,7 +6,7 @@ import { StoryFnReactReturnType } from "@storybook/react/dist/client/preview/typ
 import { IGraphProps } from "../../src/components/graph/Graph.types";
 
 const meta: Meta = {
-  title: "Graph"
+  title: "Graph",
 };
 
 export default meta;
@@ -15,9 +15,7 @@ interface ITemplateArgs extends BaseStory<Args, StoryFnReactReturnType> {
   graphProps: IGraphProps;
 }
 
-const Template: Story<ITemplateArgs> = (args: ITemplateArgs) => (
-  <Graph {...args.graphProps} />
-);
+const Template: Story<ITemplateArgs> = (args: ITemplateArgs) => <Graph {...args.graphProps} />;
 
 // By passing using the Args format for exported stories, you can control the props for a component for reuse in a test
 // https://storybook.js.org/docs/react/workflows/unit-testing
@@ -40,7 +38,7 @@ Basic.args = {
       { id: "D12" },
       { id: "D13" },
       { id: "D14" },
-      { id: "D15" }
+      { id: "D15" },
     ],
     links: [
       { source: "Fluent Graph", target: "React" },
@@ -56,17 +54,17 @@ Basic.args = {
       { source: "D5", target: "D12" },
       { source: "D6", target: "D11" },
       { source: "D7", target: "D10" },
-      { source: "D8", target: "D9" }
+      { source: "D8", target: "D9" },
     ],
     config: {
       sim: {
         gravity: -150,
         linkLength: 120,
         linkStrength: 2,
-        paddingRadius: 30
-      }
-    }
-  }
+        paddingRadius: 30,
+      },
+    },
+  },
 };
 
 export const Styled: Story<ITemplateArgs> = Template.bind({});
@@ -76,23 +74,23 @@ Styled.args = {
     nodes: [{ id: "Fluent Graph" }, { id: "React" }, { id: "D3" }],
     links: [
       { source: "Fluent Graph", target: "React" },
-      { source: "Fluent Graph", target: "D3" }
+      { source: "Fluent Graph", target: "D3" },
     ],
     nodeConfig: {
       nodeStyle: {
-        fill: "skyblue"
+        fill: "skyblue",
       },
       labelStyle: {
         fill: "darkgray",
-        fontSize: 12
-      }
+        fontSize: 12,
+      },
     },
     linkConfig: {
       lineStyle: {
-        borderColor: "deepskyblue"
-      }
-    }
-  }
+        borderColor: "deepskyblue",
+      },
+    },
+  },
 };
 
 export const Loop: Story<ITemplateArgs> = Template.bind({});
@@ -104,9 +102,9 @@ Loop.args = {
       { source: "A", target: "B1" },
       { source: "A", target: "B2" },
       { source: "B1", target: "C" },
-      { source: "B2", target: "C" }
-    ]
-  }
+      { source: "B2", target: "C" },
+    ],
+  },
 };
 
 export const Complex: Story<ITemplateArgs> = Template.bind({});
@@ -143,7 +141,7 @@ Complex.args = {
       { id: "Black Tea" },
       { id: "Espresso" },
       { id: "Espresso1" },
-      { id: "Espresso2" }
+      { id: "Espresso2" },
     ],
     links: [
       { source: "Mark 8", target: "Aerial" },
@@ -175,22 +173,22 @@ Complex.args = {
       { source: "Partners", target: "Athena" },
       { source: "United", target: "Elements" },
       { source: "Delta", target: "Juno" },
-      { source: "Juno", target: "Milk" }
+      { source: "Juno", target: "Milk" },
     ],
     nodeConfig: {
-      nodeFocusable: true
+      nodeFocusable: true,
     },
     linkConfig: {
       onClickLink: (ev, linkProps) => console.log("Clicked on link", linkProps),
-      lineProps: { className: "link-test", tabIndex: 0 }
+      lineProps: { className: "link-test", tabIndex: 0 },
     },
     config: {
       sim: {
         gravity: -150,
         linkLength: 120,
         linkStrength: 2,
-        paddingRadius: 30
-      }
-    }
-  }
+        paddingRadius: 30,
+      },
+    },
+  },
 };

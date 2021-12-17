@@ -30,20 +30,8 @@ export interface INodeCommonConfig extends INodeEventHandlers {
 }
 
 export interface INodeEventHandlers {
-  onClickNode?: (
-    props: INodeProps,
-    event: React.MouseEvent<HTMLElement, MouseEvent>
-  ) => void;
-  onContextMenu?: (
-    props: INodeProps,
-    event: React.MouseEvent<HTMLElement, MouseEvent>
-  ) => void;
-  onMouseOverNode?: (
-    props: INodeProps,
-    event: React.MouseEvent<HTMLElement, MouseEvent>
-  ) => void;
-  onMouseOutNode?: (
-    props: INodeProps,
-    event: React.MouseEvent<HTMLElement, MouseEvent>
-  ) => void;
+  onClickNode?: (props: INodeProps, event: React.MouseEvent<HTMLElement, MouseEvent>) => void;
+  onContextMenu?: (props: INodeProps, event: React.MouseEvent<HTMLElement, MouseEvent>) => void;
+  onMouseOverNode?: (props: INodeProps, event: React.MouseEvent<HTMLElement, MouseEvent>) => void;
+  onMouseOutNode?: (props: INodeProps, event: React.MouseEvent<HTMLElement, MouseEvent>) => void;
 }

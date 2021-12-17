@@ -4,7 +4,7 @@ import { Graph } from "../../src";
 import { INodeProps } from "../../src/components/node/Node.types";
 
 const meta: Meta = {
-  title: "Graph: Editing"
+  title: "Graph: Editing",
 };
 
 export default meta;
@@ -13,49 +13,41 @@ export const AddingAndDeleting: FC = () => {
   const [nodes, setNodes] = useState([{ id: "Root", label: "Root" }]);
   const [links, setLinks] = useState([]);
 
-  const onClickNode = (
-    props: INodeProps,
-    event: React.MouseEvent<HTMLElement, MouseEvent>
-  ) => {
-    const nodesCopy = nodes.map(node => {
+  const onClickNode = (props: INodeProps, event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+    const nodesCopy = nodes.map((node) => {
       if (node.id === props.id) {
         return {
           id: node.id,
           label: node.label,
           force: {
             fx: 0,
-            fy: 0
-          }
+            fy: 0,
+          },
         };
       }
       return {
         id: node.id,
-        label: node.label
+        label: node.label,
       };
     });
 
     const newId = `${Math.random()}`;
     const newNode = {
       id: newId,
-      label: newId
+      label: newId,
     };
     setNodes([...nodesCopy, newNode]);
     setLinks([...links, { source: props.id, target: newNode.id }]);
   };
 
-  const onContextMenu = (
-    props: INodeProps,
-    event: React.MouseEvent<HTMLElement, MouseEvent>
-  ) => {
+  const onContextMenu = (props: INodeProps, event: React.MouseEvent<HTMLElement, MouseEvent>) => {
     event.preventDefault();
     if (props.id === "Root") {
       return;
     }
 
-    setNodes(nodes.filter(node => node.id !== props.id));
-    setLinks(
-      links.filter(link => link.source !== props.id && link.target !== props.id)
-    );
+    setNodes(nodes.filter((node) => node.id !== props.id));
+    setLinks(links.filter((link) => link.source !== props.id && link.target !== props.id));
   };
 
   return (
@@ -72,7 +64,7 @@ export const AddingAndDeleting: FC = () => {
           links={links}
           nodeConfig={{
             onClickNode: onClickNode,
-            onContextMenu: onContextMenu
+            onContextMenu: onContextMenu,
           }}
         />
       </div>

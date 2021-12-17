@@ -6,7 +6,7 @@ import { Link, Node } from "../../src";
 import { ILinkProps } from "../../src/components/link/Link.types";
 
 const meta: Meta = {
-  title: "Link: Styling"
+  title: "Link: Styling",
 };
 
 export default meta;
@@ -24,14 +24,14 @@ const Template: Story<ITemplateArgs> = (args: ITemplateArgs) => (
 const DEFAULT_REQUIRED_PROPS: ILinkProps = {
   id: "Fluent Graph Link",
   start: { x: 50, y: 50 },
-  end: { x: 200, y: 100 }
+  end: { x: 200, y: 100 },
 };
 
 export const Basic: Story<ITemplateArgs> = Template.bind({});
 Basic.args = {
   linkProps: {
-    ...DEFAULT_REQUIRED_PROPS
-  }
+    ...DEFAULT_REQUIRED_PROPS,
+  },
 };
 
 export const Styled: Story<ITemplateArgs> = Template.bind({});
@@ -40,8 +40,8 @@ Styled.args = {
     ...DEFAULT_REQUIRED_PROPS,
     size: 8,
     color: "skyblue",
-    lineType: "dashed"
-  }
+    lineType: "dashed",
+  },
 };
 
 export const ClickableLink: Story<ITemplateArgs> = Template.bind({});
@@ -49,8 +49,8 @@ ClickableLink.args = {
   linkProps: {
     ...DEFAULT_REQUIRED_PROPS,
     size: 4,
-    onClickLink: (ev, linkProps) => console.log("clicking on link: ", linkProps)
-  }
+    onClickLink: (ev, linkProps) => console.log("clicking on link: ", linkProps),
+  },
 };
 
 export const Offset: FC = () => (
@@ -61,7 +61,7 @@ export const Offset: FC = () => (
       style={{
         position: "absolute",
         left: 50,
-        top: 50
+        top: 50,
       }}
     />
     <Node
@@ -70,7 +70,7 @@ export const Offset: FC = () => (
       style={{
         position: "absolute",
         left: 200,
-        top: 100
+        top: 100,
       }}
     />
     <Link

@@ -3,10 +3,7 @@ import { ILinkEnd } from "./Link.types";
 export function calcDraw(start: ILinkEnd, end: ILinkEnd): [ILinkEnd, ILinkEnd] {
   const v = sub(end, start);
   const dir = normalize(v);
-  return [
-    add(start, times(dir, start.offset || 0)),
-    sub(end, times(dir, end.offset || 0))
-  ];
+  return [add(start, times(dir, start.offset || 0)), sub(end, times(dir, end.offset || 0))];
 }
 
 export function deg(src: ILinkEnd, tar: ILinkEnd) {
@@ -18,11 +15,7 @@ export function center(src: ILinkEnd, tar: ILinkEnd) {
 }
 
 export function len(src: ILinkEnd, tar: ILinkEnd) {
-  return (
-    Math.sqrt(
-      (tar.y - src.y) * (tar.y - src.y) + (tar.x - src.x) * (tar.x - src.x)
-    ) || 0
-  );
+  return Math.sqrt((tar.y - src.y) * (tar.y - src.y) + (tar.x - src.x) * (tar.x - src.x)) || 0;
 }
 function length(v: ILinkEnd): number {
   return Math.sqrt(v.x * v.x + v.y * v.y) || 0;

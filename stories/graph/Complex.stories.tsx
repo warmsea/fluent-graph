@@ -1,14 +1,11 @@
 import React, { CSSProperties, FC } from "react";
 import { Meta } from "@storybook/react";
 import { Graph } from "../../src";
-import {
-  IGraphProps,
-  IGraphPropsNode
-} from "../../src/components/graph/Graph.types";
+import { IGraphProps, IGraphPropsNode } from "../../src/components/graph/Graph.types";
 import { ILinkType } from "../../src/components/link/Link.types";
 
 const meta: Meta = {
-  title: "Complex"
+  title: "Complex",
 };
 export default meta;
 
@@ -21,12 +18,12 @@ const nodes: [string, number, string, string?, Partial<IGraphPropsNode>?][] = [
     {
       force: {
         fx: 0,
-        fy: 0
+        fy: 0,
       },
       labelStyle: {
-        fontWeight: "bold"
-      }
-    }
+        fontWeight: "bold",
+      },
+    },
   ],
   ["Structural Integrity", 2, "#c239b3"],
   ["Flight Operations", 1, "#c239b3"],
@@ -42,8 +39,8 @@ const nodes: [string, number, string, string?, Partial<IGraphPropsNode>?][] = [
     "#ca500f",
     "circle",
     {
-      label: "Sustainable Operations Agricultural Reliability"
-    }
+      label: "Sustainable Operations Agricultural Reliability",
+    },
   ],
   ["Delta", 3, "#ca500f"],
   ["Swiftly", 3, "#ca500f"],
@@ -58,11 +55,11 @@ const nodes: [string, number, string, string?, Partial<IGraphPropsNode>?][] = [
     "#498204",
     "circle",
     {
-      label: "Construction Operations Reliability"
-    }
+      label: "Construction Operations Reliability",
+    },
   ],
   ["Spaces", 3, "#498204", "circle"],
-  ["Partners", 3, "#498204"]
+  ["Partners", 3, "#498204"],
 ];
 
 const links: [string, string, number, ILinkType?][] = [
@@ -97,7 +94,7 @@ const links: [string, string, number, ILinkType?][] = [
   ["Survey Intelligence", "COR", 1, "dashed"],
   ["Elements", "Spaces", 1, "dashed"],
   ["Data Visualization", "Spaces", 1, "dashed"],
-  ["Geothermal", "Partners", 1]
+  ["Geothermal", "Partners", 1],
 ];
 
 export const Example1: FC = () => {
@@ -105,9 +102,9 @@ export const Example1: FC = () => {
     id: "graph",
     config: {
       width: 800,
-      height: 600
+      height: 600,
     },
-    nodes: nodes.map(n => {
+    nodes: nodes.map((n) => {
       let size: number;
       let labelOffset: number;
       switch (n[1]) {
@@ -135,30 +132,30 @@ export const Example1: FC = () => {
         size,
         labelOffset,
         nodeStyle,
-        ...n[4]
+        ...n[4],
       };
     }),
-    links: links.map(l => ({
+    links: links.map((l) => ({
       source: l[0],
       target: l[1],
       size: l[2],
-      lineType: l[3] ?? "solid"
+      lineType: l[3] ?? "solid",
     })),
     nodeConfig: {
       nodeStyle: {
-        boxShadow: "0 2px 4px grey"
+        boxShadow: "0 2px 4px grey",
       },
       labelStyle: {
         fontFamily: '"Segoe UI", Roboto, "Helvetica Neue", sans-serif',
-        fontSize: 12
+        fontSize: 12,
       },
-      labelOffset: -4
+      labelOffset: -4,
     },
     linkConfig: {
       lineStyle: {
-        borderBottomColor: "rgb(4, 120, 124, .5)"
-      }
-    }
+        borderBottomColor: "rgb(4, 120, 124, .5)",
+      },
+    },
   };
   return <Graph {...graphProps} />;
 };
