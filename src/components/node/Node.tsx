@@ -1,10 +1,10 @@
-import React, { HTMLAttributes, ReactNode } from "react";
+import React, { HTMLAttributes, ReactElement } from "react";
 import { css, mergeConfig } from "../../utils";
 import { INodeCommonConfig, INodeProps } from "./Node.types";
 
-export const NODE_CLASS_ROOT: string = "fg-node-root";
-export const NODE_CLASS_NODE: string = "fg-node-node";
-export const NODE_CLASS_LABEL: string = "fg-node-label";
+export const NODE_CLASS_ROOT = "fg-node-root";
+export const NODE_CLASS_NODE = "fg-node-node";
+export const NODE_CLASS_LABEL = "fg-node-label";
 export const DEFAULT_NODE_PROPS: INodeCommonConfig = {
   size: 20,
   style: {
@@ -21,7 +21,7 @@ export const DEFAULT_NODE_PROPS: INodeCommonConfig = {
   },
 };
 
-function defaultOnRenderNode(props: INodeProps): ReactNode {
+function defaultOnRenderNode(props: INodeProps): ReactElement {
   const size: number = props.size ?? DEFAULT_NODE_PROPS.size!;
   const nodeProps: HTMLAttributes<HTMLDivElement> = {
     className: NODE_CLASS_NODE,
@@ -44,7 +44,7 @@ function defaultOnRenderNode(props: INodeProps): ReactNode {
   return <div className={NODE_CLASS_NODE} {...nodeProps} />;
 }
 
-function defaultOnRenderLabel(props: INodeProps): ReactNode {
+function defaultOnRenderLabel(props: INodeProps): ReactElement {
   const label = props.label ?? props.id;
   if (label) {
     return (
@@ -63,7 +63,7 @@ function defaultOnRenderLabel(props: INodeProps): ReactNode {
   }
 }
 
-export const Node = (props: INodeProps) => {
+export const Node = (props: INodeProps): ReactElement => {
   props = mergeConfig(DEFAULT_NODE_PROPS, props);
 
   return (

@@ -17,8 +17,8 @@ import { Drag, IZoomState, Ref, Selection, Simulation, Zoom } from "./Graph.type
 import { GraphBehavior } from "./GraphBehavior";
 import { useForceUpdate, useStateRef } from "./Graph.hooks";
 
-const GRAPH_CLASS_MAIN: string = "fg-main";
-const DISPLAY_DEBOUNCE_MS: number = 50;
+const GRAPH_CLASS_MAIN = "fg-main";
+const DISPLAY_DEBOUNCE_MS = 50;
 const INITIAL_ZOOM: IZoomState = { x: 0, y: 0, k: 1 };
 
 function getTransform(width: number, height: number, zoom: IZoomState): string {
@@ -45,7 +45,7 @@ function onRenderElements(rootId: string | undefined, nodeMap: NodeMap, linkMatr
     return <></>;
   }
 
-  const elements: React.ReactNode[] = [nodeMap.get(rootId).renderNode()];
+  const elements: React.ReactElement[] = [nodeMap.get(rootId).renderNode()];
   const queue: NodeModel[] = [nodeMap.get(rootId)];
   const rendered: Set<NodeModel | LinkModel> = new Set();
   // The render order decides tab/focus order as well.
@@ -70,8 +70,8 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   const simulationRef: Ref<Simulation | undefined> = useRef();
   const zoomRef: Ref<Zoom> = useRef(d3.zoom());
 
-  const graphId: string = props.id.replace(/ /g, "_");
-  const graphContainerId: string = `fg-container-${graphId}`;
+  const graphId = props.id.replace(/ /g, "_");
+  const graphContainerId = `fg-container-${graphId}`;
   const graphConfig: IGraphConfig = useMemo(() => mergeConfig(DEFAULT_CONFIG, props.config), [props.config]);
   const nodeConfig: INodeCommonConfig = useMemo(() => {
     return mergeConfig(DEFAULT_NODE_PROPS, props.nodeConfig);

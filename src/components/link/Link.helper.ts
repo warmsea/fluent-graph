@@ -6,15 +6,15 @@ export function calcDraw(start: ILinkEnd, end: ILinkEnd): [ILinkEnd, ILinkEnd] {
   return [add(start, times(dir, start.offset || 0)), sub(end, times(dir, end.offset || 0))];
 }
 
-export function deg(src: ILinkEnd, tar: ILinkEnd) {
+export function deg(src: ILinkEnd, tar: ILinkEnd): number {
   return (Math.atan2(tar.y - src.y, tar.x - src.x) * 180) / Math.PI;
 }
 
-export function center(src: ILinkEnd, tar: ILinkEnd) {
+export function center(src: ILinkEnd, tar: ILinkEnd): ILinkEnd {
   return { x: (tar.x + src.x) / 2, y: (tar.y + src.y) / 2 };
 }
 
-export function len(src: ILinkEnd, tar: ILinkEnd) {
+export function len(src: ILinkEnd, tar: ILinkEnd): number {
   return Math.sqrt((tar.y - src.y) * (tar.y - src.y) + (tar.x - src.x) * (tar.x - src.x)) || 0;
 }
 function length(v: ILinkEnd): number {

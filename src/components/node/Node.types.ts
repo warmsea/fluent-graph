@@ -1,4 +1,4 @@
-import React, { CSSProperties, ReactNode } from "react";
+import React, { CSSProperties, ReactElement } from "react";
 
 export interface INodeProps extends INodeCommonConfig {
   id: string;
@@ -25,8 +25,8 @@ export interface INodeCommonConfig extends INodeEventHandlers {
   labelOffset?: number;
   labelZoom?: number;
 
-  onRenderNode?: (props: INodeProps) => ReactNode;
-  onRenderLabel?: (props: INodeProps) => ReactNode;
+  onRenderNode?: (props: INodeProps) => ReactElement;
+  onRenderLabel?: (props: INodeProps) => ReactElement;
 }
 
 export interface INodeEventHandlers {

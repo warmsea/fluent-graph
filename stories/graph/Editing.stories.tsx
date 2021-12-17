@@ -13,7 +13,7 @@ export const AddingAndDeleting: FC = () => {
   const [nodes, setNodes] = useState([{ id: "Root", label: "Root" }]);
   const [links, setLinks] = useState([]);
 
-  const onClickNode = (props: INodeProps, event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+  const onClickNode = (props: INodeProps) => {
     const nodesCopy = nodes.map((node) => {
       if (node.id === props.id) {
         return {

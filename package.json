@@ -35,6 +35,16 @@
     "printWidth": 110,
     "trailingComma": "es5"
   },
+  "eslint": {
+    "rules": {
+      "@typescript-eslint/no-unused-vars": [
+        "warn",
+        {
+          "varsIgnorePattern": "^_[0-9]*$"
+        }
+      ]
+    }
+  },
   "name": "fluent-graph",
   "author": "Su Su",
   "module": "dist/fluent-graph.esm.js",

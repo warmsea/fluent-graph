@@ -11,7 +11,7 @@ export class LinkMap {
   }
 
   public updateLinkMap(links: IGraphPropsLink[], linkConfig: ILinkCommonConfig, nodeMap: NodeMap): boolean {
-    let addedOrRemovedLinks: boolean = false;
+    let addedOrRemovedLinks = false;
 
     // Delete links that are no longer there
     const toBeDeleted: Set<string> = new Set(this._map.keys());

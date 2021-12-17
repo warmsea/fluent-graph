@@ -72,4 +72,4 @@ export interface IGraphNodeDatum extends SimulationNodeDatum {
   size: number;
 }
 
-export interface IGraphLinkDatum extends SimulationLinkDatum<IGraphNodeDatum> {}
+export type IGraphLinkDatum = SimulationLinkDatum<IGraphNodeDatum>;

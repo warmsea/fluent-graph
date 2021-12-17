@@ -3,8 +3,8 @@ import { css, mergeConfig } from "../../utils";
 import { calcDraw, len, deg, center } from "./Link.helper";
 import { ILinkCommonConfig, ILinkProps } from "./Link.types";
 
-export const LINK_CLASS_ROOT: string = "fg-link-root";
-export const LINK_CLASS_LINE: string = "fg-link-line";
+export const LINK_CLASS_ROOT = "fg-link-root";
+export const LINK_CLASS_LINE = "fg-link-line";
 export const DEFAULT_LINK_PROPS: ILinkCommonConfig = {
   size: 2,
   color: "gray",
@@ -18,7 +18,7 @@ export const DEFAULT_LINK_PROPS: ILinkCommonConfig = {
     background: "transparent",
   },
 };
-export const CLICK_HELPER_THRESHOLD: number = 12;
+export const CLICK_HELPER_THRESHOLD = 12;
 
 export const Link: FC<ILinkProps> = (props: ILinkProps) => {
   props = mergeConfig(DEFAULT_LINK_PROPS, props);

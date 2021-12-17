@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ReactElement } from "react";
 import { mergeConfig } from "../../utils";
 import { Link } from "../link/Link";
 import { ILinkCommonConfig, ILinkEnd } from "../link/Link.types";
@@ -6,7 +6,7 @@ import { IGraphLinkDatum, IGraphPropsLink } from "./Graph.types";
 import { NodeMap } from "./NodeMap";
 import { NodeModel } from "./NodeModel";
 import { default as CONST } from "./graph.const";
-const DELIMITER_SYMBOL: string = ",";
+const DELIMITER_SYMBOL = ",";
 
 export class LinkModel {
   public sourceNode: NodeModel;
@@ -40,7 +40,7 @@ export class LinkModel {
     this.props = mergeConfig(linkConfig, props);
   }
 
-  public renderLink(): JSX.Element {
+  public renderLink(): ReactElement {
     if (
       typeof this.sourceNode.force.x !== "number" ||
       typeof this.sourceNode.force.y !== "number" ||

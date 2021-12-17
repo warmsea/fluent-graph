@@ -19,7 +19,7 @@ export class NodeMap {
     nodeConfig: INodeCommonConfig,
     links: IGraphPropsLink[]
   ): boolean {
-    let addedOrRemovedNodes: boolean = false;
+    let addedOrRemovedNodes = false;
 
     // Delete nodes that are no longer there
     const toBeDeleted: Set<string> = new Set(this._map.keys());

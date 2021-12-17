@@ -29,7 +29,7 @@ export class LinkMatrix {
     });
   }
 
-  public forEachWithSource(sourceId: string, callback: (link: LinkModel) => void) {
+  public forEachWithSource(sourceId: string, callback: (link: LinkModel) => void): void {
     this._matrix.getRow(sourceId).forEach(callback);
   }
 }

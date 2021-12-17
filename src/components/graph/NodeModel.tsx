@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ReactElement } from "react";
 import { mergeConfig } from "../../utils";
 import { Node } from "../node/Node";
 import { INodeCommonConfig } from "../node/Node.types";
@@ -41,7 +41,7 @@ export class NodeModel {
     nodeConfig: INodeCommonConfig,
     relatedNodesOfLinkNode?: string[],
     isLinkNode?: boolean
-  ) {
+  ): void {
     if (props.id !== this.props.id) {
       // TODO should not reach here
       return;
@@ -54,7 +54,7 @@ export class NodeModel {
     this.force.fy = props.force?.fy;
   }
 
-  public renderNode(): JSX.Element {
+  public renderNode(): ReactElement {
     let zoom: number | undefined = this._zoomStateRef?.current.k;
     if (zoom !== undefined) {
       if (zoom > 1) {
