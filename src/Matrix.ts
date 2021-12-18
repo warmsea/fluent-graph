@@ -9,7 +9,7 @@ export class Matrix<K, V> {
     if (!this._matrix.has(row)) {
       this._matrix.set(row, new Map());
     }
-    this._matrix.get(row)!.set(column, value);
+    this._matrix.get(row)?.set(column, value);
   }
 
   public get(row: K, column: K): V | undefined {
@@ -17,10 +17,6 @@ export class Matrix<K, V> {
   }
 
   public getRow(row: K): V[] {
-    if (this._matrix.has(row)) {
-      return Array.from(this._matrix.get(row)!.values());
-    } else {
-      return [];
-    }
+    return Array.from(this._matrix.get(row)?.values() ?? []);
   }
 }

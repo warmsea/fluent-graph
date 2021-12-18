@@ -1,3 +1,4 @@
+import { isNumber } from "lodash";
 import React, { CSSProperties, FC, HTMLAttributes } from "react";
 import { css, mergeConfig } from "../../utils";
 import { calcDraw, len, deg, center } from "./Link.helper";
@@ -35,7 +36,7 @@ export const Link: FC<ILinkProps> = (props: ILinkProps) => {
   };
 
   const needClickHelper: boolean =
-    !!props.onClickLink && (!isFinite(props.size!) || props.size! < CLICK_HELPER_THRESHOLD);
+    !!props.onClickLink && isNumber(props.size) && props.size < CLICK_HELPER_THRESHOLD;
 
   const lineCenterPos = center(start, end);
   const lineLength = len(start, end);

@@ -50,18 +50,20 @@ function onRenderElements(rootId: string | undefined, nodeMap: NodeMap, linkMatr
   const rendered: Set<NodeModel | LinkModel> = new Set();
   // The render order decides tab/focus order as well.
   while (queue.length > 0) {
-    const current: NodeModel = queue.shift()!;
-    linkMatrix.forEachWithSource(current.id, (link: LinkModel) => {
-      if (!rendered.has(link)) {
-        elements.push(link.renderLink());
-        rendered.add(link);
-      }
-      if (!rendered.has(link.targetNode)) {
-        elements.push(link.targetNode.renderNode());
-        rendered.add(link.targetNode);
-        queue.push(link.targetNode);
-      }
-    });
+    const current: NodeModel | undefined = queue.shift();
+    if (current) {
+      linkMatrix.forEachWithSource(current.id, (link: LinkModel) => {
+        if (!rendered.has(link)) {
+          elements.push(link.renderLink());
+          rendered.add(link);
+        }
+        if (!rendered.has(link.targetNode)) {
+          elements.push(link.targetNode.renderNode());
+          rendered.add(link.targetNode);
+          queue.push(link.targetNode);
+        }
+      });
+    }
   }
   return elements;
 }

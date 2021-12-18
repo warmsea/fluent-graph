@@ -1,3 +1,4 @@
+import { isNumber } from "lodash";
 import React, { HTMLAttributes, ReactElement } from "react";
 import { css, mergeConfig } from "../../utils";
 import { INodeCommonConfig, INodeProps } from "./Node.types";
@@ -22,13 +23,13 @@ export const DEFAULT_NODE_PROPS: INodeCommonConfig = {
 };
 
 function defaultOnRenderNode(props: INodeProps): ReactElement {
-  const size: number = props.size ?? DEFAULT_NODE_PROPS.size!;
+  const size: number | undefined = props.size ?? DEFAULT_NODE_PROPS.size;
   const nodeProps: HTMLAttributes<HTMLDivElement> = {
     className: NODE_CLASS_NODE,
     style: {
       width: size,
       height: size,
-      borderRadius: size / 2,
+      borderRadius: isNumber(size) ? size / 2 : 0,
       ...props.nodeStyle,
     },
 

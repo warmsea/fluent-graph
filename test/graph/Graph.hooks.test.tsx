@@ -10,8 +10,8 @@ describe("useStateRef", () => {
     document.body.appendChild(container);
   });
   afterEach(() => {
-    unmountComponentAtNode(container!);
-    container!.remove();
+    unmountComponentAtNode(container);
+    container?.remove();
     container = null;
   });
 

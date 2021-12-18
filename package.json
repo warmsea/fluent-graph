@@ -42,7 +42,8 @@
         {
           "varsIgnorePattern": "^_[0-9]*$"
         }
-      ]
+      ],
+      "@typescript-eslint/no-non-null-assertion": "warn"
     }
   },
   "name": "fluent-graph",
