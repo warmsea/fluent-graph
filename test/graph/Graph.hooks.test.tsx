@@ -10,9 +10,11 @@ describe("useStateRef", () => {
     document.body.appendChild(container);
   });
   afterEach(() => {
-    unmountComponentAtNode(container);
-    container?.remove();
-    container = null;
+    if (container) {
+      unmountComponentAtNode(container);
+      container.remove();
+      container = null;
+    }
   });
 
   const TestComponent: FC = () => {
