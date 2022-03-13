@@ -1,4 +1,4 @@
-import { isNumber } from "lodash";
+import isNumber from "lodash/isNumber";
 import React, { HTMLAttributes, ReactElement } from "react";
 import { css, mergeConfig } from "../../utils";
 import { INodeCommonConfig, INodeProps } from "./Node.types";

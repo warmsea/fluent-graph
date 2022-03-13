@@ -3,7 +3,7 @@ import React, { FC, useEffect, useMemo, useReducer, useRef } from "react";
 import { IGraphBehavior, IGraphConfig, IGraphNodeDatum, IGraphProps, IGraphPropsNode } from "./Graph.types";
 import { NodeMap } from "./NodeMap";
 import { LinkMatrix } from "./LinkMatrix";
-import { throttle } from "lodash";
+import throttle from "lodash/throttle";
 import { mergeConfig } from "../../utils";
 import { DEFAULT_CONFIG } from "./graph.config";
 import { NodeModel } from "./NodeModel";

@@ -1,4 +1,4 @@
-import { isNumber } from "lodash";
+import isNumber from "lodash/isNumber";
 import React, { CSSProperties, FC, HTMLAttributes } from "react";
 import { css, mergeConfig } from "../../utils";
 import { calcDraw, len, deg, center } from "./Link.helper";

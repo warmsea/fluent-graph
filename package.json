@@ -57,7 +57,7 @@
     "@types/lodash": "^4.14.168",
     "@types/react": "^17.0.2",
     "@types/react-dom": "^17.0.1",
-    "@warmsea/o": "^0.0.5",
+    "@warmsea/o": "^0.0.6",
     "babel-loader": "^8.2.2",
     "d3": "^6.6.0",
     "husky": "^5.1.3",

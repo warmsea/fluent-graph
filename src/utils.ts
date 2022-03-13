@@ -1,4 +1,5 @@
-import { identity, merge } from "lodash";
+import identity from "lodash/identity";
+import merge from "lodash/merge";
 
 export function css(...classNames: (string | undefined)[]): string {
   return classNames.filter(identity).join(" ");

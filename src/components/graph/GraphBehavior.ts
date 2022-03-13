@@ -1,4 +1,4 @@
-import { noop } from "lodash";
+import noop from "lodash/noop";
 import { IGraphBehavior } from "./Graph.types";
 import { Ref, Selection, Zoom } from "./Graph.types.internal";
 
