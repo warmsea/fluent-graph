@@ -1,8 +1,6 @@
 import React from "react";
 import { Meta, Story } from "@storybook/react";
 import { Graph } from "../../src";
-import { Args, BaseStory } from "@storybook/addons";
-import { StoryFnReactReturnType } from "@storybook/react/dist/client/preview/types";
 import { IGraphProps } from "../../src/components/graph/Graph.types";
 
 const meta: Meta = {
@@ -11,7 +9,7 @@ const meta: Meta = {
 
 export default meta;
 
-interface ITemplateArgs extends BaseStory<Args, StoryFnReactReturnType> {
+interface ITemplateArgs {
   graphProps: IGraphProps;
 }
 
