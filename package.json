@@ -14,6 +14,7 @@
     "build": "o build",
     "test": "o test",
     "lint": "o lint",
+    "size": "size-limit",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook"
   },
@@ -31,8 +32,15 @@
       }
     }
   },
+  "size-limit": [
+    {
+      "path": "dist/fluent-graph.js",
+      "limit": "15 KB"
+    }
+  ],
   "devDependencies": {
     "@babel/core": "^7.17.8",
+    "@size-limit/preset-small-lib": "^7.0.8",
     "@storybook/react": "^6.4.19",
     "@types/d3": "^7.1.0",
     "@types/jest": "^27.4.1",
@@ -44,6 +52,7 @@
     "jest": "^27.5.1",
     "react": ">=16",
     "react-dom": ">=16",
+    "size-limit": "^7.0.8",
     "ts-jest": "^27.1.3",
     "tslib": "^2.3.1",
     "typescript": "^4.6.2"
