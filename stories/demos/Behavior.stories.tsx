@@ -4,7 +4,7 @@ import { Graph } from "../../src";
 import { IGraphBehavior } from "../../src/components/graph/Graph.types";
 
 const meta: Meta = {
-  title: "Graph: Behavior",
+  title: "Demos/Behavior",
 };
 
 export default meta;

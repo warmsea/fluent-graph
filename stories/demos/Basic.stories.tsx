@@ -4,7 +4,7 @@ import { Graph } from "../../src";
 import { IGraphProps } from "../../src/components/graph/Graph.types";
 
 const meta: Meta = {
-  title: "Graph",
+  title: "Demos/Basic",
 };
 
 export default meta;
@@ -17,51 +17,19 @@ const Template: Story<ITemplateArgs> = (args: ITemplateArgs) => <Graph {...args.
 
 // By passing using the Args format for exported stories, you can control the props for a component for reuse in a test
 // https://storybook.js.org/docs/react/workflows/unit-testing
-export const Basic: Story<ITemplateArgs> = Template.bind({});
-Basic.args = {
+export const Simple: Story<ITemplateArgs> = Template.bind({});
+Simple.args = {
   graphProps: {
     id: "graph",
     nodes: [
       { id: "Fluent Graph" },
       { id: "React" },
       { id: "D3" },
-      { id: "D4" },
-      { id: "D5" },
-      { id: "D6" },
-      { id: "D7" },
-      { id: "D8" },
-      { id: "D9" },
-      { id: "D10" },
-      { id: "D11" },
-      { id: "D12" },
-      { id: "D13" },
-      { id: "D14" },
-      { id: "D15" },
     ],
     links: [
       { source: "Fluent Graph", target: "React" },
       { source: "Fluent Graph", target: "D3" },
-      { source: "Fluent Graph", target: "D4" },
-      { source: "Fluent Graph", target: "D5" },
-      { source: "Fluent Graph", target: "D6" },
-      { source: "Fluent Graph", target: "D7" },
-      { source: "Fluent Graph", target: "D8" },
-      { source: "React", target: "D15" },
-      { source: "D3", target: "D14" },
-      { source: "D4", target: "D13" },
-      { source: "D5", target: "D12" },
-      { source: "D6", target: "D11" },
-      { source: "D7", target: "D10" },
-      { source: "D8", target: "D9" },
     ],
-    config: {
-      sim: {
-        gravity: -150,
-        linkLength: 120,
-        linkStrength: 2,
-        paddingRadius: 30,
-      },
-    },
   },
 };
 

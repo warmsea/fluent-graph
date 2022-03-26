@@ -1,17 +1,15 @@
 import React, { FC } from "react";
 import { Meta, Story } from "@storybook/react";
-import { Args, BaseStory } from "@storybook/addons";
-import { StoryFnReactReturnType } from "@storybook/react/dist/client/preview/types";
-import { Link, Node } from "../../src";
-import { ILinkProps } from "../../src/components/link/Link.types";
+import { Link, Node } from "../../../src";
+import { ILinkProps } from "../../../src/components/link/Link.types";
 
 const meta: Meta = {
-  title: "Link: Styling",
+  title: "Subcomponents/Link/Styling",
 };
 
 export default meta;
 
-interface ITemplateArgs extends BaseStory<Args, StoryFnReactReturnType> {
+interface ITemplateArgs {
   linkProps: ILinkProps;
 }
 

@@ -5,7 +5,7 @@ import { IGraphProps, IGraphPropsNode } from "../../src/components/graph/Graph.t
 import { ILinkType } from "../../src/components/link/Link.types";
 
 const meta: Meta = {
-  title: "Complex",
+  title: "Demos/Complex",
 };
 export default meta;
 

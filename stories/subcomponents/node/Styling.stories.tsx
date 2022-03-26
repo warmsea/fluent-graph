@@ -1,17 +1,15 @@
 import React from "react";
 import { Meta, Story } from "@storybook/react";
-import { Node, NODE_CLASS_NODE } from "../../src/components/node/Node";
-import { INodeProps } from "../../src/components/node/Node.types";
-import { Args, BaseStory } from "@storybook/addons";
-import { StoryFnReactReturnType } from "@storybook/react/dist/client/preview/types";
+import { Node, NODE_CLASS_NODE } from "../../../src/components/node/Node";
+import { INodeProps } from "../../../src/components/node/Node.types";
 
 const meta: Meta = {
-  title: "Node: Styling",
+  title: "Subcomponents/Node/Styling",
 };
 
 export default meta;
 
-interface ITemplateArgs extends BaseStory<Args, StoryFnReactReturnType> {
+interface ITemplateArgs {
   nodeProps: INodeProps;
 }
 

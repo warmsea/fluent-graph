@@ -4,7 +4,7 @@ import { Graph } from "../../src";
 import { INodeProps } from "../../src/components/node/Node.types";
 
 const meta: Meta = {
-  title: "Graph: Editing",
+  title: "Demos/Updating",
 };
 
 export default meta;
