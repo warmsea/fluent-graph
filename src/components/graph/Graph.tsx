@@ -27,7 +27,7 @@ function getTransform(width: number, height: number, zoom: IZoomState): string {
   return `translate(${x}px,${y}px) scale(${zoom.k})`;
 }
 
-function getGraphBehavior(ref: Ref<IGraphBehavior> | undefined): GraphBehavior | undefined {
+function getGraphBehavior(ref: Ref<IGraphBehavior | undefined> | undefined): GraphBehavior | undefined {
   if (ref) {
     if (!ref.current) {
       ref.current = new GraphBehavior();

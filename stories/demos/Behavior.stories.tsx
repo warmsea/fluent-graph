@@ -10,7 +10,7 @@ const meta: Meta = {
 export default meta;
 
 export const Zoom: FC = () => {
-  const graphRef: MutableRefObject<IGraphBehavior> = useRef();
+  const graphRef: MutableRefObject<IGraphBehavior | undefined> = useRef<IGraphBehavior>();
   return (
     <div>
       <button onClick={() => graphRef.current?.zoomBy(Math.SQRT2)}>Zoom in</button>

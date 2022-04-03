@@ -2,6 +2,7 @@ import React, { FC, useState } from "react";
 import { Meta } from "@storybook/react";
 import { Graph } from "../../src";
 import { INodeProps } from "../../src/components/node/Node.types";
+import { IGraphPropsLink, IGraphPropsNode } from "../../src/components/graph/Graph.types";
 
 const meta: Meta = {
   title: "Demos/Updating",
@@ -10,12 +11,12 @@ const meta: Meta = {
 export default meta;
 
 export const AddingAndDeleting: FC = () => {
-  const [nodes, setNodes] = useState([{ id: "Root", label: "Root" }]);
-  const [links, setLinks] = useState([]);
+  const [nodes, setNodes] = useState<IGraphPropsNode[]>([{ id: "Root", label: "Root" }]);
+  const [links, setLinks] = useState<IGraphPropsLink[]>([]);
 
-  const onClickNode = (props: INodeProps) => {
+  const onClickNode = (nodeProps: INodeProps) => {
     const nodesCopy = nodes.map((node) => {
-      if (node.id === props.id) {
+      if (node.id === nodeProps.id) {
         return {
           id: node.id,
           label: node.label,
@@ -37,17 +38,17 @@ export const AddingAndDeleting: FC = () => {
       label: newId,
     };
     setNodes([...nodesCopy, newNode]);
-    setLinks([...links, { source: props.id, target: newNode.id }]);
+    setLinks([...links, { source: nodeProps.id, target: newNode.id }]);
   };
 
-  const onContextMenu = (props: INodeProps, event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+  const onContextMenu = (nodeProps: INodeProps, event: React.MouseEvent<HTMLElement, MouseEvent>) => {
     event.preventDefault();
-    if (props.id === "Root") {
+    if (nodeProps.id === "Root") {
       return;
     }
 
-    setNodes(nodes.filter((node) => node.id !== props.id));
-    setLinks(links.filter((link) => link.source !== props.id && link.target !== props.id));
+    setNodes(nodes.filter((node) => node.id !== nodeProps.id));
+    setLinks(links.filter((link) => link.source !== nodeProps.id && link.target !== nodeProps.id));
   };
 
   return (

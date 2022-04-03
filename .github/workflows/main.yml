@@ -2,31 +2,32 @@ name: CI
 on: [push]
 jobs:
   build:
-    name: Build, lint, and test on Node ${{ matrix.node }} and ${{ matrix.os }}
+    name: Lint, build, and test on Node ${{ matrix.node }} and ${{ matrix.os }}
 
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        node: ['12.x', '14.x']
-        os: [windows-latest, macOS-latest]
+        node: ["14.x", "16.x"]
+        os: [macOS-latest, windows-latest]
 
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
 
       - name: Use Node ${{ matrix.node }}
-        uses: actions/setup-node@v1
+        uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node }}
+          cache: 'yarn'
 
-      - name: Install deps and build (with cache)
-        uses: bahmutov/npm-install@v1
+      - name: Install deps
+        run: yarn install
 
       - name: Lint
         run: yarn lint
 
-      - name: Test
-        run: yarn test --ci --coverage --maxWorkers=2
-
       - name: Build
         run: yarn build
+
+      - name: Test
+        run: yarn test

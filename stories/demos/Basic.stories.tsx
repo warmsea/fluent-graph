@@ -21,11 +21,7 @@ export const Simple: Story<ITemplateArgs> = Template.bind({});
 Simple.args = {
   graphProps: {
     id: "graph",
-    nodes: [
-      { id: "Fluent Graph" },
-      { id: "React" },
-      { id: "D3" },
-    ],
+    nodes: [{ id: "Fluent Graph" }, { id: "React" }, { id: "D3" }],
     links: [
       { source: "Fluent Graph", target: "React" },
       { source: "Fluent Graph", target: "D3" },

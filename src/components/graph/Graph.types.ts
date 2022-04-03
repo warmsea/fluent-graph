@@ -44,7 +44,7 @@ export interface IGraphProps {
   /**
    * A reference to control graph behavior like zooming from outside.
    */
-  behaviorRef?: MutableRefObject<IGraphBehavior>;
+  behaviorRef?: MutableRefObject<IGraphBehavior | undefined>;
 }
 
 export interface IGraphPropsNode extends INodeProps {
