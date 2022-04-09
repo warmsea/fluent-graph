@@ -1,6 +1,7 @@
+import { classNames } from "@warmsea/h";
 import isNumber from "lodash/isNumber";
 import React, { CSSProperties, FC, HTMLAttributes } from "react";
-import { css, mergeConfig } from "../../utils";
+import { mergeConfig } from "../../mergeConfig";
 import { calcDraw, len, deg, center } from "./Link.helper";
 import { ILinkCommonConfig, ILinkProps } from "./Link.types";
 
@@ -43,7 +44,7 @@ export const Link: FC<ILinkProps> = (props: ILinkProps) => {
   const lineProps: HTMLAttributes<HTMLDivElement> = {
     ...eventHandlers,
     ...props.lineProps,
-    className: css(LINK_CLASS_LINE, props.lineProps?.className),
+    className: classNames(LINK_CLASS_LINE, props.lineProps?.className),
     style: {
       position: "absolute",
       width: lineLength,

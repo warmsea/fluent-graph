@@ -2937,10 +2937,17 @@
   resolved "https://registry.yarnpkg.com/@warmsea/cl/-/cl-0.6.1.tgz#5805a22872583e888b8baa3e202201d7de79e10d"
   integrity sha512-fZek9FbL2uocK/5q1zciH45RcU/Y+0ETYXCBOU5UNdkjCRCIr0DUWk0h3BbunrfTIVJH/ja/jOiLRtmNRJ19Kw==
 
-"@warmsea/o@^0.0.9":
-  version "0.0.9"
-  resolved "https://registry.yarnpkg.com/@warmsea/o/-/o-0.0.9.tgz#92b43815ba343b2e269ccf32ed78e6db7df5b590"
-  integrity sha512-VahYOlzodIpW/GnTZXZRPMtiKxWzBcGCfQTDWy6qJeQ8OLh65CK2i6TbRVrWT5xbgFZPH5mZPyaRsXs4OEYBAQ==
+"@warmsea/h@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/@warmsea/h/-/h-0.1.1.tgz#de3a3bb9c907f565b1c37a0cfabcb7013edca72e"
+  integrity sha512-+s/sSt0qYm3LqUqKby4VjHJRv13/y9PBNc9+obb1vsIEojr9A0Z3Cgt4baEiCbaVMvxEMvGe2X6Ad/0HlvHarg==
+  dependencies:
+    lodash "^4.17.21"
+
+"@warmsea/o@^0.0.10":
+  version "0.0.10"
+  resolved "https://registry.yarnpkg.com/@warmsea/o/-/o-0.0.10.tgz#b03e89832ce5986a9c586cfbbad071b2fdd5038a"
+  integrity sha512-YHBKzC41BMyxJLpokemY+bcVLwUTFYWCZBLVgrBAhdP1s8BbKnNkMGlcSxaW1UtKPR/9Qi7Z8U//+3KxApJXCw==
   dependencies:
     "@teamsupercell/typings-for-css-modules-loader" "^2.5.1"
     "@typescript-eslint/eslint-plugin" "^5.14.0"

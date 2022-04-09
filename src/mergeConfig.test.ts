@@ -1,13 +1,4 @@
-import { css, mergeConfig } from "../src/utils";
-
-describe("css", () => {
-  it("should join css class names with spaces", () => {
-    expect(css()).toEqual("");
-    expect(css("a")).toEqual("a");
-    expect(css("a", "b")).toEqual("a b");
-    expect(css("a", "b", "c")).toEqual("a b c");
-  });
-});
+import { mergeConfig } from "../src/mergeConfig";
 
 describe("mergeConfig", () => {
   it("should deep merge config", () => {

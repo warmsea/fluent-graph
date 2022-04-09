@@ -1,6 +1,6 @@
 import React, { FC, useEffect } from "react";
 import { render, unmountComponentAtNode } from "react-dom";
-import { useStateRef } from "../../src/components/graph/Graph.hooks";
+import { useStateRef } from "./Graph.hooks";
 import { act } from "react-dom/test-utils";
 
 describe("useStateRef", () => {
@@ -18,7 +18,7 @@ describe("useStateRef", () => {
   });
 
   const TestComponent: FC = () => {
-    var [count, setCount, countRef] = useStateRef(0);
+    const [count, setCount, countRef] = useStateRef(0);
     useEffect(() => {
       const button = document.querySelector("[data-testid=increment]");
       (button as HTMLElement).onclick = () => setCount(countRef.current + 1);

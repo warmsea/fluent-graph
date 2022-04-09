@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react";
-import { mergeConfig } from "../../utils";
+import { mergeConfig } from "../../mergeConfig";
 import { Link } from "../link/Link";
 import { ILinkCommonConfig, ILinkEnd } from "../link/Link.types";
 import { IGraphLinkDatum, IGraphPropsLink } from "./Graph.types";

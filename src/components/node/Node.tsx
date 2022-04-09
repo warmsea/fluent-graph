@@ -1,6 +1,7 @@
+import { classNames } from "@warmsea/h";
 import isNumber from "lodash/isNumber";
 import React, { HTMLAttributes, ReactElement } from "react";
-import { css, mergeConfig } from "../../utils";
+import { mergeConfig } from "../../mergeConfig";
 import { INodeCommonConfig, INodeProps } from "./Node.types";
 
 export const NODE_CLASS_ROOT = "fg-node-root";
@@ -68,7 +69,7 @@ export const Node = (props: INodeProps): ReactElement => {
   props = mergeConfig(DEFAULT_NODE_PROPS, props);
 
   return (
-    <div id={props.id} className={css(NODE_CLASS_ROOT, props.className)} style={props.style}>
+    <div id={props.id} className={classNames(NODE_CLASS_ROOT, props.className)} style={props.style}>
       {(props.onRenderNode ?? defaultOnRenderNode)(props)}
       {(props.onRenderLabel ?? defaultOnRenderLabel)(props)}
     </div>

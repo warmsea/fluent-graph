@@ -4,7 +4,7 @@ import { IGraphBehavior, IGraphConfig, IGraphNodeDatum, IGraphProps, IGraphProps
 import { NodeMap } from "./NodeMap";
 import { LinkMatrix } from "./LinkMatrix";
 import throttle from "lodash/throttle";
-import { mergeConfig } from "../../utils";
+import { mergeConfig } from "../../mergeConfig";
 import { DEFAULT_CONFIG } from "./graph.config";
 import { NodeModel } from "./NodeModel";
 import { LinkModel, getLinkNodeId } from "./LinkModel";
