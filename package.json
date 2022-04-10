@@ -43,6 +43,7 @@
   "devDependencies": {
     "@babel/core": "^7.17.8",
     "@size-limit/preset-small-lib": "^7.0.8",
+    "@storybook/addon-a11y": "^6.4.19",
     "@storybook/addon-essentials": "^6.4.19",
     "@storybook/builder-webpack5": "^6.4.19",
     "@storybook/manager-webpack5": "^6.4.19",

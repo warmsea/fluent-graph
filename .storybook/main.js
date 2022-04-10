@@ -1,6 +1,6 @@
 module.exports = {
   stories: ["../stories/**/*.stories.@(ts|tsx|js|jsx)"],
-  addons: ["@storybook/addon-essentials"],
+  addons: ["@storybook/addon-essentials", "@storybook/addon-a11y"],
   typescript: {
     check: true, // type-check stories during Storybook build
   },
