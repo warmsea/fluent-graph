@@ -1,36 +1,30 @@
 import { classNames } from "@warmsea/h";
-import isNumber from "lodash/isNumber";
 import React, { HTMLAttributes, ReactElement } from "react";
-import { mergeConfig } from "../../mergeConfig";
-import { INodeCommonConfig, INodeProps } from "./Node.types";
+import { INodeProps } from "./Node.types";
+import styles from "./Node.scss";
 
+/**
+ * @deprecated
+ */
 export const NODE_CLASS_ROOT = "fg-node-root";
+/**
+ * @deprecated
+ */
 export const NODE_CLASS_NODE = "fg-node-node";
+/**
+ * @deprecated
+ */
 export const NODE_CLASS_LABEL = "fg-node-label";
-export const DEFAULT_NODE_PROPS: INodeCommonConfig = {
-  size: 20,
-  style: {
-    zIndex: 3,
-    // Since node and label used transform to calculate their positions.
-    // The root node container will have offset, set the size to 0 to avoid the offset of root node container.
-    width: 0,
-    height: 0,
-  },
-  nodeStyle: {
-    boxSizing: "border-box",
-    backgroundColor: "lightgray",
-    transform: "translate(-50%, -50%)",
-  },
-};
+
+export const DEFAULT_NODE_SIZE = 20;
 
 function defaultOnRenderNode(props: INodeProps): ReactElement {
-  const size: number | undefined = props.size ?? DEFAULT_NODE_PROPS.size;
+  const size: number | undefined = props.size ?? DEFAULT_NODE_SIZE;
   const nodeProps: HTMLAttributes<HTMLDivElement> = {
-    className: NODE_CLASS_NODE,
     style: {
       width: size,
       height: size,
-      borderRadius: isNumber(size) ? size / 2 : 0,
+      borderRadius: size / 2,
       ...props.nodeStyle,
     },
 
@@ -43,7 +37,7 @@ function defaultOnRenderNode(props: INodeProps): ReactElement {
     onMouseOut: (event) => props.onMouseOutNode?.(props, event),
   };
 
-  return <div className={NODE_CLASS_NODE} {...nodeProps} />;
+  return <div className={classNames(NODE_CLASS_NODE, styles.node)} {...nodeProps} />;
 }
 
 function defaultOnRenderLabel(props: INodeProps): ReactElement {
@@ -51,9 +45,9 @@ function defaultOnRenderLabel(props: INodeProps): ReactElement {
   if (label) {
     return (
       <div
+        className={styles.label}
         style={{
           transform: `translate(-50%, ${props.labelOffset ?? 0}px) scale(${props.labelZoom ?? 1})`,
-          width: "fit-content",
           ...props.labelStyle,
         }}
       >
@@ -66,10 +60,12 @@ function defaultOnRenderLabel(props: INodeProps): ReactElement {
 }
 
 export const Node = (props: INodeProps): ReactElement => {
-  props = mergeConfig(DEFAULT_NODE_PROPS, props);
-
   return (
-    <div id={props.id} className={classNames(NODE_CLASS_ROOT, props.className)} style={props.style}>
+    <div
+      id={props.id}
+      className={classNames(NODE_CLASS_ROOT, styles.root, props.className)}
+      style={props.style}
+    >
       {(props.onRenderNode ?? defaultOnRenderNode)(props)}
       {(props.onRenderLabel ?? defaultOnRenderLabel)(props)}
     </div>

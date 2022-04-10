@@ -10,7 +10,7 @@ import { NodeModel } from "./NodeModel";
 import { LinkModel, getLinkNodeId } from "./LinkModel";
 import { LinkMap } from "./LinkMap";
 import { INodeCommonConfig } from "../node/Node.types";
-import { DEFAULT_NODE_PROPS, NODE_CLASS_NODE, NODE_CLASS_ROOT } from "../node/Node";
+import { NODE_CLASS_NODE, NODE_CLASS_ROOT } from "../node/Node";
 import { ILinkCommonConfig } from "../link/Link.types";
 import { DEFAULT_LINK_PROPS } from "../link/Link";
 import { Drag, IZoomState, Ref, Selection, Simulation, Zoom } from "./Graph.types.internal";
@@ -76,7 +76,7 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   const graphContainerId = `fg-container-${graphId}`;
   const graphConfig: IGraphConfig = useMemo(() => mergeConfig(DEFAULT_CONFIG, props.config), [props.config]);
   const nodeConfig: INodeCommonConfig = useMemo(() => {
-    return mergeConfig(DEFAULT_NODE_PROPS, props.nodeConfig);
+    return mergeConfig({}, props.nodeConfig);
   }, [props.nodeConfig]);
   const linkConfig: ILinkCommonConfig = useMemo(() => {
     return mergeConfig(DEFAULT_LINK_PROPS, props.linkConfig);

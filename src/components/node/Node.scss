@@ -1,0 +1,18 @@
+.root {
+  z-index: 3;
+  // We used transform to calculate the position of nodes.
+  // The root node container will have offset, set the size to 0 to avoid the offset of root node container.
+  width: 0;
+  height: 0;
+}
+.node {
+  box-sizing: border-box;
+  background-color: lightgray;
+  transform: translate(-50%, -50%);
+}
+.label {
+  width: max-content;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 14px;
+  cursor: default;
+}

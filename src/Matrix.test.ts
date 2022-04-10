@@ -1,4 +1,4 @@
-import { Matrix } from "../src/Matrix";
+import { Matrix } from "./Matrix";
 
 describe("Matrix", () => {
   describe("get", () => {
