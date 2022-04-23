@@ -10,7 +10,6 @@ import { NodeModel } from "./NodeModel";
 import { LinkModel, getLinkNodeId } from "./LinkModel";
 import { LinkMap } from "./LinkMap";
 import { INodeCommonConfig } from "../node/Node.types";
-import { NODE_CLASS_NODE, NODE_CLASS_ROOT } from "../node/Node";
 import { ILinkCommonConfig } from "../link/Link.types";
 import { DEFAULT_LINK_PROPS } from "../link/Link";
 import { Drag, IZoomState, Ref, Selection, Simulation, Zoom } from "./Graph.types.internal";
@@ -149,8 +148,8 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
     dragBehavior.on("start", (event) => {
       const eventTarget: Element = event.sourceEvent.target;
       // Clicking node should start dragging. Clicking node label should not.
-      if (eventTarget.closest(`.${NODE_CLASS_NODE}`)) {
-        const nodeRoot = eventTarget.closest(`.${NODE_CLASS_ROOT}`);
+      if (eventTarget.closest(`[data-fg-element=node-draggable-zone]`)) {
+        const nodeRoot = eventTarget.closest(`[data-fg-element=node-root]`);
         if (nodeRoot) {
           const draggingNode = nodeMapRef.current.get(nodeRoot.id);
           if (
@@ -180,7 +179,7 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
       draggingNodeRef.current = undefined;
       simulationRef.current?.alphaTarget(0).restart();
     });
-    const dragSelection: Selection = d3.selectAll(`.${NODE_CLASS_ROOT}`);
+    const dragSelection: Selection = d3.selectAll(`[data-fg-element=node-root]`);
     dragSelection.call(dragBehavior);
   }
 

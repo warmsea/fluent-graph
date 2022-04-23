@@ -1,6 +1,6 @@
 import React from "react";
 import { Meta, Story } from "@storybook/react";
-import { Node, NODE_CLASS_NODE } from "../../../src/components/node/Node";
+import { Node } from "../../../src/components/node/Node";
 import { INodeProps } from "../../../src/components/node/Node.types";
 
 const meta: Meta = {
@@ -146,7 +146,7 @@ CustomizeNode.args = {
     labelOffset: 15,
     onRenderNode: () => {
       return (
-        <div className={NODE_CLASS_NODE}>
+        <>
           <div
             style={{
               position: "absolute",
@@ -170,7 +170,7 @@ CustomizeNode.args = {
               borderRadius: 15,
             }}
           />
-        </div>
+        </>
       );
     },
   },
@@ -182,7 +182,7 @@ CustomizeLabel.args = {
     id: "Fluent Graph",
     onRenderLabel: (props: INodeProps) => {
       return (
-        <div style={{ ...props.labelStyle, transform: "translate(-50%, 0)" }}>
+        <div style={{ ...props.labelStyle, transform: "translate(-50%, 0)", width: "max-content" }}>
           Hello, <strong>Fluent Graph</strong>!
         </div>
       );

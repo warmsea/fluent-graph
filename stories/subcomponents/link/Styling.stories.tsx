@@ -1,7 +1,8 @@
 import React, { FC } from "react";
 import { Meta, Story } from "@storybook/react";
-import { Link, Node } from "../../../src";
+import { Link } from "../../../src/components/link/Link";
 import { ILinkProps } from "../../../src/components/link/Link.types";
+import { Node } from "../../../src/components/node/Node";
 
 const meta: Meta = {
   title: "Subcomponents/Link/Styling",
