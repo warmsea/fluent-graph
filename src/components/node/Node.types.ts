@@ -17,10 +17,12 @@ export interface INodeCommonConfig extends INodeEventHandlers {
   className?: string;
   style?: CSSProperties;
 
+  nodeClassName?: string;
   nodeStyle?: CSSProperties;
   nodeFocusable?: boolean;
   nodeAriaLabel?: string;
 
+  labelClassName?: string;
   labelStyle?: CSSProperties;
   labelOffset?: number;
   labelZoom?: number;

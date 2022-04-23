@@ -28,7 +28,13 @@ function defaultOnRenderNode(props: INodeProps): ReactElement {
     onMouseOut: (event) => props.onMouseOutNode?.(props, event),
   };
 
-  return <div className={classNames(styles.node)} {...NODE_DRAGGABLE_ZONE_FLAG} {...nodeProps} />;
+  return (
+    <div
+      className={classNames(styles.node, props.nodeClassName)}
+      {...NODE_DRAGGABLE_ZONE_FLAG}
+      {...nodeProps}
+    />
+  );
 }
 
 function defaultOnRenderLabel(props: INodeProps): ReactElement {
@@ -36,7 +42,7 @@ function defaultOnRenderLabel(props: INodeProps): ReactElement {
   if (label) {
     return (
       <div
-        className={styles.label}
+        className={classNames(styles.label, props.labelClassName)}
         style={{
           transform: `translate(-50%, ${props.labelOffset ?? 0}px) scale(${props.labelZoom ?? 1})`,
           ...props.labelStyle,
