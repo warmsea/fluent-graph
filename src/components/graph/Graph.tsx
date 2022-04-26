@@ -9,9 +9,6 @@ import { DEFAULT_CONFIG } from "./graph.config";
 import { NodeModel } from "./NodeModel";
 import { LinkModel, getLinkNodeId } from "./LinkModel";
 import { LinkMap } from "./LinkMap";
-import { INodeCommonConfig } from "../node/Node.types";
-import { ILinkCommonConfig } from "../link/Link.types";
-import { DEFAULT_LINK_PROPS } from "../link/Link";
 import { Drag, IZoomState, Ref, Selection, Simulation, Zoom } from "./Graph.types.internal";
 import { GraphBehavior } from "./GraphBehavior";
 import { useForceUpdate, useStateRef } from "./Graph.hooks";
@@ -74,17 +71,13 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   const graphId = props.id.replace(/ /g, "_");
   const graphContainerId = `fg-container-${graphId}`;
   const graphConfig: IGraphConfig = useMemo(() => mergeConfig(DEFAULT_CONFIG, props.config), [props.config]);
-  const nodeConfig: INodeCommonConfig = useMemo(() => {
-    return mergeConfig({}, props.nodeConfig);
-  }, [props.nodeConfig]);
-  const linkConfig: ILinkCommonConfig = useMemo(() => {
-    return mergeConfig(DEFAULT_LINK_PROPS, props.linkConfig);
-  }, [props.linkConfig]);
   const { width, height } = graphConfig;
-
   const [topology, increaseTopologyVersion] = useReducer((v) => v + 1, 0);
   const [zoomState, setZoomState, zoomStateRef] = useStateRef(INITIAL_ZOOM, DISPLAY_DEBOUNCE_MS);
   const forceUpdate = useForceUpdate(DISPLAY_DEBOUNCE_MS);
+
+  const nodeConfig = props.nodeConfig ?? {};
+  const linkConfig = props.linkConfig ?? {};
 
   const nodeMapRef: Ref<NodeMap> = useRef(new NodeMap(zoomStateRef));
   const linkMapRef: Ref<LinkMap> = useRef(new LinkMap());

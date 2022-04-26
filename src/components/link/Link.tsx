@@ -1,29 +1,14 @@
 import { classNames } from "@warmsea/h";
-import isNumber from "lodash/isNumber";
 import React, { CSSProperties, FC, HTMLAttributes } from "react";
-import { mergeConfig } from "../../mergeConfig";
 import { calcDraw, len, deg, center } from "./Link.helper";
-import { ILinkCommonConfig, ILinkProps } from "./Link.types";
+import { ILinkProps } from "./Link.types";
+import styles from "./Link.scss";
 
-export const LINK_CLASS_ROOT = "fg-link-root";
-export const LINK_CLASS_LINE = "fg-link-line";
-export const DEFAULT_LINK_PROPS: ILinkCommonConfig = {
-  size: 2,
-  color: "gray",
-  lineType: "solid",
-  style: {
-    position: "absolute",
-    zIndex: 1,
-  },
-  lineStyle: {
-    position: "absolute",
-    background: "transparent",
-  },
-};
 export const CLICK_HELPER_THRESHOLD = 12;
 
 export const Link: FC<ILinkProps> = (props: ILinkProps) => {
-  props = mergeConfig(DEFAULT_LINK_PROPS, props);
+  const size = props.size ?? 2;
+
   const [start, end] = calcDraw(props.start, props.end);
   if (isNaN(start.x) || isNaN(start.y) || isNaN(end.x) || isNaN(end.y)) {
     return <></>;
@@ -36,41 +21,35 @@ export const Link: FC<ILinkProps> = (props: ILinkProps) => {
     onKeyDown: (event) => props.onKeyDownLink?.(event, props),
   };
 
-  const needClickHelper: boolean =
-    !!props.onClickLink && isNumber(props.size) && props.size < CLICK_HELPER_THRESHOLD;
+  const needClickHelper: boolean = !!props.onClickLink && size < CLICK_HELPER_THRESHOLD;
 
-  const lineCenterPos = center(start, end);
+  const lineCenter = center(start, end);
   const lineLength = len(start, end);
   const lineProps: HTMLAttributes<HTMLDivElement> = {
+    className: classNames(styles.line, props.lineClassName),
+    style: {
+      width: lineLength,
+      height: size,
+      top: lineCenter.y,
+      left: lineCenter.x,
+      transform: `translate(-50%, -50%) rotate(${deg(start, end)}deg)`,
+      ...(!!props.onClickLink && { cursor: "pointer" }),
+      ...(needClickHelper && { height: CLICK_HELPER_THRESHOLD }),
+    },
     ...eventHandlers,
     ...props.lineProps,
-    className: classNames(LINK_CLASS_LINE, props.lineProps?.className),
-    style: {
-      position: "absolute",
-      width: lineLength,
-      height: props.size,
-      top: lineCenterPos.y,
-      left: lineCenterPos.x,
-      transform: `translate(-50%, -50%) rotate(${deg(start, end)}deg)`,
-      display: "flex",
-      alignItems: "center",
-      ...(needClickHelper && {
-        cursor: "pointer",
-        height: CLICK_HELPER_THRESHOLD,
-      }),
-    },
   };
 
   const lineInnerStyles: CSSProperties = {
-    borderBottomColor: props.color,
-    borderBottomStyle: props.lineType,
-    borderBottomWidth: props.size,
+    borderBottomColor: props.color ?? "gray",
+    borderBottomStyle: props.lineType ?? "solid",
+    borderBottomWidth: size,
     width: "100%",
     ...props.lineStyle,
   };
 
   return (
-    <div className={LINK_CLASS_ROOT} style={props.style}>
+    <div className={styles.root} style={props.style}>
       <div {...lineProps}>
         <div style={lineInnerStyles}></div>
       </div>

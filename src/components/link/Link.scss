@@ -1,0 +1,11 @@
+.root {
+  position: absolute;
+  z-index: 1;
+}
+
+.line {
+  position: absolute;
+  background-color: transparent;
+  display: flex;
+  align-items: center;
+}
