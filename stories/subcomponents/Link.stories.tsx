@@ -11,7 +11,7 @@ export default meta;
 
 export const Basic: Story = (args) => (
   <Link
-    id="Fluent Graph Link"
+    id="link"
     start={{ x: 50, y: 50 }}
     end={{ x: 200, y: 100 }}
     size={args.size}
@@ -66,7 +66,7 @@ export const Offsets: Story = (args) => (
       }}
     />
     <Link
-      id="Link with offset"
+      id="link"
       color={"red"}
       start={{ x: 50, y: 50, offset: args.startOffset }}
       end={{ x: 200, y: 100, offset: args.endOffset }}

@@ -129,7 +129,7 @@ export const CustomizedNode = () => (
       left: 100,
       top: 100,
     }}
-    id="Fluent Graph"
+    id="node"
     label="Fluent Graph"
     labelOffset={15}
     onRenderNode={() => (
@@ -169,7 +169,7 @@ export const CustomizedLabel = () => (
       left: 100,
       top: 100,
     }}
-    id="Fluent Graph"
+    id="node"
     onRenderLabel={(props: INodeProps) => {
       return (
         <div
@@ -186,7 +186,7 @@ export const CustomizedLabel = () => (
   />
 );
 
-export const StyledNode = () => {
+export const StyledWithClassNames = () => {
   const classNames = createUseStyles({
     node: {
       backgroundColor: "none",
@@ -206,10 +206,10 @@ export const StyledNode = () => {
         left: 100,
         top: 100,
       }}
-      id="Graph"
+      id="node"
+      label="Graph"
       nodeClassName={classNames.node}
       labelClassName={classNames.label}
-      label="Graph"
       size={50}
       labelOffset={-57}
     />
