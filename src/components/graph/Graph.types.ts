@@ -37,6 +37,7 @@ export interface IGraphProps {
   id: string;
   nodes: IGraphPropsNode[];
   links: IGraphPropsLink[];
+  className?: string;
   nodeConfig?: INodeCommonConfig;
   linkConfig?: ILinkCommonConfig;
   config?: IGraphPropsConfig;

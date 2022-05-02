@@ -250,7 +250,7 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   );
 
   return (
-    <div id={graphContainerId} style={{ overflow: "hidden", width, height }}>
+    <div id={graphContainerId} className={props.className} style={{ overflow: "hidden", width, height }}>
       <div
         style={{
           transformOrigin: "0 0",
