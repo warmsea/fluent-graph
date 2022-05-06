@@ -68,3 +68,15 @@ Loop.args = {
     ],
   },
 };
+
+export const FixedRootNode: Story = () => {
+  const graphProps: IGraphProps = {
+    id: "graph",
+    nodes: [{ id: "Fluent Graph", force: { fx: 0, fy: 0 } }, { id: "React" }, { id: "D3" }],
+    links: [
+      { source: "Fluent Graph", target: "React" },
+      { source: "Fluent Graph", target: "D3" },
+    ],
+  };
+  return <Graph {...graphProps} />;
+};

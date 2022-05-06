@@ -3,6 +3,7 @@ import React, { FC, useEffect, useMemo, useReducer, useRef } from "react";
 import { IGraphBehavior, IGraphConfig, IGraphNodeDatum, IGraphProps, IGraphPropsNode } from "./Graph.types";
 import { NodeMap } from "./NodeMap";
 import { LinkMatrix } from "./LinkMatrix";
+import isNumber from "lodash/isNumber";
 import throttle from "lodash/throttle";
 import { mergeConfig } from "../../mergeConfig";
 import { DEFAULT_CONFIG } from "./graph.config";
@@ -145,14 +146,10 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
         const nodeRoot = eventTarget.closest(`[data-fg-element=node-root]`);
         if (nodeRoot) {
           const draggingNode = nodeMapRef.current.get(nodeRoot.id);
-          if (
-            draggingNode &&
-            typeof draggingNode.force?.fx !== "number" &&
-            typeof draggingNode.force?.fy !== "number"
-          ) {
+          if (draggingNode && !isNumber(draggingNode.force?.fx) && !isNumber(draggingNode.force?.fy)) {
             draggingNodeRef.current = draggingNode;
+            simulationRef.current?.alphaTarget(0.3).restart();
           }
-          simulationRef.current?.alphaTarget(0.3).restart();
         }
       }
     });
@@ -168,9 +165,9 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
       const force = draggingNodeRef.current?.force;
       if (force) {
         force.fx = force.fy = undefined;
+        draggingNodeRef.current = undefined;
+        simulationRef.current?.alphaTarget(0).restart();
       }
-      draggingNodeRef.current = undefined;
-      simulationRef.current?.alphaTarget(0).restart();
     });
     const dragSelection: Selection = d3.selectAll(`[data-fg-element=node-root]`);
     dragSelection.call(dragBehavior);
