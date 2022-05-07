@@ -41,7 +41,7 @@ export const AddingAndDeleting: FC = () => {
     setLinks([...links, { source: nodeProps.id, target: newNode.id }]);
   };
 
-  const onContextMenu = (nodeProps: INodeProps, event: React.MouseEvent<HTMLElement, MouseEvent>) => {
+  const onRightClickNode = (nodeProps: INodeProps, event: React.MouseEvent<HTMLElement, MouseEvent>) => {
     event.preventDefault();
     if (nodeProps.id === "Root") {
       return;
@@ -64,8 +64,8 @@ export const AddingAndDeleting: FC = () => {
           nodes={nodes}
           links={links}
           nodeConfig={{
-            onClickNode: onClickNode,
-            onContextMenu: onContextMenu,
+            onClickNode,
+            onRightClickNode,
           }}
         />
       </div>

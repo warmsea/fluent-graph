@@ -1,4 +1,5 @@
 import React, { CSSProperties, ReactElement } from "react";
+import { HTMLFreeAttributes } from "../../utilities";
 
 export interface INodeProps extends INodeCommonConfig {
   id: string;
@@ -16,16 +17,17 @@ export interface INodeCommonConfig extends INodeEventHandlers {
 
   className?: string;
   style?: CSSProperties;
+  attributes?: HTMLFreeAttributes<HTMLDivElement>;
 
   nodeClassName?: string;
   nodeStyle?: CSSProperties;
-  nodeFocusable?: boolean;
-  nodeAriaLabel?: string;
+  nodeAttributes?: HTMLFreeAttributes<HTMLDivElement>;
 
   labelClassName?: string;
   labelStyle?: CSSProperties;
   labelOffset?: number;
   labelZoom?: number;
+  labelAttributes?: HTMLFreeAttributes<HTMLDivElement>;
 
   onRenderNode?: (props: INodeProps) => ReactElement;
   onRenderLabel?: (props: INodeProps) => ReactElement;
@@ -33,7 +35,7 @@ export interface INodeCommonConfig extends INodeEventHandlers {
 
 export interface INodeEventHandlers {
   onClickNode?: (props: INodeProps, event: React.MouseEvent<HTMLElement, MouseEvent>) => void;
-  onContextMenu?: (props: INodeProps, event: React.MouseEvent<HTMLElement, MouseEvent>) => void;
+  onRightClickNode?: (props: INodeProps, event: React.MouseEvent<HTMLElement, MouseEvent>) => void;
   onMouseOverNode?: (props: INodeProps, event: React.MouseEvent<HTMLElement, MouseEvent>) => void;
   onMouseOutNode?: (props: INodeProps, event: React.MouseEvent<HTMLElement, MouseEvent>) => void;
 }

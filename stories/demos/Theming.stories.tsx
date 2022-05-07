@@ -4,7 +4,7 @@ import { createUseStyles, ThemeProvider, useTheme } from "react-jss";
 import { Graph, IGraphProps } from "../../src";
 
 const meta: Meta = {
-  title: "Demo/Theming",
+  title: "Demos/Theming",
 };
 
 export default meta;
