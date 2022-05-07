@@ -1,6 +1,6 @@
 declare namespace LinkScssNamespace {
   export interface ILinkScss {
-    line: string;
+    link: string;
     root: string;
   }
 }

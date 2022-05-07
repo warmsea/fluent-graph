@@ -24,10 +24,10 @@ export interface ILinkCommonConfig extends ILinkEventHandlers {
   className?: string;
   style?: CSSProperties;
 
-  lineClassName?: string;
-  lineType?: ILinkType;
-  lineStyle?: CSSProperties;
-  lineProps?: HTMLAttributes<HTMLDivElement>;
+  linkClassName?: string;
+  linkType?: ILinkType;
+  linkStyle?: CSSProperties;
+  linkProps?: HTMLAttributes<HTMLDivElement>;
 }
 
 export interface ILinkEventHandlers {

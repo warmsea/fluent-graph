@@ -16,7 +16,7 @@ export const Basic: Story = (args) => (
     end={{ x: 200, y: 100 }}
     size={args.size}
     color={args.color}
-    lineType={args.lineType}
+    linkType={args.lineType}
     onClickLink={args.onClickLink}
   />
 );

@@ -48,7 +48,7 @@ Styled.args = {
       },
     },
     linkConfig: {
-      lineStyle: {
+      linkStyle: {
         borderColor: "deepskyblue",
       },
     },

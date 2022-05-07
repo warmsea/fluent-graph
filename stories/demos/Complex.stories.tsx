@@ -152,7 +152,7 @@ export const Example1: FC = () => {
       labelOffset: -4,
     },
     linkConfig: {
-      lineStyle: {
+      linkStyle: {
         borderBottomColor: "rgb(4, 120, 124, .5)",
       },
     },

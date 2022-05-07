@@ -23,35 +23,35 @@ export const Link: FC<ILinkProps> = (props: ILinkProps) => {
 
   const needClickHelper: boolean = !!props.onClickLink && size < CLICK_HELPER_THRESHOLD;
 
-  const lineCenter = center(start, end);
-  const lineLength = len(start, end);
-  const lineProps: HTMLAttributes<HTMLDivElement> = {
-    className: classNames(styles.line, props.lineClassName),
+  const linkCenter = center(start, end);
+  const linkLength = len(start, end);
+  const linkProps: HTMLAttributes<HTMLDivElement> = {
+    className: classNames(styles.link, props.linkClassName),
     style: {
-      width: lineLength,
+      width: linkLength,
       height: size,
-      top: lineCenter.y,
-      left: lineCenter.x,
+      top: linkCenter.y,
+      left: linkCenter.x,
       transform: `translate(-50%, -50%) rotate(${deg(start, end)}deg)`,
       ...(!!props.onClickLink && { cursor: "pointer" }),
       ...(needClickHelper && { height: CLICK_HELPER_THRESHOLD }),
     },
     ...eventHandlers,
-    ...props.lineProps,
+    ...props.linkProps,
   };
 
-  const lineInnerStyles: CSSProperties = {
+  const linkInnerStyles: CSSProperties = {
     borderBottomColor: props.color ?? "gray",
-    borderBottomStyle: props.lineType ?? "solid",
+    borderBottomStyle: props.linkType ?? "solid",
     borderBottomWidth: size,
     width: "100%",
-    ...props.lineStyle,
+    ...props.linkStyle,
   };
 
   return (
     <div className={styles.root} style={props.style}>
-      <div {...lineProps}>
-        <div style={lineInnerStyles}></div>
+      <div {...linkProps}>
+        <div style={linkInnerStyles}></div>
       </div>
     </div>
   );
