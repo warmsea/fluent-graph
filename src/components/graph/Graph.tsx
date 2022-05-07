@@ -15,7 +15,7 @@ import { GraphBehavior } from "./GraphBehavior";
 import { useForceUpdate, useStateRef } from "./Graph.hooks";
 
 const GRAPH_CLASS_MAIN = "fg-main";
-const DISPLAY_DEBOUNCE_MS = 50;
+const DISPLAY_DEBOUNCE_MS = 10;
 const INITIAL_ZOOM: IZoomState = { x: 0, y: 0, k: 1 };
 
 function getTransform(width: number, height: number, zoom: IZoomState): string {
@@ -115,13 +115,14 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
       .force(
         "collide",
         d3.forceCollide((node) => {
-          if (nodeMapRef.current.get((node as IGraphNodeDatum).id).isLinkNode) {
+          if (nodeMapRef.current.get(node.id).isLinkNode) {
             return 10;
           } else {
             return 50;
           }
         })
       )
+      .force("center", d3.forceCenter(0, 0).strength(0.01))
       .on("tick", tick);
 
     const forceLink = d3
