@@ -1,4 +1,5 @@
-import React, { CSSProperties, HTMLAttributes } from "react";
+import React, { CSSProperties } from "react";
+import { HTMLFreeAttributes } from "../../utilities";
 
 export type ILinkType =
   | "none"
@@ -23,11 +24,12 @@ export interface ILinkCommonConfig extends ILinkEventHandlers {
   color?: string;
   className?: string;
   style?: CSSProperties;
+  attributes?: HTMLFreeAttributes<HTMLDivElement>;
 
   linkClassName?: string;
   linkType?: ILinkType;
   linkStyle?: CSSProperties;
-  linkProps?: HTMLAttributes<HTMLDivElement>;
+  linkAttributes?: HTMLFreeAttributes<HTMLDivElement>;
 }
 
 export interface ILinkEventHandlers {

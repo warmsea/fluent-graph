@@ -55,6 +55,7 @@ export const Node = (props: INodeProps): ReactElement => {
       className={classNames(styles.root, props.className)}
       data-fg-element="node-root"
       style={props.style}
+      {...props.attributes}
     >
       {(props.onRenderNode ?? defaultOnRenderNode)(props)}
       {(props.onRenderLabel ?? defaultOnRenderLabel)(props)}

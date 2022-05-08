@@ -14,13 +14,6 @@ export const Link: FC<ILinkProps> = (props: ILinkProps) => {
     return <></>;
   }
 
-  const eventHandlers: HTMLAttributes<HTMLElement> = {
-    onClick: (event) => props.onClickLink?.(event, props),
-    onMouseOver: (event) => props.onMouseOverLink?.(event, props),
-    onMouseOut: (event) => props.onMouseOutLink?.(event, props),
-    onKeyDown: (event) => props.onKeyDownLink?.(event, props),
-  };
-
   const needClickHelper: boolean = !!props.onClickLink && size < CLICK_HELPER_THRESHOLD;
 
   const linkCenter = center(start, end);
@@ -36,8 +29,13 @@ export const Link: FC<ILinkProps> = (props: ILinkProps) => {
       ...(!!props.onClickLink && { cursor: "pointer" }),
       ...(needClickHelper && { height: CLICK_HELPER_THRESHOLD }),
     },
-    ...eventHandlers,
-    ...props.linkProps,
+
+    onClick: (event) => props.onClickLink?.(event, props),
+    onMouseOver: (event) => props.onMouseOverLink?.(event, props),
+    onMouseOut: (event) => props.onMouseOutLink?.(event, props),
+    onKeyDown: (event) => props.onKeyDownLink?.(event, props),
+
+    ...props.linkAttributes,
   };
 
   const linkInnerStyles: CSSProperties = {
@@ -49,7 +47,7 @@ export const Link: FC<ILinkProps> = (props: ILinkProps) => {
   };
 
   return (
-    <div className={styles.root} style={props.style}>
+    <div className={styles.root} style={props.style} {...props.attributes}>
       <div {...linkProps}>
         <div style={linkInnerStyles}></div>
       </div>
