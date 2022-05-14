@@ -1,4 +1,4 @@
-import { FocusZone, FocusZoneDirection } from "@fluentui/react-focus";
+import { FocusZone, FocusZoneDirection } from "@fluentui/react";
 import { Meta, Story } from "@storybook/react";
 import React from "react";
 import { Graph, IGraphProps } from "../../src";

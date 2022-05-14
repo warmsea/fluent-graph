@@ -15,18 +15,16 @@ interface ITemplateArgs {
 
 const Template: Story<ITemplateArgs> = (args: ITemplateArgs) => <Graph {...args.graphProps} />;
 
-// By passing using the Args format for exported stories, you can control the props for a component for reuse in a test
-// https://storybook.js.org/docs/react/workflows/unit-testing
-export const Simple: Story<ITemplateArgs> = Template.bind({});
-Simple.args = {
-  graphProps: {
+export const Simple: Story = () => {
+  const graphProps: IGraphProps = {
     id: "graph",
     nodes: [{ id: "Fluent Graph" }, { id: "React" }, { id: "D3" }],
     links: [
       { source: "Fluent Graph", target: "React" },
       { source: "Fluent Graph", target: "D3" },
     ],
-  },
+  };
+  return <Graph {...graphProps} />;
 };
 
 export const Styled: Story<ITemplateArgs> = Template.bind({});

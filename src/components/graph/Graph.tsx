@@ -37,12 +37,17 @@ function getGraphBehavior(ref: Ref<IGraphBehavior | undefined> | undefined): Gra
   }
 }
 
-function onRenderElements(rootId: string | undefined, nodeMap: NodeMap, linkMatrix: LinkMatrix) {
+function onRenderElements(
+  rootId: string | undefined,
+  nodeMap: NodeMap,
+  linkMatrix: LinkMatrix,
+  zoomStateRef?: Ref<IZoomState>
+) {
   if (!rootId) {
     return <></>;
   }
 
-  const elements: React.ReactElement[] = [nodeMap.get(rootId).renderNode()];
+  const elements: React.ReactElement[] = [nodeMap.get(rootId).renderNode(zoomStateRef)];
   const queue: NodeModel[] = [nodeMap.get(rootId)];
   const rendered: Set<NodeModel | LinkModel> = new Set();
   // The render order decides tab/focus order as well.
@@ -55,7 +60,7 @@ function onRenderElements(rootId: string | undefined, nodeMap: NodeMap, linkMatr
           rendered.add(link);
         }
         if (!rendered.has(link.targetNode)) {
-          elements.push(link.targetNode.renderNode());
+          elements.push(link.targetNode.renderNode(zoomStateRef));
           rendered.add(link.targetNode);
           queue.push(link.targetNode);
         }
@@ -80,7 +85,7 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   const nodeConfig = props.nodeConfig ?? {};
   const linkConfig = props.linkConfig ?? {};
 
-  const nodeMapRef: Ref<NodeMap> = useRef(new NodeMap(zoomStateRef));
+  const nodeMapRef: Ref<NodeMap> = useRef(new NodeMap());
   const linkMapRef: Ref<LinkMap> = useRef(new LinkMap());
   const draggingNodeRef: Ref<NodeModel | undefined> = useRef();
 
@@ -244,7 +249,8 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   const elements = onRenderElements(
     rootId,
     nodeMapRef.current,
-    new LinkMatrix(props.links, linkMapRef.current, nodeMapRef.current)
+    new LinkMatrix(props.links, linkMapRef.current, nodeMapRef.current),
+    zoomStateRef
   );
 
   return (

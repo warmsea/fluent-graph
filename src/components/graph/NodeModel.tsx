@@ -17,7 +17,6 @@ export class NodeModel {
   constructor(
     props: IGraphPropsNode,
     nodeConfig: INodeCommonConfig,
-    zoomStateRef?: Ref<IZoomState>,
     relatedNodesOfLinkNode?: string[],
     isLinkNode?: boolean
   ) {
@@ -28,7 +27,6 @@ export class NodeModel {
       size: this.size,
       ...props.force,
     };
-    this._zoomStateRef = zoomStateRef;
 
     this.props = mergeConfig(nodeConfig, props);
     this.size = this.props.size ?? 0;
@@ -52,8 +50,8 @@ export class NodeModel {
     this.isLinkNode = !!isLinkNode;
   }
 
-  public renderNode(): ReactElement {
-    let zoom: number | undefined = this._zoomStateRef?.current.k;
+  public renderNode(zoomStateRef?: Ref<IZoomState>): ReactElement {
+    let zoom: number | undefined = zoomStateRef?.current.k;
     if (zoom !== undefined) {
       if (zoom > 1) {
         zoom = 1 / zoom;
