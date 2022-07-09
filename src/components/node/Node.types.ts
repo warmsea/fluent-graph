@@ -1,5 +1,5 @@
 import React, { CSSProperties, ReactElement } from "react";
-import { HTMLFreeAttributes } from "../../utilities";
+import { DivAttributes } from "../../utilities";
 
 export interface INodeProps extends INodeCommonConfig {
   id: string;
@@ -17,17 +17,17 @@ export interface INodeCommonConfig extends INodeEventHandlers {
 
   className?: string;
   style?: CSSProperties;
-  attributes?: HTMLFreeAttributes<HTMLDivElement>;
+  attributes?: DivAttributes;
 
   nodeClassName?: string;
   nodeStyle?: CSSProperties;
-  nodeAttributes?: HTMLFreeAttributes<HTMLDivElement>;
+  nodeAttributes?: DivAttributes;
 
   labelClassName?: string;
   labelStyle?: CSSProperties;
   labelOffset?: number;
   labelZoom?: number;
-  labelAttributes?: HTMLFreeAttributes<HTMLDivElement>;
+  labelAttributes?: DivAttributes;
 
   onRenderNode?: (props: INodeProps) => ReactElement;
   onRenderLabel?: (props: INodeProps) => ReactElement;

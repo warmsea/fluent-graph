@@ -1,5 +1,5 @@
 import React, { CSSProperties } from "react";
-import { HTMLFreeAttributes } from "../../utilities";
+import { DivAttributes } from "../../utilities";
 
 export type ILinkType =
   | "none"
@@ -24,12 +24,12 @@ export interface ILinkCommonConfig extends ILinkEventHandlers {
   color?: string;
   className?: string;
   style?: CSSProperties;
-  attributes?: HTMLFreeAttributes<HTMLDivElement>;
+  attributes?: DivAttributes;
 
   linkClassName?: string;
   linkType?: ILinkType;
   linkStyle?: CSSProperties;
-  linkAttributes?: HTMLFreeAttributes<HTMLDivElement>;
+  linkAttributes?: DivAttributes;
 }
 
 export interface ILinkEventHandlers {
