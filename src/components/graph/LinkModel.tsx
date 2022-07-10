@@ -1,3 +1,4 @@
+import isNumber from "lodash/isNumber";
 import React, { ReactElement } from "react";
 import { mergeConfig } from "../../mergeConfig";
 import { Link } from "../link/Link";
@@ -5,70 +6,67 @@ import { ILinkCommonConfig, ILinkEnd } from "../link/Link.types";
 import { IGraphLinkDatum, IGraphPropsLink } from "./Graph.types";
 import { NodeMap } from "./NodeMap";
 import { NodeModel } from "./NodeModel";
-import { default as CONST } from "./graph.const";
-const DELIMITER_SYMBOL = ",";
 
 export class LinkModel {
+  public id: string;
   public sourceNode: NodeModel;
   public targetNode: NodeModel;
-  public linkNode: NodeModel;
-
-  private id: string;
-  private linkNodeId: string;
-  private props: IGraphPropsLink;
-
   public force: IGraphLinkDatum;
 
-  constructor(props: IGraphPropsLink, linkConfig: ILinkCommonConfig, nodeMap: NodeMap) {
-    this.id = getLinkId(props);
-    this.linkNodeId = getLinkNodeId(props);
-    this.sourceNode = nodeMap.get(props.source);
-    this.targetNode = nodeMap.get(props.target);
-    this.linkNode = nodeMap.get(this.linkNodeId);
+  private props: IGraphPropsLink;
+
+  constructor(id: string, props: IGraphPropsLink, linkConfig: ILinkCommonConfig, nodeMap: NodeMap) {
+    this.id = id;
+
+    const sourceNode = nodeMap.get(props.source);
+    if (!sourceNode) {
+      throw new Error(`This is likely a Fluent Graph bug, node not exist: ${props.source}`);
+    }
+
+    const targetNode = nodeMap.get(props.target);
+    if (!targetNode) {
+      throw new Error(`This is likely a Fluent Graph bug, node not exist: ${props.target}`);
+    }
+
+    this.sourceNode = sourceNode;
+    this.targetNode = targetNode;
     this.props = mergeConfig(linkConfig, props);
     this.force = {
-      source: this.sourceNode.force,
-      target: this.targetNode.force,
+      source: sourceNode.force,
+      target: targetNode.force,
     };
   }
 
-  public update(props: IGraphPropsLink, linkConfig?: ILinkCommonConfig): void {
-    if (getLinkId(props) !== this.id) {
-      // TODO should not reach here
-      return;
+  public update(id: string, props: IGraphPropsLink, linkConfig?: ILinkCommonConfig): void {
+    if (id !== this.id) {
+      throw new Error(`This is likely a Fluent Graph bug, link not exist: ${id}`);
     }
     this.props = mergeConfig(linkConfig, props);
   }
 
   public renderLink(): ReactElement {
+    const source = this.sourceNode;
+    const target = this.targetNode;
     if (
-      typeof this.sourceNode.force.x !== "number" ||
-      typeof this.sourceNode.force.y !== "number" ||
-      typeof this.targetNode.force.x !== "number" ||
-      typeof this.targetNode.force.y !== "number"
+      !isNumber(source.force.x) ||
+      !isNumber(source.force.y) ||
+      !isNumber(target.force.x) ||
+      !isNumber(target.force.y)
     ) {
       return <React.Fragment key={this.id}></React.Fragment>;
     }
 
     const start: ILinkEnd = {
-      x: this.sourceNode.force.x,
-      y: this.sourceNode.force.y,
-      offset: this.sourceNode.size / 2,
+      x: source.force.x,
+      y: source.force.y,
+      offset: source.size / 2,
     };
     const end: ILinkEnd = {
-      x: this.targetNode.force.x,
-      y: this.targetNode.force.y,
-      offset: this.targetNode.size / 2,
+      x: target.force.x,
+      y: target.force.y,
+      offset: target.size / 2,
     };
 
-    return <Link key={this.id} id={this.id} start={start} end={end} {...this.props} />;
+    return <Link key={this.id} id={this.id} {...{ start, end }} {...this.props} />;
   }
-}
-
-export function getLinkId(link: { source: string; target: string }): string {
-  return `${link.source},${link.target}`;
-}
-
-export function getLinkNodeId(link: { source: string; target: string }): string {
-  return `${CONST.LINK_NODE_PREFIX}${link.source}${DELIMITER_SYMBOL}${link.target}`;
 }

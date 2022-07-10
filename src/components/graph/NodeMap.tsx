@@ -1,7 +1,7 @@
 import { INodeCommonConfig } from "../node/Node.types";
-import { IGraphNodeDatum, IGraphPropsLink, IGraphPropsNode } from "./Graph.types";
+import { IGraphNodeDatum, IGraphPropsNode } from "./Graph.types";
 import { NodeModel } from "./NodeModel";
-import { getLinkNodeId } from "./LinkModel";
+
 export class NodeMap {
   public rootNode: NodeModel | undefined;
 
@@ -11,11 +11,7 @@ export class NodeMap {
     this._map = new Map();
   }
 
-  public updateNodeMap(
-    nodes: IGraphPropsNode[],
-    nodeConfig: INodeCommonConfig,
-    links: IGraphPropsLink[]
-  ): boolean {
+  public update(nodes: IGraphPropsNode[], nodeConfig: INodeCommonConfig): boolean {
     let addedOrRemovedNodes = false;
 
     // Delete nodes that are no longer there
@@ -33,33 +29,8 @@ export class NodeMap {
       if (this._map.has(node.id)) {
         this._map.get(node.id)?.update(node, nodeConfig);
       } else {
-        addedOrRemovedNodes = true;
         this._map.set(node.id, new NodeModel(node, nodeConfig));
-      }
-    });
-
-    links.forEach((link) => {
-      if (this._map.has(getLinkNodeId(link))) {
-        this._map.get(getLinkNodeId(link))?.update(
-          {
-            id: getLinkNodeId(link),
-          },
-          {},
-          [link.target, link.source],
-          true
-        );
-      } else {
-        this._map.set(
-          getLinkNodeId(link),
-          new NodeModel(
-            {
-              id: getLinkNodeId(link),
-            },
-            {},
-            [link.target, link.source],
-            true
-          )
-        );
+        addedOrRemovedNodes = true;
       }
     });
 
@@ -73,17 +44,11 @@ export class NodeMap {
     return this._map.has(nodeId);
   }
 
-  public get(nodeId: string): NodeModel {
-    const node: NodeModel | undefined = this._map.get(nodeId);
-    if (node) {
-      return node;
-    } else {
-      // TODO handle error
-      throw new Error();
-    }
+  public get(nodeId: string): NodeModel | undefined {
+    return this._map.get(nodeId);
   }
 
-  public getSimulationNodeDatums(): IGraphNodeDatum[] {
+  public getSimNodes(): IGraphNodeDatum[] {
     const datums: IGraphNodeDatum[] = [];
     this._map.forEach((node) => datums.push(node.force));
     return datums;

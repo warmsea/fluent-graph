@@ -7,47 +7,30 @@ import { IZoomState, Ref } from "./Graph.types.internal";
 
 export class NodeModel {
   private props: IGraphPropsNode;
-  private _zoomStateRef: Ref<IZoomState> | undefined;
   public id: string;
   public size: number;
   public force: IGraphNodeDatum;
-  public relatedNodesOfLinkNode: string[];
-  public isLinkNode: boolean;
 
-  constructor(
-    props: IGraphPropsNode,
-    nodeConfig: INodeCommonConfig,
-    relatedNodesOfLinkNode?: string[],
-    isLinkNode?: boolean
-  ) {
-    this.id = props.id;
-    this.size = props.size ?? 0;
+  constructor(node: IGraphPropsNode, nodeConfig: INodeCommonConfig) {
+    this.id = node.id;
+    this.size = node.size ?? 0;
     this.force = {
-      id: props.id,
+      id: node.id,
       size: this.size,
-      ...props.force,
+      ...node.force,
     };
 
-    this.props = mergeConfig(nodeConfig, props);
+    this.props = mergeConfig(nodeConfig, node);
     this.size = this.props.size ?? 0;
-    this.relatedNodesOfLinkNode = relatedNodesOfLinkNode ?? [];
-    this.isLinkNode = !!isLinkNode;
   }
 
-  public update(
-    props: IGraphPropsNode,
-    nodeConfig: INodeCommonConfig,
-    relatedNodesOfLinkNode?: string[],
-    isLinkNode?: boolean
-  ): void {
+  public update(props: IGraphPropsNode, nodeConfig: INodeCommonConfig): void {
     if (props.id !== this.props.id) {
       // TODO should not reach here
       return;
     }
     this.props = mergeConfig(nodeConfig, props);
     this.size = this.props.size ?? 0;
-    this.relatedNodesOfLinkNode = relatedNodesOfLinkNode ?? [];
-    this.isLinkNode = !!isLinkNode;
   }
 
   public renderNode(zoomStateRef?: Ref<IZoomState>): ReactElement {

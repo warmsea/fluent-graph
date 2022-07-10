@@ -1,6 +1,6 @@
 import * as d3 from "d3";
 import React, { FC, useEffect, useMemo, useReducer, useRef } from "react";
-import { IGraphBehavior, IGraphConfig, IGraphNodeDatum, IGraphProps, IGraphPropsNode } from "./Graph.types";
+import { IGraphBehavior, IGraphConfig, IGraphNodeDatum, IGraphProps } from "./Graph.types";
 import { NodeMap } from "./NodeMap";
 import { LinkMatrix } from "./LinkMatrix";
 import isNumber from "lodash/isNumber";
@@ -8,8 +8,7 @@ import throttle from "lodash/throttle";
 import { mergeConfig } from "../../mergeConfig";
 import { DEFAULT_CONFIG } from "./graph.config";
 import { NodeModel } from "./NodeModel";
-import { LinkModel, getLinkNodeId } from "./LinkModel";
-import { LinkMap } from "./LinkMap";
+import { LinkModel } from "./LinkModel";
 import { Drag, IZoomState, Ref, Selection, Simulation, Zoom } from "./Graph.types.internal";
 import { GraphBehavior } from "./GraphBehavior";
 import { useForceUpdate, useStateRef } from "./Graph.hooks";
@@ -46,9 +45,13 @@ function onRenderElements(
   if (!rootId) {
     return <></>;
   }
+  const rootNode = nodeMap.get(rootId);
+  if (!rootNode) {
+    return <></>;
+  }
 
-  const elements: React.ReactElement[] = [nodeMap.get(rootId).renderNode(zoomStateRef)];
-  const queue: NodeModel[] = [nodeMap.get(rootId)];
+  const elements: React.ReactElement[] = [rootNode.renderNode(zoomStateRef)];
+  const queue: NodeModel[] = [rootNode];
   const rendered: Set<NodeModel | LinkModel> = new Set();
   // The render order decides tab/focus order as well.
   while (queue.length > 0) {
@@ -86,24 +89,13 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
   const linkConfig = props.linkConfig ?? {};
 
   const nodeMapRef: Ref<NodeMap> = useRef(new NodeMap());
-  const linkMapRef: Ref<LinkMap> = useRef(new LinkMap());
+  const linkMatrixRef: Ref<LinkMatrix> = useRef(new LinkMatrix());
   const draggingNodeRef: Ref<NodeModel | undefined> = useRef();
 
   const tick = useMemo(
     () =>
       throttle(() => {
-        const nodeMap: NodeMap = nodeMapRef.current;
-        nodeMap.getSimulationNodeDatums().forEach((node) => {
-          const currentNode = nodeMap.get(node.id);
-          if (currentNode.isLinkNode) {
-            node.x =
-              (nodeMap.get(currentNode.relatedNodesOfLinkNode[0]).force.x ?? 0) * 0.5 +
-              (nodeMap.get(currentNode.relatedNodesOfLinkNode[1]).force.x ?? 0) * 0.5;
-            node.y =
-              (nodeMap.get(currentNode.relatedNodesOfLinkNode[0]).force.y ?? 0) * 0.5 +
-              (nodeMap.get(currentNode.relatedNodesOfLinkNode[1]).force.y ?? 0) * 0.5;
-          }
-        });
+        linkMatrixRef.current.updateCollideNotesPosition();
         forceUpdate();
       }, DISPLAY_DEBOUNCE_MS),
     [forceUpdate]
@@ -113,17 +105,19 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
     // Stop current simulation if exist
     stopForceSimulation();
 
-    simulationRef.current = d3.forceSimulation(nodeMapRef.current.getSimulationNodeDatums());
+    simulationRef.current = d3.forceSimulation(
+      nodeMapRef.current.getSimNodes().concat(linkMatrixRef.current.getSimCollideNodes())
+    );
 
     simulationRef.current
       .force("charge", d3.forceManyBody().strength(graphConfig.sim.gravity))
       .force(
         "collide",
         d3.forceCollide((node) => {
-          if (nodeMapRef.current.get(node.id).isLinkNode) {
-            return 10;
-          } else {
+          if (nodeMapRef.current.get(node.id)) {
             return 50;
+          } else {
+            return 10;
           }
         })
       )
@@ -131,7 +125,7 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
       .on("tick", tick);
 
     const forceLink = d3
-      .forceLink(linkMapRef.current.getSimulationLinkDatums())
+      .forceLink(linkMatrixRef.current.getSimLinks())
       .id((node) => (node as IGraphNodeDatum).id)
       .distance(graphConfig.sim.linkLength)
       .strength(graphConfig.sim.linkStrength);
@@ -230,28 +224,16 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
     props.behaviorRef,
   ]);
 
-  const rootId: string | undefined = props.nodes.length > 0 ? props.nodes[0].id : undefined;
+  const { nodes, links } = props;
 
-  const nodes: IGraphPropsNode[] = props.nodes.concat(
-    props.links.map((link) => {
-      return { id: getLinkNodeId(link) };
-    })
-  );
-  const addedOrRemovedNodes: boolean = nodeMapRef.current.updateNodeMap(nodes, nodeConfig, props.links);
-  const addedOrRemovedLinks: boolean = linkMapRef.current.updateLinkMap(
-    props.links,
-    linkConfig,
-    nodeMapRef.current
-  );
+  const rootId: string | undefined = nodes.length > 0 ? nodes[0].id : undefined;
+
+  const addedOrRemovedNodes: boolean = nodeMapRef.current.update(nodes, nodeConfig);
+  const addedOrRemovedLinks: boolean = linkMatrixRef.current.update(links, linkConfig, nodeMapRef.current);
   if (addedOrRemovedNodes || addedOrRemovedLinks) {
     increaseTopologyVersion();
   }
-  const elements = onRenderElements(
-    rootId,
-    nodeMapRef.current,
-    new LinkMatrix(props.links, linkMapRef.current, nodeMapRef.current),
-    zoomStateRef
-  );
+  const elements = onRenderElements(rootId, nodeMapRef.current, linkMatrixRef.current, zoomStateRef);
 
   return (
     <div id={graphContainerId} className={props.className} style={{ overflow: "hidden", width, height }}>
