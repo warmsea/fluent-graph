@@ -15,11 +15,11 @@ export type ILinkType =
 
 export interface ILinkProps extends ILinkCommonConfig {
   id: string;
-  start: ILinkEnd;
-  end: ILinkEnd;
+  start: ILinkPoint;
+  end: ILinkPoint;
 }
 
-export interface ILinkCommonConfig extends ILinkEventHandlers {
+export interface ILinkCommonConfig {
   size?: number;
   color?: string;
   className?: string;
@@ -30,16 +30,14 @@ export interface ILinkCommonConfig extends ILinkEventHandlers {
   linkType?: ILinkType;
   linkStyle?: CSSProperties;
   linkAttributes?: DivAttributes;
+
+  onClickLink?: (props: ILinkProps, event: React.MouseEvent<HTMLElement, MouseEvent>) => void;
+  onMouseOverLink?: (props: ILinkProps, event: React.MouseEvent<HTMLElement, MouseEvent>) => void;
+  onMouseOutLink?: (props: ILinkProps, event: React.MouseEvent<HTMLElement, MouseEvent>) => void;
+  onKeyDownLink?: (props: ILinkProps, event: React.KeyboardEvent<HTMLElement>) => void;
 }
 
-export interface ILinkEventHandlers {
-  onClickLink?: (event: React.MouseEvent<HTMLElement, MouseEvent>, props: ILinkProps) => void;
-  onMouseOverLink?: (event: React.MouseEvent<HTMLElement, MouseEvent>, props: ILinkProps) => void;
-  onMouseOutLink?: (event: React.MouseEvent<HTMLElement, MouseEvent>, props: ILinkProps) => void;
-  onKeyDownLink?: (event: React.KeyboardEvent<HTMLElement>, props: ILinkProps) => void;
-}
-
-export interface ILinkEnd {
+export interface ILinkPoint {
   x: number;
   y: number;
   offset?: number;

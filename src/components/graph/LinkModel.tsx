@@ -2,7 +2,7 @@ import isNumber from "lodash/isNumber";
 import React, { ReactElement } from "react";
 import { mergeConfig } from "../../mergeConfig";
 import { Link } from "../link/Link";
-import { ILinkCommonConfig, ILinkEnd } from "../link/Link.types";
+import { ILinkCommonConfig, ILinkPoint } from "../link/Link.types";
 import { IGraphLinkDatum, IGraphPropsLink } from "./Graph.types";
 import { NodeMap } from "./NodeMap";
 import { NodeModel } from "./NodeModel";
@@ -56,12 +56,12 @@ export class LinkModel {
       return <React.Fragment key={this.id}></React.Fragment>;
     }
 
-    const start: ILinkEnd = {
+    const start: ILinkPoint = {
       x: source.force.x,
       y: source.force.y,
       offset: source.size / 2,
     };
-    const end: ILinkEnd = {
+    const end: ILinkPoint = {
       x: target.force.x,
       y: target.force.y,
       offset: target.size / 2,

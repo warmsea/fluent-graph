@@ -30,10 +30,10 @@ export const Link: FC<ILinkProps> = (props: ILinkProps) => {
       ...(needClickHelper && { height: CLICK_HELPER_THRESHOLD }),
     },
 
-    onClick: (event) => props.onClickLink?.(event, props),
-    onMouseOver: (event) => props.onMouseOverLink?.(event, props),
-    onMouseOut: (event) => props.onMouseOutLink?.(event, props),
-    onKeyDown: (event) => props.onKeyDownLink?.(event, props),
+    onClick: (event) => props.onClickLink?.(props, event),
+    onMouseOver: (event) => props.onMouseOverLink?.(props, event),
+    onMouseOut: (event) => props.onMouseOutLink?.(props, event),
+    onKeyDown: (event) => props.onKeyDownLink?.(props, event),
 
     ...props.linkAttributes,
   };
