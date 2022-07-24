@@ -52,7 +52,7 @@ export class LinkMatrix {
         const sourceForce = link.sourceNode.force;
         const targetForce = link.targetNode.force;
         collideNode.fx = this._getMiddle(sourceForce.x, targetForce.x);
-        collideNode.fy = this._getMiddle(targetForce.y, targetForce.y);
+        collideNode.fy = this._getMiddle(sourceForce.y, targetForce.y);
       }
     });
   }
