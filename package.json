@@ -1,5 +1,5 @@
 {
-  "version": "0.2.1",
+  "version": "0.2.2",
   "license": "MIT",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
@@ -34,7 +34,7 @@
   "size-limit": [
     {
       "path": "dist/fluent-graph.js",
-      "limit": "12 KB"
+      "limit": "15 KB"
     }
   ],
   "peerDependencies": {
@@ -59,7 +59,7 @@
     "@types/react": "^17.0.41",
     "@types/react-dom": "^17.0.14",
     "@warmsea/h": "^0.1.1",
-    "@warmsea/o": "^0.0.13",
+    "@warmsea/o": "^0.0.14",
     "babel-loader": "^8.2.4",
     "d3": "^6.6.0",
     "jest": "^27.5.1",
