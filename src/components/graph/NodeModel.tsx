@@ -1,5 +1,5 @@
 import React, { ReactElement } from "react";
-import { mergeConfig } from "../../mergeConfig";
+import { mergeConfig } from "../../utilities";
 import { Node } from "../node/Node";
 import { INodeCommonConfig } from "../node/Node.types";
 import { IGraphNodeDatum, IGraphPropsNode } from "./Graph.types";

@@ -1,6 +1,6 @@
 import isNumber from "lodash/isNumber";
 import React, { ReactElement } from "react";
-import { mergeConfig } from "../../mergeConfig";
+import { mergeConfig } from "../../utilities";
 import { Link } from "../link/Link";
 import { ILinkCommonConfig, ILinkPoint } from "../link/Link.types";
 import { IGraphLinkDatum, IGraphPropsLink } from "./Graph.types";

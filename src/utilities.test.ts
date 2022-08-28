@@ -1,4 +1,4 @@
-import { mergeConfig } from "./mergeConfig";
+import { mergeConfig } from "./utilities";
 
 describe("mergeConfig", () => {
   it("should deep merge config", () => {

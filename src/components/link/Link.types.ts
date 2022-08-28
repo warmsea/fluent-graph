@@ -1,17 +1,6 @@
+import type CSS from "csstype";
 import React, { CSSProperties } from "react";
 import { DivAttributes } from "../../utilities";
-
-export type ILinkType =
-  | "none"
-  | "hidden"
-  | "dotted"
-  | "dashed"
-  | "solid"
-  | "double"
-  | "groove"
-  | "ridge"
-  | "inset"
-  | "outset";
 
 export interface ILinkProps extends ILinkCommonConfig {
   id: string;
@@ -27,7 +16,7 @@ export interface ILinkCommonConfig {
   attributes?: DivAttributes;
 
   linkClassName?: string;
-  linkType?: ILinkType;
+  linkType?: CSS.DataType.LineStyle;
   linkStyle?: CSSProperties;
   linkAttributes?: DivAttributes;
 

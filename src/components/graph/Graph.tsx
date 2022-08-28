@@ -5,7 +5,7 @@ import { NodeMap } from "./NodeMap";
 import { LinkMatrix } from "./LinkMatrix";
 import isNumber from "lodash/isNumber";
 import throttle from "lodash/throttle";
-import { mergeConfig } from "../../mergeConfig";
+import { mergeConfig } from "../../utilities";
 import { DEFAULT_CONFIG } from "./graph.config";
 import { NodeModel } from "./NodeModel";
 import { LinkModel } from "./LinkModel";
