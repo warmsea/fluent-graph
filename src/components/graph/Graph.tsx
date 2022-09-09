@@ -137,8 +137,8 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
         d3
           .forceManyBody()
           .strength(graphConfig.sim.gravity)
-          .distanceMax(graphConfig.sim.distanceMax)
-          .distanceMin(graphConfig.sim.distanceMin)
+          .distanceMax(graphConfig.sim.distanceMax ?? Infinity)
+          .distanceMin(graphConfig.sim.distanceMin ?? 1)
       )
       .force(
         "collide",
