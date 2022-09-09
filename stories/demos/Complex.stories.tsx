@@ -1,8 +1,11 @@
 import React, { CSSProperties, FC } from "react";
 import { Meta } from "@storybook/react";
 import { Graph } from "../../src";
-import { IGraphProps, IGraphPropsNode } from "../../src/components/graph/Graph.types";
-import { ILinkType } from "../../src/components/link/Link.types";
+import {
+  IGraphProps,
+  IGraphPropsNode,
+} from "../../src/components/graph/Graph.types";
+import type { DataType } from "csstype";
 
 const meta: Meta = {
   title: "Demos/Complex",
@@ -62,7 +65,7 @@ const nodes: [string, number, string, string?, Partial<IGraphPropsNode>?][] = [
   ["Partners", 3, "#498204"],
 ];
 
-const links: [string, string, number, ILinkType?][] = [
+const links: [string, string, number, DataType.LineStyle?][] = [
   ["Mark 8", "Structural Integrity", 5, "dashed"],
   ["Mark 8", "Flight Operations", 5],
   ["Mark 8", "3D Modeling", 4, "dashed"],

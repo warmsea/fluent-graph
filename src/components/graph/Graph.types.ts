@@ -19,9 +19,12 @@ export interface IGraphConfig {
 
 export interface IGraphConfigSim {
   gravity: number;
+  distanceMax?: number;
+  distanceMin?: number;
+  forceCenterStrength?: number;
   linkLength: number;
   linkStrength: number;
-  paddingRadius: number;
+  paddingRadius?: number;
 }
 
 export interface IGraphConfigZoom {
