@@ -1,6 +1,11 @@
 import * as d3 from "d3";
 import React, { FC, useEffect, useMemo, useReducer, useRef } from "react";
-import { IGraphBehavior, IGraphConfig, IGraphNodeDatum, IGraphProps } from "./Graph.types";
+import {
+  IGraphBehavior,
+  IGraphConfig,
+  IGraphNodeDatum,
+  IGraphProps,
+} from "./Graph.types";
 import { NodeMap } from "./NodeMap";
 import { LinkMatrix } from "./LinkMatrix";
 import isNumber from "lodash/isNumber";
@@ -9,7 +14,14 @@ import { mergeConfig } from "../../utilities";
 import { DEFAULT_CONFIG } from "./graph.config";
 import { NodeModel } from "./NodeModel";
 import { LinkModel } from "./LinkModel";
-import { Drag, IZoomState, Ref, Selection, Simulation, Zoom } from "./Graph.types.internal";
+import {
+  Drag,
+  IZoomState,
+  Ref,
+  Selection,
+  Simulation,
+  Zoom,
+} from "./Graph.types.internal";
 import { GraphBehavior } from "./GraphBehavior";
 import { useForceUpdate, useStateRef } from "./Graph.hooks";
 
@@ -23,7 +35,9 @@ function getTransform(width: number, height: number, zoom: IZoomState): string {
   return `translate(${x}px,${y}px) scale(${zoom.k})`;
 }
 
-function getGraphBehavior(ref: Ref<IGraphBehavior | undefined> | undefined): GraphBehavior | undefined {
+function getGraphBehavior(
+  ref: Ref<IGraphBehavior | undefined> | undefined
+): GraphBehavior | undefined {
   if (ref) {
     if (!ref.current) {
       ref.current = new GraphBehavior();
@@ -79,10 +93,16 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
 
   const graphId = props.id.replace(/ /g, "_");
   const graphContainerId = `fg-container-${graphId}`;
-  const graphConfig: IGraphConfig = useMemo(() => mergeConfig(DEFAULT_CONFIG, props.config), [props.config]);
+  const graphConfig: IGraphConfig = useMemo(
+    () => mergeConfig(DEFAULT_CONFIG, props.config),
+    [props.config]
+  );
   const { width, height } = graphConfig;
   const [topology, increaseTopologyVersion] = useReducer((v) => v + 1, 0);
-  const [zoomState, setZoomState, zoomStateRef] = useStateRef(INITIAL_ZOOM, DISPLAY_DEBOUNCE_MS);
+  const [zoomState, setZoomState, zoomStateRef] = useStateRef(
+    INITIAL_ZOOM,
+    DISPLAY_DEBOUNCE_MS
+  );
   const forceUpdate = useForceUpdate(DISPLAY_DEBOUNCE_MS);
 
   const nodeConfig = props.nodeConfig ?? {};
@@ -106,22 +126,39 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
     stopForceSimulation();
 
     simulationRef.current = d3.forceSimulation(
-      nodeMapRef.current.getSimNodes().concat(linkMatrixRef.current.getSimCollideNodes())
+      nodeMapRef.current
+        .getSimNodes()
+        .concat(linkMatrixRef.current.getSimCollideNodes())
     );
 
     simulationRef.current
-      .force("charge", d3.forceManyBody().strength(graphConfig.sim.gravity))
+      .force(
+        "charge",
+        d3
+          .forceManyBody()
+          .strength(graphConfig.sim.gravity)
+          .distanceMax(graphConfig.sim.distanceMax ?? Infinity)
+          .distanceMin(graphConfig.sim.distanceMin ?? 1)
+      )
       .force(
         "collide",
-        d3.forceCollide((node) => {
-          if (nodeMapRef.current.get(node.id)) {
-            return 50;
-          } else {
-            return 10;
-          }
-        })
+        d3
+          .forceCollide()
+          .radius((node: any) => {
+            if (nodeMapRef.current.get(node.id)) {
+              return 50;
+            } else {
+              return graphConfig.sim.paddingRadius ?? 10;
+            }
+          })
+          .strength(graphConfig.sim.distanceMin ?? 0.05)
       )
-      .force("center", d3.forceCenter(0, 0).strength(0.01))
+      .force(
+        "center",
+        d3
+          .forceCenter(0, 0)
+          .strength(graphConfig.sim.forceCenterStrength ?? 0.01)
+      )
       .on("tick", tick);
 
     const forceLink = d3
@@ -146,7 +183,11 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
         const nodeRoot = eventTarget.closest(`[data-fg-element=node-root]`);
         if (nodeRoot) {
           const draggingNode = nodeMapRef.current.get(nodeRoot.id);
-          if (draggingNode && !isNumber(draggingNode.force?.fx) && !isNumber(draggingNode.force?.fy)) {
+          if (
+            draggingNode &&
+            !isNumber(draggingNode.force?.fx) &&
+            !isNumber(draggingNode.force?.fy)
+          ) {
             draggingNodeRef.current = draggingNode;
             simulationRef.current?.alphaTarget(0.3).restart();
           }
@@ -169,7 +210,9 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
         simulationRef.current?.alphaTarget(0).restart();
       }
     });
-    const dragSelection: Selection = d3.selectAll(`[data-fg-element=node-root]`);
+    const dragSelection: Selection = d3.selectAll(
+      `[data-fg-element=node-root]`
+    );
     dragSelection.call(dragBehavior);
   }
 
@@ -189,7 +232,10 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
 
   // Zoom: update min and max zoom scale
   useEffect(() => {
-    zoomRef.current.scaleExtent([graphConfig.zoom.minZoom, graphConfig.zoom.maxZoom]);
+    zoomRef.current.scaleExtent([
+      graphConfig.zoom.minZoom,
+      graphConfig.zoom.maxZoom,
+    ]);
   }, [graphConfig.zoom.minZoom, graphConfig.zoom.maxZoom]);
   // Zoom: handle zoom event
   useEffect(() => {
@@ -228,15 +274,31 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
 
   const rootId: string | undefined = nodes.length > 0 ? nodes[0].id : undefined;
 
-  const addedOrRemovedNodes: boolean = nodeMapRef.current.update(nodes, nodeConfig);
-  const addedOrRemovedLinks: boolean = linkMatrixRef.current.update(links, linkConfig, nodeMapRef.current);
+  const addedOrRemovedNodes: boolean = nodeMapRef.current.update(
+    nodes,
+    nodeConfig
+  );
+  const addedOrRemovedLinks: boolean = linkMatrixRef.current.update(
+    links,
+    linkConfig,
+    nodeMapRef.current
+  );
   if (addedOrRemovedNodes || addedOrRemovedLinks) {
     increaseTopologyVersion();
   }
-  const elements = onRenderElements(rootId, nodeMapRef.current, linkMatrixRef.current, zoomStateRef);
+  const elements = onRenderElements(
+    rootId,
+    nodeMapRef.current,
+    linkMatrixRef.current,
+    zoomStateRef
+  );
 
   return (
-    <div id={graphContainerId} className={props.className} style={{ overflow: "hidden", width, height }}>
+    <div
+      id={graphContainerId}
+      className={props.className}
+      style={{ overflow: "hidden", width, height }}
+    >
       <div
         style={{
           transformOrigin: "0 0",
