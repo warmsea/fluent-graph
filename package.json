@@ -34,7 +34,7 @@
   "size-limit": [
     {
       "path": "dist/fluent-graph.js",
-      "limit": "15 KB"
+      "limit": "20 KB"
     }
   ],
   "peerDependencies": {
@@ -60,7 +60,7 @@
     "@types/lodash": "^4.14.180",
     "@types/react": "^17.0.41",
     "@types/react-dom": "^17.0.14",
-    "@warmsea/o": "^0.0.16",
+    "@warmsea/o": "0.0.17",
     "babel-loader": "^8.2.4",
     "d3": "^6.6.0",
     "jest": "^27.5.1",

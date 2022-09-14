@@ -4011,10 +4011,10 @@
   dependencies:
     lodash "^4.17.21"
 
-"@warmsea/o@^0.0.16":
-  version "0.0.16"
-  resolved "https://registry.yarnpkg.com/@warmsea/o/-/o-0.0.16.tgz#9e6858dc0fbaaefb199c3aa2b3849d845eefc333"
-  integrity sha512-IERtqhvDHpmVrlH+h/+FZUvj7vfy9EtW1bmCPMe/v6IHkYap0h62/QTHrqU+tFiruFMLwIn6QbUHCS5AIBc74w==
+"@warmsea/o@0.0.17":
+  version "0.0.17"
+  resolved "https://registry.yarnpkg.com/@warmsea/o/-/o-0.0.17.tgz#12ddd649058598b8a77e977f6cf99ef585d05f53"
+  integrity sha512-6RuiAQiDFZ598MugCgnvYOew47l7cj3IAl/Abve9nexUDp8jWc1MUPLHKj74BVFbqt26ZtqtLjWQ+877J1Alqw==
   dependencies:
     "@teamsupercell/typings-for-css-modules-loader" "^2.5.1"
     "@typescript-eslint/eslint-plugin" "^5.14.0"

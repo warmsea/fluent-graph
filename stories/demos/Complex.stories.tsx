@@ -1,10 +1,7 @@
 import React, { CSSProperties, FC } from "react";
 import { Meta } from "@storybook/react";
 import { Graph } from "../../src";
-import {
-  IGraphProps,
-  IGraphPropsNode,
-} from "../../src/components/graph/Graph.types";
+import { IGraphProps, IGraphPropsNode } from "../../src/components/graph/Graph.types";
 import type { DataType } from "csstype";
 
 const meta: Meta = {
