@@ -158,12 +158,14 @@ export const Graph: FC<IGraphProps> = (props: IGraphProps) => {
           const draggingNode = nodeMapRef.current.get(nodeRoot.id);
           if (draggingNode && !isNumber(draggingNode.force?.fx) && !isNumber(draggingNode.force?.fy)) {
             draggingNodeRef.current = draggingNode;
-            simulationRef.current?.alphaTarget(0.3).restart();
           }
         }
       }
     });
     dragBehavior.on("drag", (event) => {
+      if (simulationRef.current?.alphaTarget() === 0) {
+        simulationRef.current?.alphaTarget(0.1).restart();
+      }
       const force = draggingNodeRef.current?.force;
       if (force) {
         force.fx = event.x / zoomStateRef.current.k;
