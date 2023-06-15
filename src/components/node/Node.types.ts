@@ -4,6 +4,7 @@ import { DivAttributes } from "../../utilities";
 export interface INodeProps extends INodeCommonConfig {
   id: string;
   label?: string;
+  isSuggested?: boolean;
 }
 
 /**
